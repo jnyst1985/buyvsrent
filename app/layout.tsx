@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://buyvsrent.vercel.app', // Will update to custom domain later
   },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport = {

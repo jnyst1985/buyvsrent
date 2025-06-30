@@ -254,15 +254,45 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
     (monthlyInvestmentAmount * 12 * general.timeHorizon)) * (tax.capitalGainsTaxRate / 100);
   const rentScenarioNetWorth = finalPortfolioValue - capitalGainsTax;
   
-  // Find break-even year
+  // Find true break-even year (last crossover where buying becomes permanently better)
   let breakEvenYear: number | null = null;
+  
+  // First, find all crossover points
+  const crossovers: number[] = [];
+  let previousBuyBetter = false;
+  
   for (let i = 0; i < yearlyData.length; i++) {
     const buyNetWorth = yearlyData[i].buyScenario.equity - 
       (yearlyData[i].buyScenario.homeValue * realEstate.sellingCostPercent / 100);
     const rentNetWorth = yearlyData[i].rentScenario.portfolioValue;
+    const buyBetter = buyNetWorth > rentNetWorth;
     
-    if (buyNetWorth > rentNetWorth) {
-      breakEvenYear = i + 1;
+    // If this is a crossover point (buy becomes better when it wasn't before)
+    if (buyBetter && !previousBuyBetter) {
+      crossovers.push(i + 1);
+    }
+    previousBuyBetter = buyBetter;
+  }
+  
+  // Check each crossover to see if buying stays ahead for the rest of the period
+  for (let crossoverIndex = crossovers.length - 1; crossoverIndex >= 0; crossoverIndex--) {
+    const crossoverYear = crossovers[crossoverIndex];
+    let buyStaysAhead = true;
+    
+    // Check if buying stays ahead from this crossover until the end
+    for (let i = crossoverYear - 1; i < yearlyData.length; i++) {
+      const buyNetWorth = yearlyData[i].buyScenario.equity - 
+        (yearlyData[i].buyScenario.homeValue * realEstate.sellingCostPercent / 100);
+      const rentNetWorth = yearlyData[i].rentScenario.portfolioValue;
+      
+      if (rentNetWorth >= buyNetWorth) {
+        buyStaysAhead = false;
+        break;
+      }
+    }
+    
+    if (buyStaysAhead) {
+      breakEvenYear = crossoverYear;
       break;
     }
   }

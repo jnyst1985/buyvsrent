@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { CalculationResults, YearlyData } from '@/lib/types';
 import { formatCurrency, formatPercent } from '@/lib/formatting';
 import ComparisonChart from './ComparisonChart';
-import Tooltip, { InfoIcon } from './Tooltip';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
@@ -182,53 +181,26 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent }
         
         {!showAllYears && (
           <p className="text-sm text-gray-600 mb-3">
-            Showing key milestone years {results.breakEvenYear ? `(including break-even year ${results.breakEvenYear})` : ''}
+            Showing key milestone years
           </p>
         )}
         
-        <div className="bg-blue-50 rounded-lg p-4 mb-4">
-          <h4 className="font-medium text-blue-900 mb-2">How to Read This Table</h4>
-          <div className="text-sm text-blue-800 space-y-1">
-            <p><strong>Net Worth (Buy):</strong> Actual cash you'd have if you sold the house (after paying realtor fees, etc.)</p>
-            <p><strong>Net Worth (Rent):</strong> Your liquid investment portfolio value</p>
-            <p><strong>Key Insight:</strong> This accounts for selling costs ({sellingCostPercent}%), which many calculators ignore.</p>
-          </div>
+        <div className="text-xs text-gray-500 mb-3">
+          <span className="font-medium">Note:</span> Net Worth (Buy) includes selling costs ({sellingCostPercent}%) for accurate comparison.
         </div>
         
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                  <div className="flex items-center gap-1">
-                    Net Worth (Buy)
-                    <Tooltip content="Your net worth if you sold the house today. Calculated as: Home Value - Mortgage Balance - Selling Costs (realtor fees, etc.). This is the actual cash you'd have after liquidating.">
-                      <InfoIcon />
-                    </Tooltip>
-                  </div>
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                  <div className="flex items-center gap-1">
-                    Net Worth (Rent)
-                    <Tooltip content="Your investment portfolio value if you rented instead. This money is liquid and can be accessed without selling costs.">
-                      <InfoIcon />
-                    </Tooltip>
-                  </div>
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                  <div className="flex items-center gap-1">
-                    Difference
-                    <Tooltip content="Net Worth (Buy) minus Net Worth (Rent). Positive means buying is ahead, negative means renting + investing is ahead. Break-even occurs when this reaches zero.">
-                      <InfoIcon />
-                    </Tooltip>
-                  </div>
-                </th>
+                <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">Year</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Net Worth (Buy)</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Net Worth (Rent)</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Difference</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {displayYears.map((year) => {
-                const isBreakEven = results.breakEvenYear === year.year;
                 // Calculate true net worth for buying (home value - mortgage - selling costs)
                 const sellingCosts = year.buyScenario.homeValue * (sellingCostPercent / 100);
                 const buyNetWorth = year.buyScenario.homeValue - year.buyScenario.mortgageBalance - sellingCosts;
@@ -236,18 +208,8 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent }
                 const difference = buyNetWorth - rentNetWorth;
                 
                 return (
-                  <tr 
-                    key={year.year}
-                    className={isBreakEven ? 'bg-green-50 border-green-200' : ''}
-                  >
-                    <td className="px-4 py-2 text-sm font-medium">
-                      {year.year}
-                      {isBreakEven && (
-                        <span className="ml-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          Break-even
-                        </span>
-                      )}
-                    </td>
+                  <tr key={year.year}>
+                    <td className="px-2 py-2 text-sm font-medium text-center">{year.year}</td>
                     <td className="px-4 py-2 text-sm">{formatCurrencyLocal(buyNetWorth)}</td>
                     <td className="px-4 py-2 text-sm">{formatCurrencyLocal(rentNetWorth)}</td>
                     <td className={`px-4 py-2 text-sm font-medium ${difference > 0 ? 'text-blue-600' : 'text-red-600'}`}>

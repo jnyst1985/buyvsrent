@@ -105,7 +105,11 @@ export default function Home() {
 
           {showResults && results && (
             <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-              <ResultsDisplay results={results} currency={inputs.general.currency} />
+              <ResultsDisplay 
+                results={results} 
+                currency={inputs.general.currency}
+                sellingCostPercent={inputs.realEstate.sellingCostPercent}
+              />
             </div>
           )}
         </div>

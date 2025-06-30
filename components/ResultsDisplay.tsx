@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { CalculationResults, YearlyData } from '@/lib/types';
 import { formatCurrency, formatPercent } from '@/lib/formatting';
 import ComparisonChart from './ComparisonChart';
+import Tooltip, { InfoIcon } from './Tooltip';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
   currency: string;
+  sellingCostPercent: number;
 }
 
-export default function ResultsDisplay({ results, currency }: ResultsDisplayProps) {
+export default function ResultsDisplay({ results, currency, sellingCostPercent }: ResultsDisplayProps) {
   // Use utility functions for consistent formatting
   const formatCurrencyLocal = (value: number) => formatCurrency(value, currency);
   
@@ -184,20 +186,54 @@ export default function ResultsDisplay({ results, currency }: ResultsDisplayProp
           </p>
         )}
         
+        <div className="bg-blue-50 rounded-lg p-4 mb-4">
+          <h4 className="font-medium text-blue-900 mb-2">How to Read This Table</h4>
+          <div className="text-sm text-blue-800 space-y-1">
+            <p><strong>Net Worth (Buy):</strong> Actual cash you'd have if you sold the house (after paying realtor fees, etc.)</p>
+            <p><strong>Net Worth (Rent):</strong> Your liquid investment portfolio value</p>
+            <p><strong>Key Insight:</strong> This accounts for selling costs ({sellingCostPercent}%), which many calculators ignore.</p>
+          </div>
+        </div>
+        
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Year</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Home Equity</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Portfolio Value</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Difference</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  <div className="flex items-center gap-1">
+                    Net Worth (Buy)
+                    <Tooltip content="Your net worth if you sold the house today. Calculated as: Home Value - Mortgage Balance - Selling Costs (realtor fees, etc.). This is the actual cash you'd have after liquidating.">
+                      <InfoIcon />
+                    </Tooltip>
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  <div className="flex items-center gap-1">
+                    Net Worth (Rent)
+                    <Tooltip content="Your investment portfolio value if you rented instead. This money is liquid and can be accessed without selling costs.">
+                      <InfoIcon />
+                    </Tooltip>
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  <div className="flex items-center gap-1">
+                    Difference
+                    <Tooltip content="Net Worth (Buy) minus Net Worth (Rent). Positive means buying is ahead, negative means renting + investing is ahead. Break-even occurs when this reaches zero.">
+                      <InfoIcon />
+                    </Tooltip>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {displayYears.map((year) => {
                 const isBreakEven = results.breakEvenYear === year.year;
-                const difference = year.buyScenario.equity - year.rentScenario.portfolioValue;
+                // Calculate true net worth for buying (home value - mortgage - selling costs)
+                const sellingCosts = year.buyScenario.homeValue * (sellingCostPercent / 100);
+                const buyNetWorth = year.buyScenario.homeValue - year.buyScenario.mortgageBalance - sellingCosts;
+                const rentNetWorth = year.rentScenario.portfolioValue;
+                const difference = buyNetWorth - rentNetWorth;
                 
                 return (
                   <tr 
@@ -212,9 +248,9 @@ export default function ResultsDisplay({ results, currency }: ResultsDisplayProp
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-sm">{formatCurrencyLocal(year.buyScenario.equity)}</td>
-                    <td className="px-4 py-2 text-sm">{formatCurrencyLocal(year.rentScenario.portfolioValue)}</td>
-                    <td className={`px-4 py-2 text-sm font-medium ${difference > 0 ? 'text-blue-600' : 'text-green-600'}`}>
+                    <td className="px-4 py-2 text-sm">{formatCurrencyLocal(buyNetWorth)}</td>
+                    <td className="px-4 py-2 text-sm">{formatCurrencyLocal(rentNetWorth)}</td>
+                    <td className={`px-4 py-2 text-sm font-medium ${difference > 0 ? 'text-blue-600' : 'text-red-600'}`}>
                       {formatCurrencyLocal(difference)}
                     </td>
                   </tr>

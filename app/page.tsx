@@ -1,56 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { CalculationInputs, CalculationResults } from '@/lib/types';
 import { performCalculations } from '@/lib/calculator';
 import { trackCalculation } from '@/lib/analytics';
 import { decodeUrlToInputs } from '@/lib/urlSharing';
+import { DEFAULT_INPUTS, TIMING, APP_CONFIG } from '@/lib/constants';
 import InputForm from '@/components/InputForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { AdUnit } from '@/components/GoogleAdsense';
 import NoSSR from '@/components/NoSSR';
 import FormSkeleton from '@/components/FormSkeleton';
+import StructuredData from '@/components/StructuredData';
+import ErrorBoundary, { CalculatorErrorBoundary, InputErrorBoundary } from '@/components/ErrorBoundary';
 
-const defaultInputs: CalculationInputs = {
-  general: {
-    currency: 'USD',
-    timeHorizon: 30,
-    currentSavings: 100000,
-  },
-  realEstate: {
-    propertyPrice: 500000,
-    downPaymentPercent: 20,
-    mortgageInterestRate: 6.5,
-    mortgageTerm: 30,
-    propertyTaxRate: 1.2,
-    homeownersInsurance: 1500,
-    hoaFees: 200,
-    maintenanceCostPercent: 1,
-    closingCostPercent: 2.5,
-    sellingCostPercent: 6,
-    propertyAppreciationRate: 3.5,
-    propertyTaxIncreaseRate: 2,
-  },
-  stockMarket: {
-    expectedAnnualReturn: 8,
-    dividendYield: 1.5,
-    expenseRatio: 0.1,
-    monthlyInvestment: 0, // calculated
-  },
-  rental: {
-    monthlyRent: 2500,
-    annualRentIncrease: 3,
-    rentersInsurance: 20,
-    securityDeposit: 2,
-  },
-  tax: {
-    incomeTaxBracket: 24,
-    capitalGainsTaxRate: 15,
-    mortgageInterestDeduction: true,
-    propertyTaxDeduction: true,
-    standardDeduction: 27700,
-  },
-};
+// Using shared constants for default values
+const defaultInputs = DEFAULT_INPUTS;
 
 export default function Home() {
   const [inputs, setInputs] = useState<CalculationInputs>(defaultInputs);
@@ -85,20 +50,32 @@ export default function Home() {
             breakEvenYear: calculationResults.breakEvenYear,
             currency: decodedInputs.general.currency,
           });
-        }, 100); // Small delay to ensure form is rendered
+        }, TIMING.SHARED_CALC_DELAY); // Small delay to ensure form is rendered
       }
     }
   }, []);
 
+  // Memoized calculation to avoid expensive recalculations
+  const memoizedCalculation = useMemo(() => {
+    if (!hasCalculated) return null;
+    
+    try {
+      return performCalculations(inputs);
+    } catch (error) {
+      console.error('Calculation error:', error);
+      return null;
+    }
+  }, [inputs, hasCalculated]);
+
   // Handle input changes and mark results as stale if calculation was performed
-  const handleInputChange = (newInputs: CalculationInputs) => {
+  const handleInputChange = useCallback((newInputs: CalculationInputs) => {
     setInputs(newInputs);
     if (hasCalculated) {
       setResultsStale(true);
     }
-  };
+  }, [hasCalculated]);
 
-  const handleCalculate = () => {
+  const handleCalculate = useCallback(() => {
     try {
       const calculationResults = performCalculations(inputs);
       setResults(calculationResults);
@@ -118,7 +95,7 @@ export default function Home() {
       console.error('Calculation error:', error);
       // Optionally show an error message to the user
     }
-  };
+  }, [inputs]);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -148,26 +125,30 @@ export default function Home() {
 
         <div className={`grid grid-cols-1 ${showResults ? 'lg:grid-cols-2' : 'max-w-4xl mx-auto'} gap-8`}>
           <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-            <NoSSR fallback={<FormSkeleton />}>
-              <InputForm 
-                inputs={inputs} 
-                setInputs={handleInputChange} 
-                onCalculate={handleCalculate}
-                hasCalculated={hasCalculated}
-                resultsStale={resultsStale}
-              />
-            </NoSSR>
+            <InputErrorBoundary>
+              <NoSSR fallback={<FormSkeleton />}>
+                <InputForm 
+                  inputs={inputs} 
+                  setInputs={handleInputChange} 
+                  onCalculate={handleCalculate}
+                  hasCalculated={hasCalculated}
+                  resultsStale={resultsStale}
+                />
+              </NoSSR>
+            </InputErrorBoundary>
           </div>
 
           {showResults && results && (
             <div className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${resultsStale ? 'ring-2 ring-amber-300 ring-opacity-50' : ''}`}>
-              <ResultsDisplay 
-                results={results} 
-                currency={inputs.general.currency}
-                sellingCostPercent={inputs.realEstate.sellingCostPercent}
-                inputs={inputs}
-                resultsStale={resultsStale}
-              />
+              <CalculatorErrorBoundary>
+                <ResultsDisplay 
+                  results={results} 
+                  currency={inputs.general.currency}
+                  sellingCostPercent={inputs.realEstate.sellingCostPercent}
+                  inputs={inputs}
+                  resultsStale={resultsStale}
+                />
+              </CalculatorErrorBoundary>
             </div>
           )}
         </div>
@@ -207,33 +188,28 @@ export default function Home() {
       </div>
 
       {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "Buy vs Rent Calculator",
-            "description": "Free calculator to compare buying a house vs renting and investing in stocks. Analyze mortgage costs, property appreciation, and investment returns.",
-            "url": "https://buyvsrent.vercel.app", // Will update to custom domain later
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Web",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            },
-            "featureList": [
-              "Mortgage calculation with amortization",
-              "Property appreciation analysis",
-              "Investment portfolio growth projection",
-              "Tax benefit calculations",
-              "Year-by-year comparison charts",
-              "Multiple currency support"
-            ]
-          })
-        }}
-      />
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": APP_CONFIG.NAME,
+        "description": APP_CONFIG.DESCRIPTION,
+        "url": APP_CONFIG.URL,
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Mortgage calculation with amortization",
+          "Property appreciation analysis",
+          "Investment portfolio growth projection",
+          "Tax benefit calculations",
+          "Year-by-year comparison charts",
+          "Multiple currency support"
+        ]
+      }} />
     </main>
   );
 }

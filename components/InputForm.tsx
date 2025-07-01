@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { CalculationInputs } from '@/lib/types';
+import { validateInputs, sanitizeInputs, ValidationError } from '@/lib/validation';
 import Tooltip, { InfoIcon } from './Tooltip';
 import PresetScenarios from './PresetScenarios';
 
@@ -13,18 +15,67 @@ interface InputFormProps {
 }
 
 export default function InputForm({ inputs, setInputs, onCalculate, hasCalculated = false, resultsStale = false }: InputFormProps) {
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [showValidation, setShowValidation] = useState(false);
+
+  // Validate inputs whenever they change
+  useEffect(() => {
+    const sanitizedInputs = sanitizeInputs(inputs);
+    const validation = validateInputs(sanitizedInputs);
+    setValidationErrors(validation.errors);
+  }, [inputs]);
+
   const handleInputChange = (
     category: keyof CalculationInputs,
     field: string,
     value: string | number | boolean
   ) => {
-    setInputs({
+    // Sanitize the input value
+    let sanitizedValue = value;
+    if (typeof value === 'string' && value !== '' && !isNaN(Number(value))) {
+      sanitizedValue = Number(value);
+    }
+
+    const newInputs = {
       ...inputs,
       [category]: {
         ...inputs[category],
-        [field]: value,
+        [field]: sanitizedValue,
       },
-    });
+    };
+
+    setInputs(newInputs);
+    
+    // Show validation after first interaction
+    if (!showValidation) {
+      setShowValidation(true);
+    }
+  };
+
+  const handleCalculate = () => {
+    setShowValidation(true);
+    
+    if (validationErrors.length === 0) {
+      onCalculate();
+    }
+  };
+
+  // Helper function to get field-specific error
+  const getFieldError = (category: keyof CalculationInputs, field: string): string | null => {
+    if (!showValidation) return null;
+    const error = validationErrors.find(e => e.category === category && e.field === field);
+    return error ? error.message : null;
+  };
+
+  // Helper function to get field CSS classes
+  const getFieldClasses = (category: keyof CalculationInputs, field: string): string => {
+    const hasError = getFieldError(category, field) !== null;
+    const baseClasses = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2";
+    
+    if (hasError) {
+      return `${baseClasses} border-red-300 focus:ring-red-500 bg-red-50`;
+    }
+    return `${baseClasses} border-gray-300 focus:ring-blue-500`;
   };
 
   const currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CNY', 'INR'];
@@ -64,12 +115,15 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </label>
             <input
               type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={getFieldClasses('general', 'timeHorizon')}
               value={inputs.general.timeHorizon}
-              onChange={(e) => handleInputChange('general', 'timeHorizon', Number(e.target.value))}
+              onChange={(e) => handleInputChange('general', 'timeHorizon', e.target.value)}
               min="1"
               max="50"
             />
+            {getFieldError('general', 'timeHorizon') && (
+              <p className="mt-1 text-sm text-red-600">{getFieldError('general', 'timeHorizon')}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -77,11 +131,14 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </label>
             <input
               type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={getFieldClasses('general', 'currentSavings')}
               value={inputs.general.currentSavings}
-              onChange={(e) => handleInputChange('general', 'currentSavings', Number(e.target.value))}
+              onChange={(e) => handleInputChange('general', 'currentSavings', e.target.value)}
               min="0"
             />
+            {getFieldError('general', 'currentSavings') && (
+              <p className="mt-1 text-sm text-red-600">{getFieldError('general', 'currentSavings')}</p>
+            )}
           </div>
         </div>
       </div>
@@ -96,11 +153,14 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </label>
             <input
               type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={getFieldClasses('realEstate', 'propertyPrice')}
               value={inputs.realEstate.propertyPrice}
-              onChange={(e) => handleInputChange('realEstate', 'propertyPrice', Number(e.target.value))}
+              onChange={(e) => handleInputChange('realEstate', 'propertyPrice', e.target.value)}
               min="0"
             />
+            {getFieldError('realEstate', 'propertyPrice') && (
+              <p className="mt-1 text-sm text-red-600">{getFieldError('realEstate', 'propertyPrice')}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
@@ -408,18 +468,38 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             ⚠️ Parameters changed - results may be outdated
           </div>
         )}
+        {showValidation && validationErrors.length > 0 && (
+          <div className="bg-red-50 border border-red-200 rounded-md p-3">
+            <h4 className="text-sm font-medium text-red-800 mb-2">Please fix the following errors:</h4>
+            <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+              {validationErrors.slice(0, 5).map((error, index) => (
+                <li key={index}>{error.message}</li>
+              ))}
+              {validationErrors.length > 5 && (
+                <li className="text-red-600">...and {validationErrors.length - 5} more errors</li>
+              )}
+            </ul>
+          </div>
+        )}
         <button
           onClick={(e) => {
             e.preventDefault();
-            onCalculate();
+            handleCalculate();
           }}
+          disabled={showValidation && validationErrors.length > 0}
           className={`w-full py-3 px-4 font-medium rounded-md transition duration-200 ${
-            resultsStale && hasCalculated
+            showValidation && validationErrors.length > 0
+              ? 'bg-gray-400 cursor-not-allowed text-white'
+              : resultsStale && hasCalculated
               ? 'bg-amber-600 hover:bg-amber-700 text-white'
               : 'bg-blue-600 hover:bg-blue-700 text-white'
           }`}
         >
-          {resultsStale && hasCalculated ? 'Recalculate' : 'Calculate'}
+          {showValidation && validationErrors.length > 0 
+            ? `Fix ${validationErrors.length} error${validationErrors.length === 1 ? '' : 's'} to calculate`
+            : resultsStale && hasCalculated 
+            ? 'Recalculate' 
+            : 'Calculate'}
         </button>
       </div>
     </div>

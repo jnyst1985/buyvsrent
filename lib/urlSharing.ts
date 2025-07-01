@@ -1,86 +1,11 @@
 import { CalculationInputs } from './types';
+import { DEFAULT_INPUTS, URL_PARAM_MAP } from './constants';
 
-// Default values for comparison (to skip encoding defaults)
-const defaultInputs: CalculationInputs = {
-  general: {
-    currency: 'USD',
-    timeHorizon: 30,
-    currentSavings: 100000,
-  },
-  realEstate: {
-    propertyPrice: 500000,
-    downPaymentPercent: 20,
-    mortgageInterestRate: 6.5,
-    mortgageTerm: 30,
-    propertyTaxRate: 1.2,
-    homeownersInsurance: 1500,
-    hoaFees: 200,
-    maintenanceCostPercent: 1,
-    closingCostPercent: 2.5,
-    sellingCostPercent: 6,
-    propertyAppreciationRate: 3.5,
-    propertyTaxIncreaseRate: 2,
-  },
-  stockMarket: {
-    expectedAnnualReturn: 8,
-    dividendYield: 1.5,
-    expenseRatio: 0.1,
-    monthlyInvestment: 0,
-  },
-  rental: {
-    monthlyRent: 2500,
-    annualRentIncrease: 3,
-    rentersInsurance: 20,
-    securityDeposit: 2,
-  },
-  tax: {
-    incomeTaxBracket: 24,
-    capitalGainsTaxRate: 15,
-    mortgageInterestDeduction: true,
-    propertyTaxDeduction: true,
-    standardDeduction: 27700,
-  },
-};
+// Using shared default values for comparison (to skip encoding defaults)
+const defaultInputs = DEFAULT_INPUTS;
 
-// Optimized parameter mapping (short names)
-const paramMap = {
-  // General
-  'c': 'currency',
-  'th': 'timeHorizon', 
-  'cs': 'currentSavings',
-  
-  // Real estate (shortened names)
-  'pp': 'propertyPrice',
-  'dp': 'downPaymentPercent',
-  'mr': 'mortgageInterestRate',
-  'mt': 'mortgageTerm',
-  'pt': 'propertyTaxRate',
-  'ins': 'homeownersInsurance',
-  'hoa': 'hoaFees',
-  'mnt': 'maintenanceCostPercent',
-  'cc': 'closingCostPercent',
-  'sc': 'sellingCostPercent',
-  'apr': 'propertyAppreciationRate',
-  'pti': 'propertyTaxIncreaseRate',
-  
-  // Stock market
-  'sr': 'expectedAnnualReturn',
-  'div': 'dividendYield',
-  'exp': 'expenseRatio',
-  
-  // Rental
-  'rent': 'monthlyRent',
-  'ri': 'annualRentIncrease',
-  'rins': 'rentersInsurance',
-  'sd': 'securityDeposit',
-  
-  // Tax
-  'it': 'incomeTaxBracket',
-  'cg': 'capitalGainsTaxRate',
-  'md': 'mortgageInterestDeduction',
-  'pd': 'propertyTaxDeduction',
-  'std': 'standardDeduction',
-};
+// Using shared parameter mapping for URL optimization
+const paramMap = URL_PARAM_MAP;
 
 // Encode calculation inputs to URL parameters for sharing (optimized)
 export const encodeInputsToUrl = (inputs: CalculationInputs): string => {

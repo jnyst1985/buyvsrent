@@ -68,15 +68,27 @@ export default function PresetScenarios({ onApplyPreset, currency, currentInputs
             key={key}
             onClick={() => handlePresetClick(key)}
             className={getPresetButtonClass(key)}
+            aria-pressed={activePreset === key}
+            aria-describedby={`preset-${key}-description`}
           >
-            <div className="font-medium text-gray-900 mb-1">{preset.name}</div>
-            <div className="text-sm text-gray-600">{preset.description}</div>
+            <div className="font-medium text-gray-900 mb-1">
+              {preset.name}
+              {activePreset === key && (
+                <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+                  Active
+                </span>
+              )}
+            </div>
+            <div id={`preset-${key}-description`} className="text-sm text-gray-600">
+              {preset.description}
+            </div>
             {activePreset === key && (
               <div className="mt-2">
-                <span className={`inline-block w-2 h-2 rounded-full ${
+                <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
                   key === 'custom' ? 'bg-amber-400' : 'bg-blue-400'
-                }`}></span>
-                <span className="ml-2 text-xs font-medium text-gray-700">Active</span>
+                }`} aria-hidden="true"></span>
+                <span className="sr-only">This preset is currently active</span>
+                <span className="text-xs font-medium text-gray-700">Currently selected</span>
               </div>
             )}
           </button>

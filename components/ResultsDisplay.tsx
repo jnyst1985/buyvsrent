@@ -88,15 +88,25 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
       </div>
 
       {/* Winner Card */}
-      <div className={`rounded-lg p-6 ${buyBetter ? 'bg-blue-100' : 'bg-green-100'}`}>
+      <div 
+        className={`rounded-lg p-6 ${buyBetter ? 'bg-blue-100' : 'bg-green-100'}`}
+        role="region"
+        aria-label="Calculation results summary"
+      >
         <h3 className="text-xl font-semibold mb-2">
-          {buyBetter ? '🏠 Buying is Better' : '📈 Renting & Investing is Better'}
+          <span className={`inline-block w-3 h-3 rounded-full mr-2 ${buyBetter ? 'bg-blue-500' : 'bg-green-500'}`} aria-hidden="true"></span>
+          {buyBetter ? 'Winner: Buying is Better' : 'Winner: Renting & Investing is Better'}
+          <span className="sr-only">
+            {buyBetter ? 'The buying scenario performs better financially' : 'The renting and investing scenario performs better financially'}
+          </span>
         </h3>
         <p className="text-3xl font-bold mb-2">
+          <span className="sr-only">Advantage amount: </span>
           {formatCurrencyLocal(Math.abs(results.difference))}
         </p>
         <p className="text-lg">
           {buyBetter ? 'Buying' : 'Renting & Investing'} results in {formatPercent(Math.abs(results.differencePercent))} more wealth
+          <span className="sr-only"> at the end of the {inputs.general.timeHorizon}-year period</span>
         </p>
         {results.breakEvenYear && (
           <p className="mt-2 text-sm">

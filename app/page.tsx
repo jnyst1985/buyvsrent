@@ -6,6 +6,7 @@ import { performCalculations } from '@/lib/calculator';
 import { trackCalculation } from '@/lib/analytics';
 import { decodeUrlToInputs } from '@/lib/urlSharing';
 import { DEFAULT_INPUTS, TIMING, APP_CONFIG } from '@/lib/constants';
+import { formatCurrency } from '@/lib/formatting';
 import InputForm from '@/components/InputForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { AdUnit } from '@/components/GoogleAdsense';
@@ -13,6 +14,7 @@ import NoSSR from '@/components/NoSSR';
 import FormSkeleton from '@/components/FormSkeleton';
 import StructuredData from '@/components/StructuredData';
 import ErrorBoundary, { CalculatorErrorBoundary, InputErrorBoundary } from '@/components/ErrorBoundary';
+import SkipLink from '@/components/SkipLink';
 
 // Using shared constants for default values
 const defaultInputs = DEFAULT_INPUTS;
@@ -98,9 +100,11 @@ export default function Home() {
   }, [inputs]);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <header className="text-center mb-8">
+    <>
+      <SkipLink />
+      <main id="main-content" className="min-h-screen bg-gray-50" role="main">
+        <div className="container mx-auto px-4 py-8">
+        <header className="text-center mb-8" role="banner">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Buy vs Rent Calculator: Real Estate vs Stock Market Investment
           </h1>
@@ -187,6 +191,13 @@ export default function Home() {
         </section>
       </div>
 
+      {/* Live region for dynamic updates */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {showResults && results && (
+          `Calculation completed. ${results.buyScenarioNetWorth > results.rentScenarioNetWorth ? 'Buying' : 'Renting and investing'} is better by ${formatCurrency(Math.abs(results.difference), inputs.general.currency)}.`
+        )}
+      </div>
+
       {/* Structured Data */}
       <StructuredData data={{
         "@context": "https://schema.org",
@@ -210,6 +221,7 @@ export default function Home() {
           "Multiple currency support"
         ]
       }} />
-    </main>
+      </main>
+    </>
   );
 }

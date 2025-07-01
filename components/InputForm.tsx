@@ -78,10 +78,35 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
     return `${baseClasses} border-gray-300 focus:ring-blue-500`;
   };
 
+  // Helper function to generate unique field ID
+  const getFieldId = (category: keyof CalculationInputs, field: string): string => {
+    return `${category}-${field}`;
+  };
+
+  // Helper function to generate error ID
+  const getErrorId = (category: keyof CalculationInputs, field: string): string => {
+    return `${category}-${field}-error`;
+  };
+
+  // Helper function to check if field is required
+  const isFieldRequired = (category: keyof CalculationInputs, field: string): boolean => {
+    // Most fields are required for calculations
+    return true;
+  };
+
   const currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CNY', 'INR'];
 
   return (
-    <div className="space-y-6" suppressHydrationWarning>
+    <form 
+      role="form" 
+      aria-label="Buy vs Rent Calculator Input Form"
+      className="space-y-6" 
+      suppressHydrationWarning
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleCalculate();
+      }}
+    >
       <h2 className="text-2xl font-semibold text-gray-900">Input Parameters</h2>
 
       {/* Preset Scenarios */}
@@ -92,8 +117,8 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
       />
 
       {/* General Parameters */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">General</h3>
+      <fieldset className="border border-gray-200 rounded-lg p-4">
+        <legend className="text-lg font-medium text-gray-900 px-2">General Parameters</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -110,56 +135,98 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label 
+              htmlFor={getFieldId('general', 'timeHorizon')}
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Time Horizon (years)
             </label>
             <input
+              id={getFieldId('general', 'timeHorizon')}
               type="number"
               className={getFieldClasses('general', 'timeHorizon')}
               value={inputs.general.timeHorizon}
               onChange={(e) => handleInputChange('general', 'timeHorizon', e.target.value)}
               min="1"
               max="50"
+              aria-required={isFieldRequired('general', 'timeHorizon')}
+              aria-invalid={getFieldError('general', 'timeHorizon') !== null}
+              aria-describedby={getFieldError('general', 'timeHorizon') ? getErrorId('general', 'timeHorizon') : undefined}
             />
             {getFieldError('general', 'timeHorizon') && (
-              <p className="mt-1 text-sm text-red-600">{getFieldError('general', 'timeHorizon')}</p>
+              <p 
+                id={getErrorId('general', 'timeHorizon')}
+                className="mt-1 text-sm text-red-600"
+                role="alert"
+                aria-live="polite"
+              >
+                {getFieldError('general', 'timeHorizon')}
+              </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label 
+              htmlFor={getFieldId('general', 'currentSavings')}
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Current Savings
             </label>
             <input
+              id={getFieldId('general', 'currentSavings')}
               type="number"
               className={getFieldClasses('general', 'currentSavings')}
               value={inputs.general.currentSavings}
               onChange={(e) => handleInputChange('general', 'currentSavings', e.target.value)}
               min="0"
+              aria-required={isFieldRequired('general', 'currentSavings')}
+              aria-invalid={getFieldError('general', 'currentSavings') !== null}
+              aria-describedby={getFieldError('general', 'currentSavings') ? getErrorId('general', 'currentSavings') : undefined}
             />
             {getFieldError('general', 'currentSavings') && (
-              <p className="mt-1 text-sm text-red-600">{getFieldError('general', 'currentSavings')}</p>
+              <p 
+                id={getErrorId('general', 'currentSavings')}
+                className="mt-1 text-sm text-red-600"
+                role="alert"
+                aria-live="polite"
+              >
+                {getFieldError('general', 'currentSavings')}
+              </p>
             )}
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* Real Estate Parameters */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Real Estate</h3>
+      <fieldset className="border border-gray-200 rounded-lg p-4">
+        <legend className="text-lg font-medium text-gray-900 px-2">Real Estate Parameters</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label 
+              htmlFor={getFieldId('realEstate', 'propertyPrice')}
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Property Price
             </label>
             <input
+              id={getFieldId('realEstate', 'propertyPrice')}
               type="number"
               className={getFieldClasses('realEstate', 'propertyPrice')}
               value={inputs.realEstate.propertyPrice}
               onChange={(e) => handleInputChange('realEstate', 'propertyPrice', e.target.value)}
               min="0"
+              aria-required={isFieldRequired('realEstate', 'propertyPrice')}
+              aria-invalid={getFieldError('realEstate', 'propertyPrice') !== null}
+              aria-describedby={getFieldError('realEstate', 'propertyPrice') ? getErrorId('realEstate', 'propertyPrice') : undefined}
             />
             {getFieldError('realEstate', 'propertyPrice') && (
-              <p className="mt-1 text-sm text-red-600">{getFieldError('realEstate', 'propertyPrice')}</p>
+              <p 
+                id={getErrorId('realEstate', 'propertyPrice')}
+                className="mt-1 text-sm text-red-600"
+                role="alert"
+                aria-live="polite"
+              >
+                {getFieldError('realEstate', 'propertyPrice')}
+              </p>
             )}
           </div>
           <div>
@@ -281,11 +348,11 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             />
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* Stock Market Parameters */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Stock Market</h3>
+      <fieldset className="border border-gray-200 rounded-lg p-4">
+        <legend className="text-lg font-medium text-gray-900 px-2">Stock Market Parameters</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -336,11 +403,11 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             />
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* Rental Parameters */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Rental</h3>
+      <fieldset className="border border-gray-200 rounded-lg p-4">
+        <legend className="text-lg font-medium text-gray-900 px-2">Rental Parameters</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -381,11 +448,11 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             />
           </div>
         </div>
-      </div>
+      </fieldset>
 
       {/* Tax Parameters */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Tax</h3>
+      <fieldset className="border border-gray-200 rounded-lg p-4">
+        <legend className="text-lg font-medium text-gray-900 px-2">Tax Parameters</legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
@@ -460,7 +527,7 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </div>
           </div>
         </div>
-      </div>
+      </fieldset>
 
       <div className="space-y-2">
         {resultsStale && hasCalculated && (
@@ -502,6 +569,6 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             : 'Calculate'}
         </button>
       </div>
-    </div>
+    </form>
   );
 }

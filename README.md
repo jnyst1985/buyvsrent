@@ -1,15 +1,35 @@
-# Buy or Invest Calculator
+# Buy vs Rent Calculator
 
-A comprehensive web calculator that helps users compare buying real estate versus renting and investing in the stock market. The tool provides detailed financial analysis considering all costs, tax implications, and long-term wealth accumulation.
+A comprehensive, currency-agnostic web application that helps users make informed financial decisions by comparing buying real estate versus renting and investing in the stock market. Built with modern web technologies and optimized for viral sharing.
 
-## Features
+🌐 **Live Site**: [buyvsrent.xyz](https://buyvsrent.xyz)  
+📊 **Analytics**: Comprehensive user behavior tracking and optimization
 
-- **Currency Agnostic**: Works with any currency (USD, EUR, GBP, etc.)
-- **Comprehensive Calculations**: Includes all costs (mortgage, taxes, insurance, maintenance, HOA, etc.)
-- **Tax Considerations**: Accounts for mortgage interest deduction, property tax deduction, and capital gains
-- **Visual Comparisons**: Interactive charts showing net worth over time
-- **Detailed Breakdowns**: Year-by-year analysis and cost summaries
-- **Mobile Responsive**: Works on all devices
+## ✨ Key Features
+
+### 🧮 Financial Analysis
+- **Comprehensive Calculations**: All costs included (mortgage, taxes, insurance, maintenance, HOA, opportunity costs)
+- **Currency Agnostic**: Works with any currency (USD, EUR, GBP, CAD, AUD, JPY, CNY, INR)
+- **Tax Optimization**: Mortgage interest deduction, property tax deduction, capital gains calculations
+- **Break-Even Analysis**: Identifies when buying becomes permanently better than renting
+
+### 🎯 Smart Presets & UX
+- **Quick Start Scenarios**: First-Time Buyer, Investment Property, Downsizing, Custom
+- **Auto-Detection**: Real-time identification of active preset vs custom configuration
+- **Visual Feedback**: Clear indicators for active scenarios and stale results
+- **Stale Results Tracking**: Intelligent Calculate/Recalculate button states
+
+### 📱 Viral Sharing System
+- **Smart URL Optimization**: 70% shorter URLs with intelligent parameter encoding
+- **Social Media Integration**: Platform-optimized sharing (Twitter, LinkedIn, WhatsApp)
+- **Dynamic Messaging**: Emotional hooks and platform-specific content
+- **Copy Shareable Results**: Formatted messages with optimized URLs
+
+### 📊 Analytics & Insights
+- **User Behavior Tracking**: Microsoft Clarity session recordings and heatmaps
+- **Comprehensive Events**: Google Analytics 4 with custom dimensions
+- **Performance Monitoring**: Core Web Vitals and error tracking
+- **Growth Metrics**: Viral coefficient and sharing performance
 
 ## Tech Stack
 
@@ -19,64 +39,162 @@ A comprehensive web calculator that helps users compare buying real estate versu
 - **Recharts** - Data visualization
 - **Vercel** - Deployment platform
 
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
-
 - Node.js 18+ installed
 - npm or yarn package manager
 
-### Installation
-
-1. Clone the repository:
+### Development Setup
 ```bash
-git clone <repository-url>
-cd buy-or-invest
-```
+# Clone the repository
+git clone https://github.com/jnyst1985/buyvsrent.git
+cd buyvsrent
 
-2. Install dependencies:
-```bash
+# Install dependencies
 npm install
-```
 
-3. Run the development server:
-```bash
+# Start development server
 npm run dev
+
+# Open browser to http://localhost:3000
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+### Environment Variables (Optional)
+```bash
+# Copy example environment file
+cp .env.example .env.local
 
-## Building for Production
+# Add your analytics IDs (optional for development)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXX
+NEXT_PUBLIC_CLARITY_PROJECT_ID=XXXXXXXXXX
+```
 
+### Production Build
 ```bash
 npm run build
 npm start
 ```
 
-## Deployment
+## 📁 Project Structure
 
-The app is configured for easy deployment on Vercel:
+```
+├── app/                    # Next.js App Router pages
+├── components/             # React components
+│   ├── InputForm.tsx      # Main calculator interface
+│   ├── PresetScenarios.tsx # Quick start scenarios
+│   ├── ResultsDisplay.tsx  # Results visualization
+│   └── ShareResults.tsx    # Sharing system
+├── lib/                   # Utilities and business logic
+│   ├── calculator.ts      # Core calculation engine
+│   ├── urlSharing.ts      # URL optimization system
+│   ├── presetDetection.ts # Smart preset detection
+│   └── analytics.ts       # Event tracking
+└── docs/                  # Comprehensive documentation
+    ├── DEVELOPMENT.md     # Development guide
+    ├── FEATURES.md        # Feature documentation
+    ├── ROADMAP.md         # Future development plans
+    └── ANALYTICS.md       # Analytics implementation
+```
 
-1. Push your code to GitHub
-2. Import the repository in Vercel
-3. Deploy with default settings
+## 🎯 User Guide
 
-## Usage
+### 1. Quick Start with Presets
+- Choose from **First-Time Buyer**, **Investment Property**, or **Downsizing** scenarios
+- Parameters auto-populate with realistic defaults
+- Visual indicators show which preset is active
 
-1. Enter your financial parameters:
-   - Property details (price, down payment, mortgage rate)
-   - Investment assumptions (expected returns, dividend yield)
-   - Rental costs and increases
-   - Tax situation
+### 2. Custom Configuration  
+- Modify any parameter to create custom scenarios
+- System automatically switches to "Custom" preset
+- Real-time validation and feedback
 
-2. Click "Calculate" to see:
-   - Final net worth comparison
-   - Break-even analysis
-   - Detailed cost breakdowns
-   - Year-by-year progression chart
+### 3. Results Analysis
+- **Summary cards**: Quick comparison of both scenarios
+- **Winner announcement**: Clear recommendation with dollar difference
+- **Interactive charts**: Visual net worth progression over time
+- **Detailed breakdown**: Year-by-year analysis and cost summaries
 
-3. Adjust parameters to explore different scenarios
+### 4. Sharing Results
+- **Copy shareable link**: Optimized URLs with custom messaging
+- **Social media**: Platform-specific sharing (Twitter, LinkedIn, WhatsApp)
+- **Professional reports**: Detailed analysis for decision-making
 
-## Contributing
+## 🔧 Deployment
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Vercel (Recommended)
+1. Push code to GitHub repository
+2. Import repository in Vercel dashboard
+3. Add environment variables in Vercel settings
+4. Deploy with default Next.js settings
+
+### Other Platforms
+- **Netlify**: Compatible with static export
+- **AWS Amplify**: Supports Next.js deployment
+- **Railway/Render**: Node.js hosting platforms
+
+## 📊 Analytics & Performance
+
+### Monitoring Setup
+- **Google Analytics 4**: User behavior and conversion tracking
+- **Microsoft Clarity**: Session recordings and heatmaps
+- **Core Web Vitals**: Performance monitoring
+- **Error tracking**: Application stability monitoring
+
+### Key Metrics
+- **Calculation completion rate**: Target >60%
+- **Share rate**: Target >10% of calculations
+- **Viral coefficient**: New users per share
+- **Mobile performance**: <3s load time
+
+## 🛠️ Development Workflow
+
+### Code Quality
+```bash
+# Linting
+npm run lint
+
+# Type checking
+npm run build  # Includes TypeScript validation
+
+# Testing (when implemented)
+npm test
+```
+
+### Git Workflow
+1. **Feature branches**: Create from `main` for new features
+2. **Commit messages**: Descriptive with context
+3. **Pull requests**: Code review before merging
+4. **Auto-deployment**: Vercel deploys on push to `main`
+
+## 📋 Contributing
+
+### Development Guidelines
+1. **Read documentation**: Start with `DEVELOPMENT.md`
+2. **Follow TypeScript**: Maintain type safety
+3. **Test thoroughly**: All devices and scenarios
+4. **Update docs**: Keep documentation current
+
+### Priority Areas
+- **Phase 4A**: Visual content generation for sharing
+- **Performance optimization**: Core Web Vitals improvement  
+- **SEO enhancement**: Content and technical optimization
+- **Feature refinement**: Based on user feedback
+
+## 📚 Documentation
+
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)**: Complete development guide and architecture
+- **[FEATURES.md](./FEATURES.md)**: Detailed feature documentation and implementation
+- **[ROADMAP.md](./ROADMAP.md)**: Future development plans and priorities
+- **[ANALYTICS.md](./ANALYTICS.md)**: Analytics implementation and KPIs
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🤝 Support
+
+- **Issues**: [GitHub Issues](https://github.com/jnyst1985/buyvsrent/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/jnyst1985/buyvsrent/discussions)
+- **Documentation**: Comprehensive guides in `/docs` folder

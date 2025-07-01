@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import GoogleAdsense from '@/components/GoogleAdsense'
+import MicrosoftClarity from '@/components/MicrosoftClarity'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -52,6 +53,9 @@ export default function RootLayout({
         )}
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <GoogleAdsense ADSENSE_CLIENT_ID={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID} />
+        )}
+        {process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID && (
+          <MicrosoftClarity CLARITY_PROJECT_ID={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID} />
         )}
       </body>
     </html>

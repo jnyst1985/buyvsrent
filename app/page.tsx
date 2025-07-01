@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CalculationInputs, CalculationResults } from '@/lib/types';
 import { performCalculations } from '@/lib/calculator';
+import { trackCalculation } from '@/lib/analytics';
+import { decodeUrlToInputs } from '@/lib/urlSharing';
 import InputForm from '@/components/InputForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { AdUnit } from '@/components/GoogleAdsense';
@@ -54,12 +56,64 @@ export default function Home() {
   const [inputs, setInputs] = useState<CalculationInputs>(defaultInputs);
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [hasCalculated, setHasCalculated] = useState(false);
+  const [resultsStale, setResultsStale] = useState(false);
+
+  // Check for URL parameters on page load
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      
+      // If there are URL parameters, decode them and set inputs
+      if (searchParams.toString()) {
+        const decodedInputs = decodeUrlToInputs(searchParams, defaultInputs);
+        setInputs(decodedInputs);
+        
+        // Auto-calculate if we have shared parameters
+        setTimeout(() => {
+          const calculationResults = performCalculations(decodedInputs);
+          setResults(calculationResults);
+          setShowResults(true);
+          setHasCalculated(true);
+          setResultsStale(false);
+          
+          // Track that someone viewed a shared calculation
+          trackCalculation({
+            buyNetWorth: calculationResults.buyScenarioNetWorth,
+            rentNetWorth: calculationResults.rentScenarioNetWorth,
+            timeHorizon: decodedInputs.general.timeHorizon,
+            breakEvenYear: calculationResults.breakEvenYear,
+            currency: decodedInputs.general.currency,
+          });
+        }, 100); // Small delay to ensure form is rendered
+      }
+    }
+  }, []);
+
+  // Handle input changes and mark results as stale if calculation was performed
+  const handleInputChange = (newInputs: CalculationInputs) => {
+    setInputs(newInputs);
+    if (hasCalculated) {
+      setResultsStale(true);
+    }
+  };
 
   const handleCalculate = () => {
     try {
       const calculationResults = performCalculations(inputs);
       setResults(calculationResults);
       setShowResults(true);
+      setHasCalculated(true);
+      setResultsStale(false);
+      
+      // Track calculation event
+      trackCalculation({
+        buyNetWorth: calculationResults.buyScenarioNetWorth,
+        rentNetWorth: calculationResults.rentScenarioNetWorth,
+        timeHorizon: inputs.general.timeHorizon,
+        breakEvenYear: calculationResults.breakEvenYear,
+        currency: inputs.general.currency,
+      });
     } catch (error) {
       console.error('Calculation error:', error);
       // Optionally show an error message to the user
@@ -97,18 +151,22 @@ export default function Home() {
             <NoSSR fallback={<FormSkeleton />}>
               <InputForm 
                 inputs={inputs} 
-                setInputs={setInputs} 
+                setInputs={handleInputChange} 
                 onCalculate={handleCalculate}
+                hasCalculated={hasCalculated}
+                resultsStale={resultsStale}
               />
             </NoSSR>
           </div>
 
           {showResults && results && (
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+            <div className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${resultsStale ? 'ring-2 ring-amber-300 ring-opacity-50' : ''}`}>
               <ResultsDisplay 
                 results={results} 
                 currency={inputs.general.currency}
                 sellingCostPercent={inputs.realEstate.sellingCostPercent}
+                inputs={inputs}
+                resultsStale={resultsStale}
               />
             </div>
           )}

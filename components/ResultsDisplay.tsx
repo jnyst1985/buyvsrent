@@ -1,17 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { CalculationResults, YearlyData } from '@/lib/types';
+import { CalculationResults, YearlyData, CalculationInputs } from '@/lib/types';
 import { formatCurrency, formatPercent } from '@/lib/formatting';
+import { trackResultsViewed } from '@/lib/analytics';
 import ComparisonChart from './ComparisonChart';
+import ShareResults from './ShareResults';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
   currency: string;
   sellingCostPercent: number;
+  inputs: CalculationInputs;
+  resultsStale?: boolean;
 }
 
-export default function ResultsDisplay({ results, currency, sellingCostPercent }: ResultsDisplayProps) {
+export default function ResultsDisplay({ results, currency, sellingCostPercent, inputs, resultsStale = false }: ResultsDisplayProps) {
   // Use utility functions for consistent formatting
   const formatCurrencyLocal = (value: number) => formatCurrency(value, currency);
   
@@ -55,7 +59,14 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-900">Results</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-gray-900">Results</h2>
+        {resultsStale && (
+          <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+            ⚠️ Outdated
+          </div>
+        )}
+      </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -92,6 +103,15 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent }
             Break-even point: Year {results.breakEvenYear}
           </p>
         )}
+      </div>
+
+      {/* Share Results */}
+      <div>
+        <ShareResults 
+          results={results} 
+          inputs={inputs} 
+          currency={currency} 
+        />
       </div>
 
       {/* Cost Breakdown */}
@@ -172,7 +192,11 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent }
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-medium text-gray-900">Year-by-Year Comparison</h3>
           <button
-            onClick={() => setShowAllYears(!showAllYears)}
+            onClick={() => {
+              const newValue = !showAllYears;
+              setShowAllYears(newValue);
+              trackResultsViewed(newValue ? 'all_years' : 'milestone');
+            }}
             className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md transition-colors"
           >
             {showAllYears ? 'Show Key Milestones' : 'Show All Years'}

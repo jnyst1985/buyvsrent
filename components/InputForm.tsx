@@ -2,14 +2,17 @@
 
 import { CalculationInputs } from '@/lib/types';
 import Tooltip, { InfoIcon } from './Tooltip';
+import PresetScenarios from './PresetScenarios';
 
 interface InputFormProps {
   inputs: CalculationInputs;
   setInputs: (inputs: CalculationInputs) => void;
   onCalculate: () => void;
+  hasCalculated?: boolean;
+  resultsStale?: boolean;
 }
 
-export default function InputForm({ inputs, setInputs, onCalculate }: InputFormProps) {
+export default function InputForm({ inputs, setInputs, onCalculate, hasCalculated = false, resultsStale = false }: InputFormProps) {
   const handleInputChange = (
     category: keyof CalculationInputs,
     field: string,
@@ -29,6 +32,13 @@ export default function InputForm({ inputs, setInputs, onCalculate }: InputFormP
   return (
     <div className="space-y-6" suppressHydrationWarning>
       <h2 className="text-2xl font-semibold text-gray-900">Input Parameters</h2>
+
+      {/* Preset Scenarios */}
+      <PresetScenarios 
+        onApplyPreset={setInputs} 
+        currency={inputs.general.currency}
+        currentInputs={inputs}
+      />
 
       {/* General Parameters */}
       <div>
@@ -392,15 +402,26 @@ export default function InputForm({ inputs, setInputs, onCalculate }: InputFormP
         </div>
       </div>
 
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          onCalculate();
-        }}
-        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-200"
-      >
-        Calculate
-      </button>
+      <div className="space-y-2">
+        {resultsStale && hasCalculated && (
+          <div className="text-sm text-amber-600 text-center bg-amber-50 px-3 py-2 rounded-md">
+            ⚠️ Parameters changed - results may be outdated
+          </div>
+        )}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            onCalculate();
+          }}
+          className={`w-full py-3 px-4 font-medium rounded-md transition duration-200 ${
+            resultsStale && hasCalculated
+              ? 'bg-amber-600 hover:bg-amber-700 text-white'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {resultsStale && hasCalculated ? 'Recalculate' : 'Calculate'}
+        </button>
+      </div>
     </div>
   );
 }

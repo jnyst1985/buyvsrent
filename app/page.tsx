@@ -8,6 +8,7 @@ import { decodeUrlToInputs } from '@/lib/urlSharing';
 import { DEFAULT_INPUTS, TIMING, APP_CONFIG } from '@/lib/constants';
 import { formatCurrency } from '@/lib/formatting';
 import InputForm from '@/components/InputForm';
+import InputSummary from '@/components/InputSummary';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { AdUnit } from '@/components/GoogleAdsense';
 import NoSSR from '@/components/NoSSR';
@@ -22,9 +23,10 @@ const defaultInputs = DEFAULT_INPUTS;
 export default function Home() {
   const [inputs, setInputs] = useState<CalculationInputs>(defaultInputs);
   const [results, setResults] = useState<CalculationResults | null>(null);
-  const [showResults, setShowResults] = useState(false);
   const [hasCalculated, setHasCalculated] = useState(false);
   const [resultsStale, setResultsStale] = useState(false);
+  const [isInputCollapsed, setIsInputCollapsed] = useState(false);
+  const [isManualEditing, setIsManualEditing] = useState(false);
 
   // Check for URL parameters on page load
   useEffect(() => {
@@ -40,9 +42,9 @@ export default function Home() {
         setTimeout(() => {
           const calculationResults = performCalculations(decodedInputs);
           setResults(calculationResults);
-          setShowResults(true);
           setHasCalculated(true);
           setResultsStale(false);
+          setIsInputCollapsed(true);
           
           // Track that someone viewed a shared calculation
           trackCalculation({
@@ -57,7 +59,7 @@ export default function Home() {
     }
   }, []);
 
-  // Memoized calculation to avoid expensive recalculations
+  // Optimized memoization - only recalculate when specific input values change
   const memoizedCalculation = useMemo(() => {
     if (!hasCalculated) return null;
     
@@ -67,13 +69,52 @@ export default function Home() {
       console.error('Calculation error:', error);
       return null;
     }
-  }, [inputs, hasCalculated]);
+  }, [
+    hasCalculated,
+    // General
+    inputs.general.timeHorizon,
+    inputs.general.currentSavings,
+    inputs.general.currency,
+    // Real Estate
+    inputs.realEstate.propertyPrice,
+    inputs.realEstate.downPaymentPercent,
+    inputs.realEstate.mortgageInterestRate,
+    inputs.realEstate.mortgageTerm,
+    inputs.realEstate.propertyTaxRate,
+    inputs.realEstate.homeownersInsurance,
+    inputs.realEstate.hoaFees,
+    inputs.realEstate.maintenanceCostPercent,
+    inputs.realEstate.closingCostPercent,
+    inputs.realEstate.sellingCostPercent,
+    inputs.realEstate.propertyAppreciationRate,
+    inputs.realEstate.propertyTaxIncreaseRate,
+    // Stock Market
+    inputs.stockMarket.expectedAnnualReturn,
+    inputs.stockMarket.dividendYield,
+    inputs.stockMarket.expenseRatio,
+    // Rental
+    inputs.rental.monthlyRent,
+    inputs.rental.annualRentIncrease,
+    inputs.rental.rentersInsurance,
+    inputs.rental.securityDeposit,
+    // Tax
+    inputs.tax.incomeTaxBracket,
+    inputs.tax.capitalGainsTaxRate,
+    inputs.tax.mortgageInterestDeduction,
+    inputs.tax.propertyTaxDeduction,
+    inputs.tax.standardDeduction
+  ]);
 
   // Handle input changes and mark results as stale if calculation was performed
-  const handleInputChange = useCallback((newInputs: CalculationInputs) => {
+  const handleInputChange = useCallback((newInputs: CalculationInputs, isPresetChange = false) => {
     setInputs(newInputs);
     if (hasCalculated) {
       setResultsStale(true);
+    }
+    
+    // Set manual editing mode for manual changes (not preset changes)
+    if (!isPresetChange) {
+      setIsManualEditing(true);
     }
   }, [hasCalculated]);
 
@@ -81,9 +122,10 @@ export default function Home() {
     try {
       const calculationResults = performCalculations(inputs);
       setResults(calculationResults);
-      setShowResults(true);
       setHasCalculated(true);
       setResultsStale(false);
+      setIsInputCollapsed(true);
+      setIsManualEditing(false);
       
       // Track calculation event
       trackCalculation({
@@ -93,11 +135,31 @@ export default function Home() {
         breakEvenYear: calculationResults.breakEvenYear,
         currency: inputs.general.currency,
       });
+
+      // Smooth scroll to results after state update
+      setTimeout(() => {
+        const resultsElement = document.getElementById('results-section');
+        if (resultsElement) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, TIMING.SCROLL_DELAY);
     } catch (error) {
       console.error('Calculation error:', error);
       // Optionally show an error message to the user
     }
   }, [inputs]);
+
+  const handleEditInputs = useCallback(() => {
+    setIsInputCollapsed(false);
+    setIsManualEditing(true);
+    // Smooth scroll to inputs
+    setTimeout(() => {
+      const inputsElement = document.getElementById('inputs-section');
+      if (inputsElement) {
+        inputsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, TIMING.SCROLL_DELAY);
+  }, []);
 
   return (
     <>
@@ -127,23 +189,35 @@ export default function Home() {
           </div>
         )}
 
-        <div className={`grid grid-cols-1 ${showResults ? 'lg:grid-cols-2' : 'max-w-4xl mx-auto'} gap-8`}>
-          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-            <InputErrorBoundary>
-              <NoSSR fallback={<FormSkeleton />}>
-                <InputForm 
-                  inputs={inputs} 
-                  setInputs={handleInputChange} 
-                  onCalculate={handleCalculate}
-                  hasCalculated={hasCalculated}
-                  resultsStale={resultsStale}
-                />
-              </NoSSR>
-            </InputErrorBoundary>
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Input Section */}
+          <div id="inputs-section" className="transition-all duration-300 ease-in-out">
+            {isInputCollapsed && results ? (
+              <InputSummary 
+                inputs={inputs}
+                onEditInputs={handleEditInputs}
+              />
+            ) : (
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 transition-all duration-300 ease-in-out">
+                <InputErrorBoundary>
+                  <NoSSR fallback={<FormSkeleton />}>
+                    <InputForm 
+                      inputs={inputs} 
+                      setInputs={handleInputChange} 
+                      onCalculate={handleCalculate}
+                      hasCalculated={hasCalculated}
+                      resultsStale={resultsStale}
+                      isManualEditing={isManualEditing}
+                    />
+                  </NoSSR>
+                </InputErrorBoundary>
+              </div>
+            )}
           </div>
 
-          {showResults && results && (
-            <div className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${resultsStale ? 'ring-2 ring-amber-300 ring-opacity-50' : ''}`}>
+          {/* Results Section */}
+          {results && (
+            <div id="results-section" className="bg-white rounded-lg shadow-lg p-4 sm:p-6 transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-bottom-4">
               <CalculatorErrorBoundary>
                 <ResultsDisplay 
                   results={results} 
@@ -193,7 +267,7 @@ export default function Home() {
 
       {/* Live region for dynamic updates */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {showResults && results && (
+        {results && (
           `Calculation completed. ${results.buyScenarioNetWorth > results.rentScenarioNetWorth ? 'Buying' : 'Renting and investing'} is better by ${formatCurrency(Math.abs(results.difference), inputs.general.currency)}.`
         )}
       </div>

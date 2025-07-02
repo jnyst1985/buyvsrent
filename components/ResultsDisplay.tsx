@@ -6,6 +6,7 @@ import { formatCurrency, formatPercent } from '@/lib/formatting';
 import { trackResultsViewed } from '@/lib/analytics';
 import ComparisonChart from './ComparisonChart';
 import ShareResults from './ShareResults';
+import MonthlyPaymentSummary from './MonthlyPaymentSummary';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
@@ -114,6 +115,12 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
           </p>
         )}
       </div>
+
+      {/* Monthly Payment Breakdown */}
+      <MonthlyPaymentSummary 
+        inputs={inputs} 
+        currency={currency} 
+      />
 
       {/* Share Results */}
       <div>

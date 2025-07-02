@@ -6,19 +6,22 @@ import { trackPresetUsed } from '@/lib/analytics';
 import { presetConfigurations, detectActivePreset, getPresetInputs } from '@/lib/presetDetection';
 
 interface PresetScenariosProps {
-  onApplyPreset: (inputs: CalculationInputs) => void;
+  onApplyPreset: (inputs: CalculationInputs, isPresetChange?: boolean) => void;
   currency: string;
   currentInputs: CalculationInputs;
+  isManualEditing?: boolean;
 }
 
-export default function PresetScenarios({ onApplyPreset, currency, currentInputs }: PresetScenariosProps) {
+export default function PresetScenarios({ onApplyPreset, currency, currentInputs, isManualEditing = false }: PresetScenariosProps) {
   const [activePreset, setActivePreset] = useState<string>('custom');
 
-  // Detect active preset whenever inputs change
+  // Detect active preset whenever inputs change (but not during manual editing)
   useEffect(() => {
-    const detectedPreset = detectActivePreset(currentInputs);
-    setActivePreset(detectedPreset);
-  }, [currentInputs]);
+    if (!isManualEditing) {
+      const detectedPreset = detectActivePreset(currentInputs);
+      setActivePreset(detectedPreset);
+    }
+  }, [currentInputs, isManualEditing]);
 
   const handlePresetClick = (presetKey: string) => {
     if (presetKey === 'custom') {
@@ -29,7 +32,8 @@ export default function PresetScenarios({ onApplyPreset, currency, currentInputs
 
     const presetInputs = getPresetInputs(presetKey, currency);
     if (presetInputs) {
-      onApplyPreset(presetInputs);
+      // Pass true to indicate this is a preset change (not manual editing)
+      onApplyPreset(presetInputs, true);
       setActivePreset(presetKey);
       
       const preset = presetConfigurations[presetKey as keyof typeof presetConfigurations];
@@ -73,24 +77,10 @@ export default function PresetScenarios({ onApplyPreset, currency, currentInputs
           >
             <div className="font-medium text-gray-900 mb-1">
               {preset.name}
-              {activePreset === key && (
-                <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
-                  Active
-                </span>
-              )}
             </div>
             <div id={`preset-${key}-description`} className="text-sm text-gray-600">
               {preset.description}
             </div>
-            {activePreset === key && (
-              <div className="mt-2">
-                <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                  key === 'custom' ? 'bg-amber-400' : 'bg-blue-400'
-                }`} aria-hidden="true"></span>
-                <span className="sr-only">This preset is currently active</span>
-                <span className="text-xs font-medium text-gray-700">Currently selected</span>
-              </div>
-            )}
           </button>
         ))}
       </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CalculationResults, CalculationInputs } from '@/lib/types';
 import { trackShareAction } from '@/lib/analytics';
+import { UI_CONSTANTS } from '@/lib/constants';
 
 interface EmailResultsProps {
   results: CalculationResults;
@@ -79,7 +80,7 @@ Powered by buyvsrent.xyz
       setIsLoading(false);
       setMessage({ type: 'success', text: 'Email client opened with your results!' });
       setEmail('');
-      setTimeout(() => setShowEmailForm(false), 3000);
+      setTimeout(() => setShowEmailForm(false), UI_CONSTANTS.NOTIFICATION_DURATION);
     }, 1000);
   };
 

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { YearlyData } from '@/lib/types';
 import { formatCurrency, formatCurrencyCompact } from '@/lib/formatting';
+import { UI_CONSTANTS } from '@/lib/constants';
+import ChartErrorBoundary from './ChartErrorBoundary';
 
 interface ComparisonChartProps {
   yearlyData: YearlyData[];
@@ -17,7 +19,7 @@ export default function ComparisonChart({ yearlyData, currency }: ComparisonChar
   // Detect mobile screen size for responsive chart
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < UI_CONSTANTS.MOBILE_BREAKPOINT);
     };
     
     checkMobile();
@@ -67,7 +69,8 @@ export default function ComparisonChart({ yearlyData, currency }: ComparisonChar
         aria-label={`Line chart showing net worth over ${yearlyData.length} years. ${winner} performs better, ending at ${formatCurrencyLocal(winner === 'Home Equity' ? homeEquityFinal : portfolioFinal)} compared to ${formatCurrencyLocal(winner === 'Home Equity' ? portfolioFinal : homeEquityFinal)}, a difference of ${formatCurrencyLocal(difference)}.`}
         className="mb-4"
       >
-        <ResponsiveContainer width="100%" height={isMobile ? 300 : 400}>
+        <ChartErrorBoundary>
+          <ResponsiveContainer width="100%" height={isMobile ? UI_CONSTANTS.CHART_HEIGHTS.MOBILE : UI_CONSTANTS.CHART_HEIGHTS.DESKTOP}>
           <LineChart 
             data={chartData} 
             margin={{ top: 10, right: 10, left: 10, bottom: isMobile ? 50 : 10 }}
@@ -98,7 +101,7 @@ export default function ComparisonChart({ yearlyData, currency }: ComparisonChar
             <Line 
               type="monotone" 
               dataKey="Home Equity" 
-              stroke="#3B82F6" 
+              stroke={UI_CONSTANTS.CHART_COLORS.BUY} 
               strokeWidth={2}
               dot={{ r: 4 }}
               name="Home Equity (Buy Scenario)"
@@ -106,13 +109,14 @@ export default function ComparisonChart({ yearlyData, currency }: ComparisonChar
             <Line 
               type="monotone" 
               dataKey="Portfolio Value" 
-              stroke="#10B981" 
+              stroke={UI_CONSTANTS.CHART_COLORS.RENT} 
               strokeWidth={2}
               dot={{ r: 4 }}
               name="Portfolio Value (Rent & Invest)"
             />
           </LineChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
+        </ChartErrorBoundary>
       </div>
 
       {/* Accessible data table */}

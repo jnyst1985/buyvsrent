@@ -197,7 +197,7 @@ export const validateField = (
   
   if (!fieldRules) return null;
 
-  const sanitizedValue = typeof value === 'number' ? value : sanitizeNumber(value);
+  const sanitizedValue = typeof value === 'number' ? value : sanitizeNumber(value as any);
 
   // Required check
   if (fieldRules.required && (sanitizedValue === null || sanitizedValue === undefined)) {

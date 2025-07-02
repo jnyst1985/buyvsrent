@@ -1,4 +1,12 @@
 import { CalculationInputs, CalculationResults, YearlyData } from './types';
+import { 
+  validateCalculationInputs, 
+  calculateMortgageDetails, 
+  calculateFinalNetWorth,
+  findBreakEvenYear,
+  calculatePrincipalPaid,
+  getMontlyRate
+} from './calculationUtils';
 
 export function calculateMortgagePayment(
   principal: number,
@@ -100,59 +108,17 @@ export function calculateInvestmentGrowth(
 }
 
 export function performCalculations(inputs: CalculationInputs): CalculationResults {
-  const {
-    general,
-    realEstate,
-    stockMarket,
-    rental,
-    tax
-  } = inputs;
+  const { general, realEstate, stockMarket, rental, tax } = inputs;
   
-  // Validate inputs to prevent calculation errors
-  if (general.timeHorizon <= 0) {
-    throw new Error('Time horizon must be greater than 0');
-  }
-  if (realEstate.propertyPrice <= 0) {
-    throw new Error('Property price must be greater than 0');
-  }
-  if (realEstate.downPaymentPercent < 0 || realEstate.downPaymentPercent > 100) {
-    throw new Error('Down payment percentage must be between 0 and 100');
-  }
+  // Validate inputs using extracted utility
+  validateCalculationInputs(inputs);
   
-  // Calculate mortgage details
-  const downPayment = realEstate.propertyPrice * (realEstate.downPaymentPercent / 100);
-  const loanAmount = realEstate.propertyPrice - downPayment;
-  
-  if (loanAmount <= 0) {
-    throw new Error('Loan amount must be greater than 0');
-  }
-  if (realEstate.mortgageTerm <= 0) {
-    throw new Error('Mortgage term must be greater than 0');
-  }
-  
-  const monthlyMortgagePayment = calculateMortgagePayment(
-    loanAmount,
-    realEstate.mortgageInterestRate,
-    realEstate.mortgageTerm
-  );
-  
-  if (isNaN(monthlyMortgagePayment) || !isFinite(monthlyMortgagePayment)) {
-    throw new Error('Invalid mortgage payment calculation');
-  }
-  
-  // Calculate initial costs
-  const closingCosts = realEstate.propertyPrice * (realEstate.closingCostPercent / 100);
-  
-  // Calculate monthly housing costs (buy scenario)
-  const monthlyPropertyTax = (realEstate.propertyPrice * realEstate.propertyTaxRate / 100) / 12;
-  const monthlyInsurance = realEstate.homeownersInsurance / 12;
-  const monthlyMaintenance = (realEstate.propertyPrice * realEstate.maintenanceCostPercent / 100) / 12;
-  const totalMonthlyHousingCost = monthlyMortgagePayment + monthlyPropertyTax + 
-    monthlyInsurance + realEstate.hoaFees + monthlyMaintenance;
+  // Calculate mortgage details using extracted utility
+  const mortgageDetails = calculateMortgageDetails(inputs);
   
   // Calculate investment scenario
-  const initialInvestment = downPayment + closingCosts;
-  const monthlyInvestmentAmount = Math.max(0, totalMonthlyHousingCost - rental.monthlyRent);
+  const initialInvestment = mortgageDetails.downPayment + mortgageDetails.closingCosts;
+  const monthlyInvestmentAmount = Math.max(0, mortgageDetails.totalMonthlyHousingCost - rental.monthlyRent);
   
   // Initialize tracking variables
   const yearlyData: YearlyData[] = [];
@@ -183,19 +149,19 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
     // Calculate mortgage balance
     const monthsPaid = Math.min(year * 12, realEstate.mortgageTerm * 12);
     const mortgageBalance = calculateMortgageBalance(
-      loanAmount,
+      mortgageDetails.loanAmount,
       realEstate.mortgageInterestRate,
-      monthlyMortgagePayment,
+      mortgageDetails.monthlyMortgagePayment,
       monthsPaid
     );
     
-    // Calculate interest paid this year
+    // Calculate interest paid this year using extracted utility
     const yearStartBalance = year > 1 ? 
-      calculateMortgageBalance(loanAmount, realEstate.mortgageInterestRate, monthlyMortgagePayment, (year - 1) * 12) : 
-      loanAmount;
+      calculateMortgageBalance(mortgageDetails.loanAmount, realEstate.mortgageInterestRate, mortgageDetails.monthlyMortgagePayment, (year - 1) * 12) : 
+      mortgageDetails.loanAmount;
     const yearEndBalance = mortgageBalance;
-    const principalPaid = yearStartBalance - yearEndBalance;
-    const interestPaidThisYear = (monthlyMortgagePayment * 12) - principalPaid;
+    const principalPaid = calculatePrincipalPaid(yearStartBalance, yearEndBalance);
+    const interestPaidThisYear = (mortgageDetails.monthlyMortgagePayment * 12) - principalPaid;
     
     // Accumulate costs
     totalPropertyTax += currentPropertyTax;
@@ -217,7 +183,7 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
     );
     
     // Calculate investment portfolio value
-    const adjustedMonthlyInvestment = Math.max(0, totalMonthlyHousingCost - currentRent);
+    const adjustedMonthlyInvestment = Math.max(0, mortgageDetails.totalMonthlyHousingCost - currentRent);
     const portfolioValue = calculateInvestmentGrowth(
       initialInvestment,
       adjustedMonthlyInvestment,
@@ -244,65 +210,14 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
     });
   }
   
-  // Calculate final net worth
-  const sellingCosts = currentHomeValue * (realEstate.sellingCostPercent / 100);
-  const finalMortgageBalance = yearlyData[yearlyData.length - 1].buyScenario.mortgageBalance;
-  const buyScenarioNetWorth = currentHomeValue - finalMortgageBalance - sellingCosts;
+  // Calculate final net worth using extracted utility
+  const netWorthResults = calculateFinalNetWorth(yearlyData, inputs, mortgageDetails);
   
-  const finalPortfolioValue = yearlyData[yearlyData.length - 1].rentScenario.portfolioValue;
-  const capitalGainsTax = (finalPortfolioValue - initialInvestment - 
-    (monthlyInvestmentAmount * 12 * general.timeHorizon)) * (tax.capitalGainsTaxRate / 100);
-  const rentScenarioNetWorth = finalPortfolioValue - capitalGainsTax;
-  
-  // Find true break-even year (last crossover where buying becomes permanently better)
-  let breakEvenYear: number | null = null;
-  
-  // First, find all crossover points
-  const crossovers: number[] = [];
-  let previousBuyBetter = false;
-  
-  for (let i = 0; i < yearlyData.length; i++) {
-    const buyNetWorth = yearlyData[i].buyScenario.equity - 
-      (yearlyData[i].buyScenario.homeValue * realEstate.sellingCostPercent / 100);
-    const rentNetWorth = yearlyData[i].rentScenario.portfolioValue;
-    const buyBetter = buyNetWorth > rentNetWorth;
-    
-    // If this is a crossover point (buy becomes better when it wasn't before)
-    if (buyBetter && !previousBuyBetter) {
-      crossovers.push(i + 1);
-    }
-    previousBuyBetter = buyBetter;
-  }
-  
-  // Check each crossover to see if buying stays ahead for the rest of the period
-  for (let crossoverIndex = crossovers.length - 1; crossoverIndex >= 0; crossoverIndex--) {
-    const crossoverYear = crossovers[crossoverIndex];
-    let buyStaysAhead = true;
-    
-    // Check if buying stays ahead from this crossover until the end
-    for (let i = crossoverYear - 1; i < yearlyData.length; i++) {
-      const buyNetWorth = yearlyData[i].buyScenario.equity - 
-        (yearlyData[i].buyScenario.homeValue * realEstate.sellingCostPercent / 100);
-      const rentNetWorth = yearlyData[i].rentScenario.portfolioValue;
-      
-      if (rentNetWorth >= buyNetWorth) {
-        buyStaysAhead = false;
-        break;
-      }
-    }
-    
-    if (buyStaysAhead) {
-      breakEvenYear = crossoverYear;
-      break;
-    }
-  }
+  // Find break-even year using extracted utility
+  const breakEvenYear = findBreakEvenYear(yearlyData, realEstate.sellingCostPercent);
   
   return {
-    buyScenarioNetWorth,
-    rentScenarioNetWorth,
-    difference: buyScenarioNetWorth - rentScenarioNetWorth,
-    differencePercent: rentScenarioNetWorth !== 0 ? 
-      ((buyScenarioNetWorth - rentScenarioNetWorth) / rentScenarioNetWorth) * 100 : 0,
+    ...netWorthResults,
     breakEvenYear,
     yearlyData,
     totalCosts: {
@@ -312,8 +227,8 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
         totalInsurance,
         totalMaintenance,
         totalHOA,
-        closingCosts,
-        sellingCosts
+        closingCosts: mortgageDetails.closingCosts,
+        sellingCosts: currentHomeValue * (realEstate.sellingCostPercent / 100)
       },
       rent: {
         totalRent: totalRentPaid,

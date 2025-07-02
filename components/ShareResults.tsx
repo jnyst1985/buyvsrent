@@ -5,6 +5,7 @@ import { CalculationResults, CalculationInputs } from '@/lib/types';
 import { trackShareAction } from '@/lib/analytics';
 import { generateShareableUrl } from '@/lib/urlSharing';
 import { formatCurrency } from '@/lib/formatting';
+import { UI_CONSTANTS } from '@/lib/constants';
 
 interface ShareResultsProps {
   results: CalculationResults;
@@ -24,7 +25,7 @@ export default function ShareResults({ results, inputs, currency }: ShareResults
   const getShareMessages = () => {
     const formattedDiff = formatCurrency(difference, currency);
     const timeHorizon = inputs.general.timeHorizon;
-    const isLargeDiff = difference > 50000;
+    const isLargeDiff = difference > UI_CONSTANTS.LARGE_FINANCIAL_DIFFERENCE_THRESHOLD;
     
     // Determine emotional hook based on magnitude
     const getHook = (platform: 'copy' | 'twitter' | 'linkedin' | 'whatsapp') => {
@@ -70,7 +71,7 @@ export default function ShareResults({ results, inputs, currency }: ShareResults
       await navigator.clipboard.writeText(fullMessage);
       setCopied(true);
       trackShareAction('link');
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(false), UI_CONSTANTS.NOTIFICATION_DURATION);
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -81,21 +82,21 @@ export default function ShareResults({ results, inputs, currency }: ShareResults
       document.body.removeChild(textArea);
       setCopied(true);
       trackShareAction('link');
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(false), UI_CONSTANTS.NOTIFICATION_DURATION);
     }
   };
 
   const shareOnTwitter = () => {
     const messages = getShareMessages();
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(messages.twitter)}&url=${encodeURIComponent(shareableUrl)}`;
-    window.open(twitterUrl, '_blank', 'width=550,height=420');
+    window.open(twitterUrl, '_blank', `width=${UI_CONSTANTS.SOCIAL_SHARING.WINDOW_DIMENSIONS.WIDTH},height=${UI_CONSTANTS.SOCIAL_SHARING.WINDOW_DIMENSIONS.HEIGHT}`);
     trackShareAction('twitter');
   };
 
   const shareOnLinkedIn = () => {
     const messages = getShareMessages();
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableUrl)}&title=${encodeURIComponent('Buy vs Rent Financial Analysis')}&summary=${encodeURIComponent(messages.linkedin)}`;
-    window.open(linkedInUrl, '_blank', 'width=550,height=420');
+    window.open(linkedInUrl, '_blank', `width=${UI_CONSTANTS.SOCIAL_SHARING.WINDOW_DIMENSIONS.WIDTH},height=${UI_CONSTANTS.SOCIAL_SHARING.WINDOW_DIMENSIONS.HEIGHT}`);
     trackShareAction('linkedin');
   };
 

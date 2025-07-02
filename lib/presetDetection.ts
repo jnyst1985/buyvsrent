@@ -60,7 +60,7 @@ export const presetConfigurations = {
         propertyPrice: 600000,
         downPaymentPercent: 25,
         mortgageInterestRate: 7.0,
-        mortgageTerm: 30,
+        mortgageTerm: 20,
         propertyTaxRate: 1.5,
         homeownersInsurance: 2000,
         hoaFees: 300,

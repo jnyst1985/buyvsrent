@@ -3,18 +3,20 @@
 import { useState, useEffect } from 'react';
 import { CalculationInputs } from '@/lib/types';
 import { validateInputs, sanitizeInputs, ValidationError } from '@/lib/validation';
+import { useFormField } from '@/hooks/useFormField';
 import Tooltip, { InfoIcon } from './Tooltip';
 import PresetScenarios from './PresetScenarios';
 
 interface InputFormProps {
   inputs: CalculationInputs;
-  setInputs: (inputs: CalculationInputs) => void;
+  setInputs: (inputs: CalculationInputs, isPresetChange?: boolean) => void;
   onCalculate: () => void;
   hasCalculated?: boolean;
   resultsStale?: boolean;
+  isManualEditing?: boolean;
 }
 
-export default function InputForm({ inputs, setInputs, onCalculate, hasCalculated = false, resultsStale = false }: InputFormProps) {
+export default function InputForm({ inputs, setInputs, onCalculate, hasCalculated = false, resultsStale = false, isManualEditing = false }: InputFormProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [showValidation, setShowValidation] = useState(false);
 
@@ -44,6 +46,11 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
       },
     };
 
+    // Auto-update mortgage term when time horizon changes
+    if (category === 'general' && field === 'timeHorizon' && typeof sanitizedValue === 'number') {
+      newInputs.realEstate.mortgageTerm = sanitizedValue;
+    }
+
     setInputs(newInputs);
     
     // Show validation after first interaction
@@ -60,36 +67,34 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
     }
   };
 
-  // Helper function to get field-specific error
-  const getFieldError = (category: keyof CalculationInputs, field: string): string | null => {
-    if (!showValidation) return null;
-    const error = validationErrors.find(e => e.category === category && e.field === field);
-    return error ? error.message : null;
+  // Helper function to create form field utilities
+  const createFormField = (category: keyof CalculationInputs, field: string) => {
+    return useFormField({
+      category,
+      field,
+      validationErrors,
+      showValidation
+    });
   };
 
-  // Helper function to get field CSS classes
-  const getFieldClasses = (category: keyof CalculationInputs, field: string): string => {
-    const hasError = getFieldError(category, field) !== null;
+  // Legacy helper functions for existing code
+  const getFieldId = (category: keyof CalculationInputs, field: string) => `${category}-${field}`;
+  const getErrorId = (category: keyof CalculationInputs, field: string) => `${category}-${field}-error`;
+  const getFieldError = (category: keyof CalculationInputs, field: string) => {
+    if (!showValidation) return null;
+    const validationError = validationErrors.find(e => e.category === category && e.field === field);
+    return validationError ? validationError.message : null;
+  };
+  const getFieldClasses = (category: keyof CalculationInputs, field: string) => {
     const baseClasses = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2";
+    const hasError = getFieldError(category, field) !== null;
     
     if (hasError) {
       return `${baseClasses} border-red-300 focus:ring-red-500 bg-red-50`;
     }
     return `${baseClasses} border-gray-300 focus:ring-blue-500`;
   };
-
-  // Helper function to generate unique field ID
-  const getFieldId = (category: keyof CalculationInputs, field: string): string => {
-    return `${category}-${field}`;
-  };
-
-  // Helper function to generate error ID
-  const getErrorId = (category: keyof CalculationInputs, field: string): string => {
-    return `${category}-${field}-error`;
-  };
-
-  // Helper function to check if field is required
-  const isFieldRequired = (category: keyof CalculationInputs, field: string): boolean => {
+  const isFieldRequired = (category: keyof CalculationInputs, field: string) => {
     // Most fields are required for calculations
     return true;
   };
@@ -114,6 +119,7 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
         onApplyPreset={setInputs} 
         currency={inputs.general.currency}
         currentInputs={inputs}
+        isManualEditing={isManualEditing}
       />
 
       {/* General Parameters */}
@@ -135,34 +141,41 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             </select>
           </div>
           <div>
-            <label 
-              htmlFor={getFieldId('general', 'timeHorizon')}
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Time Horizon (years)
-            </label>
-            <input
-              id={getFieldId('general', 'timeHorizon')}
-              type="number"
-              className={getFieldClasses('general', 'timeHorizon')}
-              value={inputs.general.timeHorizon}
-              onChange={(e) => handleInputChange('general', 'timeHorizon', e.target.value)}
-              min="1"
-              max="50"
-              aria-required={isFieldRequired('general', 'timeHorizon')}
-              aria-invalid={getFieldError('general', 'timeHorizon') !== null}
-              aria-describedby={getFieldError('general', 'timeHorizon') ? getErrorId('general', 'timeHorizon') : undefined}
-            />
-            {getFieldError('general', 'timeHorizon') && (
-              <p 
-                id={getErrorId('general', 'timeHorizon')}
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-                aria-live="polite"
-              >
-                {getFieldError('general', 'timeHorizon')}
-              </p>
-            )}
+            {(() => {
+              const field = createFormField('general', 'timeHorizon');
+              return (
+                <>
+                  <label 
+                    htmlFor={field.fieldId}
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Time Horizon (years)
+                  </label>
+                  <input
+                    id={field.fieldId}
+                    type="number"
+                    className={field.fieldClasses}
+                    value={inputs.general.timeHorizon}
+                    onChange={(e) => handleInputChange('general', 'timeHorizon', e.target.value)}
+                    min="1"
+                    max="50"
+                    aria-required={field.isRequired}
+                    aria-invalid={field.hasError}
+                    aria-describedby={field.hasError ? field.errorId : undefined}
+                  />
+                  {field.error && (
+                    <p 
+                      id={field.errorId}
+                      className="mt-1 text-sm text-red-600"
+                      role="alert"
+                      aria-live="polite"
+                    >
+                      {field.error}
+                    </p>
+                  )}
+                </>
+              );
+            })()}
           </div>
           <div>
             <label 

@@ -15,7 +15,9 @@ export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', '
 export const TIMING = {
   SHARED_CALC_DELAY: 100, // milliseconds
   FORM_INTERACTION_DELAY: 300, // milliseconds for validation
-  ANALYTICS_DELAY: 1000 // milliseconds for analytics tracking
+  ANALYTICS_DELAY: 1000, // milliseconds for analytics tracking
+  SCROLL_DELAY: 100, // milliseconds for smooth scroll
+  PRESET_CALCULATION_DELAY: 100 // milliseconds for preset auto-calculation
 };
 
 // Validation Limits
@@ -167,11 +169,24 @@ export const CALCULATION_CONSTANTS = {
 export const UI_CONSTANTS = {
   MAX_VALIDATION_ERRORS_SHOWN: 5,
   MILESTONE_YEARS: [1, 5, 10, 15, 20, 25, 30],
+  MOBILE_BREAKPOINT: 768, // pixels
+  CHART_HEIGHTS: {
+    MOBILE: 300,
+    DESKTOP: 400
+  },
   CHART_COLORS: {
     BUY: '#3B82F6', // blue-500
     RENT: '#10B981', // green-500
     WARNING: '#F59E0B', // amber-500
     ERROR: '#EF4444' // red-500
+  },
+  NOTIFICATION_DURATION: 3000, // milliseconds
+  LARGE_FINANCIAL_DIFFERENCE_THRESHOLD: 50000, // currency units
+  SOCIAL_SHARING: {
+    WINDOW_DIMENSIONS: {
+      WIDTH: 550,
+      HEIGHT: 420
+    }
   }
 };
 

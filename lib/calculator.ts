@@ -107,6 +107,28 @@ export function calculateInvestmentGrowth(
   return balance;
 }
 
+// Fixed function that grows portfolio for one year with specific monthly contribution
+export function calculateYearlyInvestmentGrowth(
+  currentBalance: number,
+  monthlyContribution: number,
+  annualReturn: number,
+  dividendYield: number,
+  expenseRatio: number
+): number {
+  const effectiveReturn = (annualReturn - expenseRatio) / 100;
+  const monthlyReturn = effectiveReturn / 12;
+  const monthlyDividend = dividendYield / 100 / 12;
+  
+  let balance = currentBalance;
+  
+  // Apply growth for 12 months with the specified monthly contribution
+  for (let month = 0; month < 12; month++) {
+    balance = balance * (1 + monthlyReturn + monthlyDividend) + monthlyContribution;
+  }
+  
+  return balance;
+}
+
 export function performCalculations(inputs: CalculationInputs): CalculationResults {
   const { general, realEstate, stockMarket, rental, tax } = inputs;
   
@@ -132,6 +154,9 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
   let totalHOA = 0;
   let totalInterest = 0;
   let totalRentersInsurance = 0;
+  
+  // Initialize portfolio tracking with starting balance
+  let portfolioValue = initialInvestment;
   
   // Calculate year by year
   for (let year = 1; year <= general.timeHorizon; year++) {
@@ -182,15 +207,14 @@ export function performCalculations(inputs: CalculationInputs): CalculationResul
       tax.standardDeduction
     );
     
-    // Calculate investment portfolio value
+    // Calculate investment portfolio growth for this year
     const adjustedMonthlyInvestment = Math.max(0, mortgageDetails.totalMonthlyHousingCost - currentRent);
-    const portfolioValue = calculateInvestmentGrowth(
-      initialInvestment,
+    portfolioValue = calculateYearlyInvestmentGrowth(
+      portfolioValue,
       adjustedMonthlyInvestment,
       stockMarket.expectedAnnualReturn,
       stockMarket.dividendYield,
-      stockMarket.expenseRatio,
-      year
+      stockMarket.expenseRatio
     );
     
     yearlyData.push({

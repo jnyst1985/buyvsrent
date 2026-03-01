@@ -116,6 +116,18 @@ const VALIDATION_RULES = {
       min: 0,
       max: 20,
       message: 'Property tax increase rate must be between 0% and 20%'
+    },
+    pmiRate: {
+      required: true,
+      min: 0,
+      max: 3,
+      message: 'PMI rate must be between 0% and 3%'
+    },
+    generalInflationRate: {
+      required: true,
+      min: 0,
+      max: 15,
+      message: 'General inflation rate must be between 0% and 15%'
     }
   },
   stockMarket: {
@@ -182,6 +194,12 @@ const VALIDATION_RULES = {
       min: 0,
       max: 100000,
       message: 'Standard deduction must be between $0 and $100,000'
+    },
+    saltCap: {
+      required: true,
+      min: 0,
+      max: 100000,
+      message: 'SALT cap must be between $0 and $100,000'
     }
   }
 };
@@ -333,6 +351,8 @@ export const sanitizeInputs = (inputs: CalculationInputs): CalculationInputs => 
       sellingCostPercent: sanitizeNumber(inputs.realEstate.sellingCostPercent),
       propertyAppreciationRate: sanitizeNumber(inputs.realEstate.propertyAppreciationRate),
       propertyTaxIncreaseRate: sanitizeNumber(inputs.realEstate.propertyTaxIncreaseRate),
+      pmiRate: sanitizeNumber(inputs.realEstate.pmiRate),
+      generalInflationRate: sanitizeNumber(inputs.realEstate.generalInflationRate),
     },
     stockMarket: {
       expectedAnnualReturn: sanitizeNumber(inputs.stockMarket.expectedAnnualReturn),
@@ -352,6 +372,8 @@ export const sanitizeInputs = (inputs: CalculationInputs): CalculationInputs => 
       mortgageInterestDeduction: Boolean(inputs.tax.mortgageInterestDeduction),
       propertyTaxDeduction: Boolean(inputs.tax.propertyTaxDeduction),
       standardDeduction: sanitizeNumber(inputs.tax.standardDeduction),
+      saltCap: sanitizeNumber(inputs.tax.saltCap),
+      filingStatus: inputs.tax.filingStatus === 'married' ? 'married' : 'single',
     }
   };
 };

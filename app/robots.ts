@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
  
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://buyvsrent.vercel.app' // Will update to custom domain later
+  const baseUrl = 'https://buyvsrent.xyz'
   
   return {
     rules: {

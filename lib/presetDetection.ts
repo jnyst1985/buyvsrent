@@ -24,6 +24,8 @@ export const presetConfigurations = {
         sellingCostPercent: 6,
         propertyAppreciationRate: 3.5,
         propertyTaxIncreaseRate: 2,
+        pmiRate: 0.8,
+        generalInflationRate: 3,
       },
       stockMarket: {
         expectedAnnualReturn: 8,
@@ -43,6 +45,8 @@ export const presetConfigurations = {
         mortgageInterestDeduction: true,
         propertyTaxDeduction: true,
         standardDeduction: 27700,
+        saltCap: 10000,
+        filingStatus: 'single' as const,
       },
     }
   },
@@ -69,6 +73,8 @@ export const presetConfigurations = {
         sellingCostPercent: 6,
         propertyAppreciationRate: 4,
         propertyTaxIncreaseRate: 2.5,
+        pmiRate: 0.8,
+        generalInflationRate: 3,
       },
       stockMarket: {
         expectedAnnualReturn: 9,
@@ -88,6 +94,8 @@ export const presetConfigurations = {
         mortgageInterestDeduction: true,
         propertyTaxDeduction: true,
         standardDeduction: 27700,
+        saltCap: 10000,
+        filingStatus: 'married' as const,
       },
     }
   },
@@ -114,6 +122,8 @@ export const presetConfigurations = {
         sellingCostPercent: 6,
         propertyAppreciationRate: 3,
         propertyTaxIncreaseRate: 2,
+        pmiRate: 0.8,
+        generalInflationRate: 3,
       },
       stockMarket: {
         expectedAnnualReturn: 7,
@@ -133,6 +143,8 @@ export const presetConfigurations = {
         mortgageInterestDeduction: true,
         propertyTaxDeduction: true,
         standardDeduction: 27700,
+        saltCap: 10000,
+        filingStatus: 'married' as const,
       },
     }
   },
@@ -169,6 +181,8 @@ const deepEqual = (obj1: CalculationInputs, obj2: CalculationInputs): boolean =>
   if (roundForComparison(obj1.realEstate.sellingCostPercent) !== roundForComparison(obj2.realEstate.sellingCostPercent)) return false;
   if (roundForComparison(obj1.realEstate.propertyAppreciationRate) !== roundForComparison(obj2.realEstate.propertyAppreciationRate)) return false;
   if (roundForComparison(obj1.realEstate.propertyTaxIncreaseRate) !== roundForComparison(obj2.realEstate.propertyTaxIncreaseRate)) return false;
+  if (roundForComparison(obj1.realEstate.pmiRate) !== roundForComparison(obj2.realEstate.pmiRate)) return false;
+  if (roundForComparison(obj1.realEstate.generalInflationRate) !== roundForComparison(obj2.realEstate.generalInflationRate)) return false;
 
   // Compare stock market section
   if (roundForComparison(obj1.stockMarket.expectedAnnualReturn) !== roundForComparison(obj2.stockMarket.expectedAnnualReturn)) return false;
@@ -188,6 +202,8 @@ const deepEqual = (obj1: CalculationInputs, obj2: CalculationInputs): boolean =>
   if (obj1.tax.mortgageInterestDeduction !== obj2.tax.mortgageInterestDeduction) return false;
   if (obj1.tax.propertyTaxDeduction !== obj2.tax.propertyTaxDeduction) return false;
   if (obj1.tax.standardDeduction !== obj2.tax.standardDeduction) return false;
+  if (obj1.tax.saltCap !== obj2.tax.saltCap) return false;
+  if (obj1.tax.filingStatus !== obj2.tax.filingStatus) return false;
 
   return true;
 };

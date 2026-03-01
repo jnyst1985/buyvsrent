@@ -17,6 +17,8 @@ export interface RealEstateParameters {
   sellingCostPercent: number; // % of property price
   propertyAppreciationRate: number; // annual %
   propertyTaxIncreaseRate: number; // annual %
+  pmiRate: number; // annual % of loan amount, applies when down payment < 20%
+  generalInflationRate: number; // annual % for insurance/HOA/renter's insurance escalation
 }
 
 export interface StockMarketParameters {
@@ -39,6 +41,8 @@ export interface TaxParameters {
   mortgageInterestDeduction: boolean;
   propertyTaxDeduction: boolean;
   standardDeduction: number;
+  saltCap: number; // SALT deduction cap (default $10,000)
+  filingStatus: 'single' | 'married'; // for home sale capital gains exclusion
 }
 
 export interface CalculationInputs {
@@ -79,6 +83,7 @@ export interface CalculationResults {
       totalInsurance: number;
       totalMaintenance: number;
       totalHOA: number;
+      totalPMI: number;
       closingCosts: number;
       sellingCosts: number;
     };

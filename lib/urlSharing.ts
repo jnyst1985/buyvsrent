@@ -37,7 +37,9 @@ export const encodeInputsToUrl = (inputs: CalculationInputs): string => {
   addIfDifferent('sc', inputs.realEstate.sellingCostPercent, 'realEstate', 'sellingCostPercent');
   addIfDifferent('apr', inputs.realEstate.propertyAppreciationRate, 'realEstate', 'propertyAppreciationRate');
   addIfDifferent('pti', inputs.realEstate.propertyTaxIncreaseRate, 'realEstate', 'propertyTaxIncreaseRate');
-  
+  addIfDifferent('pmi', inputs.realEstate.pmiRate, 'realEstate', 'pmiRate');
+  addIfDifferent('inf', inputs.realEstate.generalInflationRate, 'realEstate', 'generalInflationRate');
+
   // Stock market parameters
   addIfDifferent('sr', inputs.stockMarket.expectedAnnualReturn, 'stockMarket', 'expectedAnnualReturn');
   addIfDifferent('div', inputs.stockMarket.dividendYield, 'stockMarket', 'dividendYield');
@@ -55,7 +57,9 @@ export const encodeInputsToUrl = (inputs: CalculationInputs): string => {
   addIfDifferent('md', inputs.tax.mortgageInterestDeduction, 'tax', 'mortgageInterestDeduction');
   addIfDifferent('pd', inputs.tax.propertyTaxDeduction, 'tax', 'propertyTaxDeduction');
   addIfDifferent('std', inputs.tax.standardDeduction, 'tax', 'standardDeduction');
-  
+  addIfDifferent('salt', inputs.tax.saltCap, 'tax', 'saltCap');
+  addIfDifferent('fs', inputs.tax.filingStatus, 'tax', 'filingStatus');
+
   return params.toString();
 };
 
@@ -92,6 +96,8 @@ export const decodeUrlToInputs = (searchParams: URLSearchParams, fallbackDefault
       sellingCostPercent: parseNumber(searchParams.get('sc'), defaultInputs.realEstate.sellingCostPercent),
       propertyAppreciationRate: parseNumber(searchParams.get('apr'), defaultInputs.realEstate.propertyAppreciationRate),
       propertyTaxIncreaseRate: parseNumber(searchParams.get('pti'), defaultInputs.realEstate.propertyTaxIncreaseRate),
+      pmiRate: parseNumber(searchParams.get('pmi'), defaultInputs.realEstate.pmiRate),
+      generalInflationRate: parseNumber(searchParams.get('inf'), defaultInputs.realEstate.generalInflationRate),
     },
     stockMarket: {
       expectedAnnualReturn: parseNumber(searchParams.get('sr'), defaultInputs.stockMarket.expectedAnnualReturn),
@@ -111,6 +117,8 @@ export const decodeUrlToInputs = (searchParams: URLSearchParams, fallbackDefault
       mortgageInterestDeduction: parseBoolean(searchParams.get('md'), defaultInputs.tax.mortgageInterestDeduction),
       propertyTaxDeduction: parseBoolean(searchParams.get('pd'), defaultInputs.tax.propertyTaxDeduction),
       standardDeduction: parseNumber(searchParams.get('std'), defaultInputs.tax.standardDeduction),
+      saltCap: parseNumber(searchParams.get('salt'), defaultInputs.tax.saltCap),
+      filingStatus: (searchParams.get('fs') as 'single' | 'married') || defaultInputs.tax.filingStatus,
     },
   };
 };

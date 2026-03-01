@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'Compare buying real estate vs renting and investing in the stock market. Free financial calculator with comprehensive analysis.',
   },
   alternates: {
-    canonical: 'https://buyvsrent.vercel.app', // Will update to custom domain later
+    canonical: 'https://buyvsrent.xyz',
   },
   icons: {
     icon: '/favicon.ico',

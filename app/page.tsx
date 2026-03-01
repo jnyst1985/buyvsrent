@@ -88,6 +88,8 @@ export default function Home() {
     inputs.realEstate.sellingCostPercent,
     inputs.realEstate.propertyAppreciationRate,
     inputs.realEstate.propertyTaxIncreaseRate,
+    inputs.realEstate.pmiRate,
+    inputs.realEstate.generalInflationRate,
     // Stock Market
     inputs.stockMarket.expectedAnnualReturn,
     inputs.stockMarket.dividendYield,
@@ -102,7 +104,9 @@ export default function Home() {
     inputs.tax.capitalGainsTaxRate,
     inputs.tax.mortgageInterestDeduction,
     inputs.tax.propertyTaxDeduction,
-    inputs.tax.standardDeduction
+    inputs.tax.standardDeduction,
+    inputs.tax.saltCap,
+    inputs.tax.filingStatus
   ]);
 
   // Handle input changes and mark results as stale if calculation was performed

@@ -1,13 +1,14 @@
 import { CalculationInputs, YearlyData } from './types';
+import { CALCULATION_CONSTANTS } from './constants';
 
 // Mortgage calculation utilities
-export function getMontlyRate(annualRate: number): number {
+export function getMonthlyRate(annualRate: number): number {
   return annualRate / 100 / 12;
 }
 
 export function validateCalculationInputs(inputs: CalculationInputs): void {
   const { general, realEstate } = inputs;
-  
+
   if (general.timeHorizon <= 0) {
     throw new Error('Time horizon must be greater than 0');
   }
@@ -30,42 +31,49 @@ export interface MortgageDetails {
   monthlyPropertyTax: number;
   monthlyInsurance: number;
   monthlyMaintenance: number;
+  monthlyPMI: number; // PMI payment (0 if down payment >= 20%)
   totalMonthlyHousingCost: number;
 }
 
 export function calculateMortgageDetails(inputs: CalculationInputs): MortgageDetails {
   const { realEstate } = inputs;
-  
+
   const downPayment = realEstate.propertyPrice * (realEstate.downPaymentPercent / 100);
   const loanAmount = realEstate.propertyPrice - downPayment;
-  
+
   if (loanAmount <= 0) {
     throw new Error('Loan amount must be greater than 0');
   }
-  
-  const monthlyRate = getMontlyRate(realEstate.mortgageInterestRate);
+
+  const monthlyRate = getMonthlyRate(realEstate.mortgageInterestRate);
   const numPayments = realEstate.mortgageTerm * 12;
-  
+
   let monthlyMortgagePayment: number;
   if (monthlyRate === 0) {
     monthlyMortgagePayment = loanAmount / numPayments;
   } else {
-    monthlyMortgagePayment = loanAmount * 
+    monthlyMortgagePayment = loanAmount *
       (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
       (Math.pow(1 + monthlyRate, numPayments) - 1);
   }
-  
+
   if (isNaN(monthlyMortgagePayment) || !isFinite(monthlyMortgagePayment)) {
     throw new Error('Invalid mortgage payment calculation');
   }
-  
+
   const closingCosts = realEstate.propertyPrice * (realEstate.closingCostPercent / 100);
   const monthlyPropertyTax = (realEstate.propertyPrice * realEstate.propertyTaxRate / 100) / 12;
   const monthlyInsurance = realEstate.homeownersInsurance / 12;
   const monthlyMaintenance = (realEstate.propertyPrice * realEstate.maintenanceCostPercent / 100) / 12;
-  const totalMonthlyHousingCost = monthlyMortgagePayment + monthlyPropertyTax + 
-    monthlyInsurance + realEstate.hoaFees + monthlyMaintenance;
-  
+
+  // PMI applies when down payment is less than 20%
+  const monthlyPMI = realEstate.downPaymentPercent < (CALCULATION_CONSTANTS.PMI_CANCEL_EQUITY_THRESHOLD * 100)
+    ? (loanAmount * realEstate.pmiRate / 100) / 12
+    : 0;
+
+  const totalMonthlyHousingCost = monthlyMortgagePayment + monthlyPropertyTax +
+    monthlyInsurance + realEstate.hoaFees + monthlyMaintenance + monthlyPMI;
+
   return {
     downPayment,
     loanAmount,
@@ -74,6 +82,7 @@ export function calculateMortgageDetails(inputs: CalculationInputs): MortgageDet
     monthlyPropertyTax,
     monthlyInsurance,
     monthlyMaintenance,
+    monthlyPMI,
     totalMonthlyHousingCost
   };
 }
@@ -86,32 +95,44 @@ export interface NetWorthResults {
 }
 
 export function calculateFinalNetWorth(
-  yearlyData: YearlyData[], 
+  yearlyData: YearlyData[],
   inputs: CalculationInputs,
-  mortgageDetails: MortgageDetails
+  mortgageDetails: MortgageDetails,
+  cumulativeTotalInvested: number // actual cumulative amount invested (tracks varying monthly contributions)
 ): NetWorthResults {
   const finalYearData = yearlyData[yearlyData.length - 1];
   const currentHomeValue = finalYearData.buyScenario.homeValue;
-  
-  // Calculate final net worth
+
+  // Calculate buy scenario net worth
   const sellingCosts = currentHomeValue * (inputs.realEstate.sellingCostPercent / 100);
   const finalMortgageBalance = finalYearData.buyScenario.mortgageBalance;
-  const buyScenarioNetWorth = currentHomeValue - finalMortgageBalance - sellingCosts;
-  
+
+  // Home sale capital gains exclusion (Section 121)
+  const purchasePrice = inputs.realEstate.propertyPrice;
+  const homeGains = Math.max(0, currentHomeValue - purchasePrice);
+  const exclusionAmount = inputs.tax.filingStatus === 'married'
+    ? CALCULATION_CONSTANTS.HOME_SALE_EXCLUSION_MARRIED
+    : CALCULATION_CONSTANTS.HOME_SALE_EXCLUSION_SINGLE;
+  const taxableHomeGains = Math.max(0, homeGains - exclusionAmount);
+  const homeSaleTax = taxableHomeGains * (inputs.tax.capitalGainsTaxRate / 100);
+
+  const buyScenarioNetWorth = currentHomeValue - finalMortgageBalance - sellingCosts - homeSaleTax;
+
+  // Calculate rent scenario net worth
   const finalPortfolioValue = finalYearData.rentScenario.portfolioValue;
-  const initialInvestment = mortgageDetails.downPayment + mortgageDetails.closingCosts;
-  const monthlyInvestmentAmount = Math.max(0, mortgageDetails.totalMonthlyHousingCost - inputs.rental.monthlyRent);
-  
-  // Calculate capital gains tax more safely
-  const totalInvested = initialInvestment + (monthlyInvestmentAmount * 12 * inputs.general.timeHorizon);
-  const capitalGains = Math.max(0, finalPortfolioValue - totalInvested);
+
+  // Use the actual cumulative invested amount for cost basis (fixes cost basis tracking bug)
+  const capitalGains = Math.max(0, finalPortfolioValue - cumulativeTotalInvested);
   const capitalGainsTax = capitalGains * (inputs.tax.capitalGainsTaxRate / 100);
-  const rentScenarioNetWorth = finalPortfolioValue - capitalGainsTax;
-  
+
+  // Add back security deposit at end of time horizon
+  const securityDepositAmount = inputs.rental.securityDeposit * inputs.rental.monthlyRent;
+  const rentScenarioNetWorth = finalPortfolioValue - capitalGainsTax + securityDepositAmount;
+
   const difference = buyScenarioNetWorth - rentScenarioNetWorth;
-  const differencePercent = rentScenarioNetWorth !== 0 ? 
+  const differencePercent = rentScenarioNetWorth !== 0 ?
     (difference / rentScenarioNetWorth) * 100 : 0;
-  
+
   return {
     buyScenarioNetWorth,
     rentScenarioNetWorth,

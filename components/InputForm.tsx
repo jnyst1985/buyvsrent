@@ -7,6 +7,62 @@ import { useFormField } from '@/hooks/useFormField';
 import Tooltip, { InfoIcon } from './Tooltip';
 import PresetScenarios from './PresetScenarios';
 
+function ChevronIcon({ isOpen }: { isOpen: boolean }) {
+  return (
+    <svg
+      className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-90' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function AdvancedToggle({ label, isOpen, onToggle }: { label: string; isOpen: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors mt-2"
+      aria-expanded={isOpen}
+    >
+      <ChevronIcon isOpen={isOpen} />
+      {label}
+    </button>
+  );
+}
+
+function CollapsibleFieldset({
+  legend,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  legend: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className="border border-gray-200 rounded-lg p-4">
+      <legend className="px-2">
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex items-center gap-2 text-lg font-medium text-gray-900 hover:text-gray-700 transition-colors"
+          aria-expanded={isOpen}
+        >
+          <ChevronIcon isOpen={isOpen} />
+          {legend}
+        </button>
+      </legend>
+      {isOpen && children}
+    </fieldset>
+  );
+}
+
 interface InputFormProps {
   inputs: CalculationInputs;
   setInputs: (inputs: CalculationInputs, isPresetChange?: boolean) => void;
@@ -19,6 +75,11 @@ interface InputFormProps {
 export default function InputForm({ inputs, setInputs, onCalculate, hasCalculated = false, resultsStale = false, isManualEditing = false }: InputFormProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [showValidation, setShowValidation] = useState(false);
+  const [showAdvancedRealEstate, setShowAdvancedRealEstate] = useState(false);
+  const [showAdvancedTax, setShowAdvancedTax] = useState(false);
+  const [sectionStockMarket, setSectionStockMarket] = useState(false);
+  const [sectionRental, setSectionRental] = useState(false);
+  const [sectionTax, setSectionTax] = useState(false);
 
   // Validate inputs whenever they change
   useEffect(() => {
@@ -360,13 +421,63 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
               step="0.1"
             />
           </div>
+
+          <AdvancedToggle
+            label="Advanced Settings"
+            isOpen={showAdvancedRealEstate}
+            onToggle={() => setShowAdvancedRealEstate(!showAdvancedRealEstate)}
+          />
+          {showAdvancedRealEstate && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 pt-3 border-t border-gray-100">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                  PMI Rate (%)
+                  <Tooltip content="Private Mortgage Insurance rate, charged when down payment is less than 20%. Typically 0.5-1.5% of the loan amount annually. Auto-cancels when equity reaches 20%.">
+                    <InfoIcon />
+                  </Tooltip>
+                </label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={inputs.realEstate.pmiRate}
+                  onChange={(e) => handleInputChange('realEstate', 'pmiRate', Number(e.target.value))}
+                  min="0"
+                  max="3"
+                  step="0.1"
+                />
+                {inputs.realEstate.downPaymentPercent >= 20 && (
+                  <p className="mt-1 text-xs text-gray-500">PMI not applicable (down payment &ge; 20%)</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                  General Inflation Rate (%)
+                  <Tooltip content="Annual inflation rate applied to insurance, HOA fees, and renter's insurance. Typical range: 2-4%. If unsure, use 3%.">
+                    <InfoIcon />
+                  </Tooltip>
+                </label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={inputs.realEstate.generalInflationRate}
+                  onChange={(e) => handleInputChange('realEstate', 'generalInflationRate', Number(e.target.value))}
+                  min="0"
+                  max="15"
+                  step="0.1"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </fieldset>
 
       {/* Stock Market Parameters */}
-      <fieldset className="border border-gray-200 rounded-lg p-4">
-        <legend className="text-lg font-medium text-gray-900 px-2">Stock Market Parameters</legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CollapsibleFieldset
+        legend="Stock Market Parameters"
+        isOpen={sectionStockMarket}
+        onToggle={() => setSectionStockMarket(!sectionStockMarket)}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Expected Annual Return (%)
@@ -416,12 +527,15 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             />
           </div>
         </div>
-      </fieldset>
+      </CollapsibleFieldset>
 
       {/* Rental Parameters */}
-      <fieldset className="border border-gray-200 rounded-lg p-4">
-        <legend className="text-lg font-medium text-gray-900 px-2">Rental Parameters</legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CollapsibleFieldset
+        legend="Rental Parameters"
+        isOpen={sectionRental}
+        onToggle={() => setSectionRental(!sectionRental)}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Monthly Rent
@@ -461,12 +575,15 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             />
           </div>
         </div>
-      </fieldset>
+      </CollapsibleFieldset>
 
       {/* Tax Parameters */}
-      <fieldset className="border border-gray-200 rounded-lg p-4">
-        <legend className="text-lg font-medium text-gray-900 px-2">Tax Parameters</legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CollapsibleFieldset
+        legend="Tax Parameters"
+        isOpen={sectionTax}
+        onToggle={() => setSectionTax(!sectionTax)}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
               Income Tax Bracket (%)
@@ -539,9 +656,52 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
               </label>
             </div>
           </div>
-        </div>
-      </fieldset>
 
+          <AdvancedToggle
+            label="Advanced Settings"
+            isOpen={showAdvancedTax}
+            onToggle={() => setShowAdvancedTax(!showAdvancedTax)}
+          />
+          {showAdvancedTax && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 pt-3 border-t border-gray-100">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                  SALT Deduction Cap
+                  <Tooltip content="State and Local Tax deduction cap. Federal law limits property tax deductions to this amount ($10,000 for most filers). If unsure, use $10,000.">
+                    <InfoIcon />
+                  </Tooltip>
+                </label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={inputs.tax.saltCap}
+                  onChange={(e) => handleInputChange('tax', 'saltCap', Number(e.target.value))}
+                  min="0"
+                  max="100000"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                  Filing Status
+                  <Tooltip content="Affects home sale capital gains exclusion. Single filers exclude first $250,000 of gains; married filing jointly excludes $500,000 (Section 121).">
+                    <InfoIcon />
+                  </Tooltip>
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={inputs.tax.filingStatus}
+                  onChange={(e) => handleInputChange('tax', 'filingStatus', e.target.value)}
+                >
+                  <option value="single">Single</option>
+                  <option value="married">Married Filing Jointly</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+      </CollapsibleFieldset>
+
+      {/* Inline Calculate button */}
       <div className="space-y-2">
         {resultsStale && hasCalculated && (
           <div className="text-sm text-amber-600 text-center bg-amber-50 px-3 py-2 rounded-md">
@@ -567,6 +727,30 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
             handleCalculate();
           }}
           disabled={showValidation && validationErrors.length > 0}
+          className={`hidden md:block w-full py-3 px-4 font-medium rounded-md transition duration-200 ${
+            showValidation && validationErrors.length > 0
+              ? 'bg-gray-400 cursor-not-allowed text-white'
+              : resultsStale && hasCalculated
+              ? 'bg-amber-600 hover:bg-amber-700 text-white'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {showValidation && validationErrors.length > 0
+            ? `Fix ${validationErrors.length} error${validationErrors.length === 1 ? '' : 's'} to calculate`
+            : resultsStale && hasCalculated
+            ? 'Recalculate'
+            : 'Calculate'}
+        </button>
+      </div>
+
+      {/* Sticky mobile Calculate button */}
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-lg md:hidden z-50">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            handleCalculate();
+          }}
+          disabled={showValidation && validationErrors.length > 0}
           className={`w-full py-3 px-4 font-medium rounded-md transition duration-200 ${
             showValidation && validationErrors.length > 0
               ? 'bg-gray-400 cursor-not-allowed text-white'
@@ -575,10 +759,10 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
               : 'bg-blue-600 hover:bg-blue-700 text-white'
           }`}
         >
-          {showValidation && validationErrors.length > 0 
-            ? `Fix ${validationErrors.length} error${validationErrors.length === 1 ? '' : 's'} to calculate`
-            : resultsStale && hasCalculated 
-            ? 'Recalculate' 
+          {showValidation && validationErrors.length > 0
+            ? `Fix ${validationErrors.length} error${validationErrors.length === 1 ? '' : 's'}`
+            : resultsStale && hasCalculated
+            ? 'Recalculate'
             : 'Calculate'}
         </button>
       </div>

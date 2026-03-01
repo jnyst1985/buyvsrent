@@ -4,7 +4,7 @@ import { CalculationInputs } from './types';
 export const APP_CONFIG = {
   NAME: 'Buy vs Rent Calculator',
   DESCRIPTION: 'Free calculator to compare buying a house vs renting and investing in stocks. Analyze mortgage costs, property appreciation, and investment returns.',
-  URL: 'https://buyvsrent.vercel.app', // Will update to custom domain later
+  URL: 'https://buyvsrent.xyz',
   DOMAIN: 'buyvsrent.xyz'
 };
 
@@ -36,6 +36,8 @@ export const VALIDATION_LIMITS = {
   SELLING_COST_PERCENT: { MIN: 0, MAX: 15 },
   PROPERTY_APPRECIATION_RATE: { MIN: -10, MAX: 20 },
   PROPERTY_TAX_INCREASE_RATE: { MIN: 0, MAX: 20 },
+  PMI_RATE: { MIN: 0, MAX: 3 },
+  GENERAL_INFLATION_RATE: { MIN: 0, MAX: 15 },
   EXPECTED_ANNUAL_RETURN: { MIN: -20, MAX: 50 },
   DIVIDEND_YIELD: { MIN: 0, MAX: 20 },
   EXPENSE_RATIO: { MIN: 0, MAX: 5 },
@@ -45,7 +47,8 @@ export const VALIDATION_LIMITS = {
   SECURITY_DEPOSIT: { MIN: 0, MAX: 12 },
   INCOME_TAX_BRACKET: { MIN: 0, MAX: 50 },
   CAPITAL_GAINS_TAX_RATE: { MIN: 0, MAX: 50 },
-  STANDARD_DEDUCTION: { MIN: 0, MAX: 100000 }
+  STANDARD_DEDUCTION: { MIN: 0, MAX: 100000 },
+  SALT_CAP: { MIN: 0, MAX: 100000 }
 };
 
 // Default Input Values (used in multiple places)
@@ -68,6 +71,8 @@ export const DEFAULT_INPUTS: CalculationInputs = {
     sellingCostPercent: 6,
     propertyAppreciationRate: 3.5,
     propertyTaxIncreaseRate: 2,
+    pmiRate: 0.8,
+    generalInflationRate: 3,
   },
   stockMarket: {
     expectedAnnualReturn: 8,
@@ -87,6 +92,8 @@ export const DEFAULT_INPUTS: CalculationInputs = {
     mortgageInterestDeduction: true,
     propertyTaxDeduction: true,
     standardDeduction: 27700,
+    saltCap: 10000,
+    filingStatus: 'single' as const,
   },
 };
 
@@ -118,7 +125,9 @@ export const URL_PARAM_MAP = {
   'sc': 'sellingCostPercent',
   'apr': 'propertyAppreciationRate',
   'pti': 'propertyTaxIncreaseRate',
-  
+  'pmi': 'pmiRate',
+  'inf': 'generalInflationRate',
+
   // Stock market
   'sr': 'expectedAnnualReturn',
   'div': 'dividendYield',
@@ -136,6 +145,8 @@ export const URL_PARAM_MAP = {
   'md': 'mortgageInterestDeduction',
   'pd': 'propertyTaxDeduction',
   'std': 'standardDeduction',
+  'salt': 'saltCap',
+  'fs': 'filingStatus',
 } as const;
 
 // Analytics Event Categories
@@ -162,7 +173,10 @@ export const CALCULATION_CONSTANTS = {
   PERCENT_TO_DECIMAL: 100,
   MAX_CALCULATION_YEARS: 50,
   MIN_LOAN_AMOUNT: 1000,
-  RENT_TO_PRICE_WARNING_RATIO: 0.2 // 20% is considered very high
+  RENT_TO_PRICE_WARNING_RATIO: 0.2, // 20% is considered very high
+  PMI_CANCEL_EQUITY_THRESHOLD: 0.20, // PMI auto-cancels at 20% equity
+  HOME_SALE_EXCLUSION_SINGLE: 250000, // Section 121 exclusion for single filers
+  HOME_SALE_EXCLUSION_MARRIED: 500000, // Section 121 exclusion for married filing jointly
 };
 
 // UI Constants

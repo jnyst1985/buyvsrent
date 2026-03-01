@@ -11,7 +11,7 @@ interface MonthlyPaymentSummaryProps {
 
 export default function MonthlyPaymentSummary({ inputs, currency }: MonthlyPaymentSummaryProps) {
   const formatCurrencyLocal = (value: number) => formatCurrency(value, currency);
-  
+
   // Calculate mortgage payment
   const downPayment = inputs.realEstate.propertyPrice * (inputs.realEstate.downPaymentPercent / 100);
   const loanAmount = inputs.realEstate.propertyPrice - downPayment;
@@ -20,14 +20,20 @@ export default function MonthlyPaymentSummary({ inputs, currency }: MonthlyPayme
     inputs.realEstate.mortgageInterestRate,
     inputs.realEstate.mortgageTerm
   );
-  
+
   // Calculate monthly housing costs
   const monthlyPropertyTax = (inputs.realEstate.propertyPrice * inputs.realEstate.propertyTaxRate / 100) / 12;
   const monthlyInsurance = inputs.realEstate.homeownersInsurance / 12;
   const monthlyMaintenance = (inputs.realEstate.propertyPrice * inputs.realEstate.maintenanceCostPercent / 100) / 12;
-  const totalMonthlyHousingCost = monthlyMortgagePayment + monthlyPropertyTax + 
-    monthlyInsurance + inputs.realEstate.hoaFees + monthlyMaintenance;
-  
+
+  // PMI calculation
+  const monthlyPMI = inputs.realEstate.downPaymentPercent < 20
+    ? (loanAmount * inputs.realEstate.pmiRate / 100) / 12
+    : 0;
+
+  const totalMonthlyHousingCost = monthlyMortgagePayment + monthlyPropertyTax +
+    monthlyInsurance + inputs.realEstate.hoaFees + monthlyMaintenance + monthlyPMI;
+
   // Calculate monthly investment amount
   const monthlyInvestmentAmount = Math.max(0, totalMonthlyHousingCost - inputs.rental.monthlyRent);
   
@@ -60,6 +66,12 @@ export default function MonthlyPaymentSummary({ inputs, currency }: MonthlyPayme
               <span className="text-blue-700">Maintenance:</span>
               <span className="font-medium text-blue-900">{formatCurrencyLocal(monthlyMaintenance)}</span>
             </div>
+            {monthlyPMI > 0 && (
+              <div className="flex justify-between">
+                <span className="text-blue-700">PMI:</span>
+                <span className="font-medium text-blue-900">{formatCurrencyLocal(monthlyPMI)}</span>
+              </div>
+            )}
             <div className="flex justify-between border-t border-blue-200 pt-2 font-semibold">
               <span className="text-blue-800">Total Monthly Cost:</span>
               <span className="text-blue-900">{formatCurrencyLocal(totalMonthlyHousingCost)}</span>

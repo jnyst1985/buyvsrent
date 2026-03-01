@@ -156,6 +156,12 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
               <span>Total HOA Fees:</span>
               <span className="font-medium">{formatCurrencyLocal(results.totalCosts.buy.totalHOA)}</span>
             </div>
+            {results.totalCosts.buy.totalPMI > 0 && (
+              <div className="flex justify-between">
+                <span>Total PMI:</span>
+                <span className="font-medium">{formatCurrencyLocal(results.totalCosts.buy.totalPMI)}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span>Closing Costs:</span>
               <span className="font-medium">{formatCurrencyLocal(results.totalCosts.buy.closingCosts)}</span>
@@ -172,6 +178,7 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
                 results.totalCosts.buy.totalInsurance +
                 results.totalCosts.buy.totalMaintenance +
                 results.totalCosts.buy.totalHOA +
+                results.totalCosts.buy.totalPMI +
                 results.totalCosts.buy.closingCosts +
                 results.totalCosts.buy.sellingCosts
               )}</span>
@@ -202,7 +209,7 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
       </div>
 
       {/* Chart */}
-      <ComparisonChart yearlyData={results.yearlyData} currency={currency} />
+      <ComparisonChart yearlyData={results.yearlyData} currency={currency} breakEvenYear={results.breakEvenYear} />
 
       {/* Year by Year Data */}
       <div>

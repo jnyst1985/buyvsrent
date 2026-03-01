@@ -13,7 +13,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com *.googlesyndication.com *.clarity.ms",
+              "script-src 'self' 'unsafe-inline' *.googletagmanager.com *.google-analytics.com *.googlesyndication.com *.clarity.ms",
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "font-src 'self' fonts.gstatic.com",
               "img-src 'self' data: *.google-analytics.com *.googlesyndication.com *.clarity.ms",

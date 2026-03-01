@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { YearlyData } from '@/lib/types';
 import { formatCurrency, formatCurrencyCompact } from '@/lib/formatting';
 import { UI_CONSTANTS } from '@/lib/constants';
@@ -10,9 +10,10 @@ import ChartErrorBoundary from './ChartErrorBoundary';
 interface ComparisonChartProps {
   yearlyData: YearlyData[];
   currency: string;
+  breakEvenYear?: number | null;
 }
 
-export default function ComparisonChart({ yearlyData, currency }: ComparisonChartProps) {
+export default function ComparisonChart({ yearlyData, currency, breakEvenYear }: ComparisonChartProps) {
   const [showTable, setShowTable] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -98,18 +99,50 @@ export default function ComparisonChart({ yearlyData, currency }: ComparisonChar
             <Legend 
               wrapperStyle={{ paddingTop: '10px', fontSize: isMobile ? '12px' : '14px' }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="Home Equity" 
-              stroke={UI_CONSTANTS.CHART_COLORS.BUY} 
+            {/* Shaded regions showing which option wins */}
+            {breakEvenYear && breakEvenYear <= yearlyData.length && (
+              <>
+                <ReferenceArea
+                  x1={1}
+                  x2={breakEvenYear}
+                  fill={UI_CONSTANTS.CHART_COLORS.RENT}
+                  fillOpacity={0.06}
+                />
+                <ReferenceArea
+                  x1={breakEvenYear}
+                  x2={yearlyData.length}
+                  fill={UI_CONSTANTS.CHART_COLORS.BUY}
+                  fillOpacity={0.06}
+                />
+              </>
+            )}
+            {/* Break-even reference line */}
+            {breakEvenYear && breakEvenYear <= yearlyData.length && (
+              <ReferenceLine
+                x={breakEvenYear}
+                stroke="#6B7280"
+                strokeDasharray="6 4"
+                strokeWidth={1.5}
+                label={{
+                  value: `Break-even: Yr ${breakEvenYear}`,
+                  position: 'top',
+                  fill: '#6B7280',
+                  fontSize: isMobile ? 10 : 12,
+                }}
+              />
+            )}
+            <Line
+              type="monotone"
+              dataKey="Home Equity"
+              stroke={UI_CONSTANTS.CHART_COLORS.BUY}
               strokeWidth={2}
               dot={{ r: 4 }}
               name="Home Equity (Buy Scenario)"
             />
-            <Line 
-              type="monotone" 
-              dataKey="Portfolio Value" 
-              stroke={UI_CONSTANTS.CHART_COLORS.RENT} 
+            <Line
+              type="monotone"
+              dataKey="Portfolio Value"
+              stroke={UI_CONSTANTS.CHART_COLORS.RENT}
               strokeWidth={2}
               dot={{ r: 4 }}
               name="Portfolio Value (Rent & Invest)"

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import GoogleAdsense from '@/components/GoogleAdsense'
 import MicrosoftClarity from '@/components/MicrosoftClarity'
@@ -57,6 +58,7 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID && (
           <MicrosoftClarity CLARITY_PROJECT_ID={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID} />
         )}
+        <Analytics />
       </body>
     </html>
   )

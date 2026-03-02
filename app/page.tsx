@@ -36,8 +36,8 @@ export default function Home() {
       // If there are URL parameters, decode them and set inputs
       if (searchParams.toString()) {
         const decodedInputs = decodeUrlToInputs(searchParams, defaultInputs);
-        setInputs(decodedInputs);
-        
+        setInputs(decodedInputs); // eslint-disable-line react-hooks/set-state-in-effect -- URL param initialization on mount
+
         // Auto-calculate if we have shared parameters
         setTimeout(() => {
           const calculationResults = performCalculations(decodedInputs);
@@ -252,7 +252,7 @@ export default function Home() {
           </h2>
           <div className="prose max-w-none text-gray-700">
             <p className="mb-4">
-              Deciding whether to buy a home or continue renting while investing in the stock market is one of the most important financial decisions you'll make. Our comprehensive calculator helps you analyze all factors including:
+              Deciding whether to buy a home or continue renting while investing in the stock market is one of the most important financial decisions you&apos;ll make. Our comprehensive calculator helps you analyze all factors including:
             </p>
             <ul className="list-disc list-inside mb-4 space-y-1">
               <li>Mortgage payments, interest rates, and loan terms</li>

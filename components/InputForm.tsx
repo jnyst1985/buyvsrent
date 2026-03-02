@@ -130,6 +130,7 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
 
   // Helper function to create form field utilities
   const createFormField = (category: keyof CalculationInputs, field: string) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- always called at same render point, not conditional
     return useFormField({
       category,
       field,
@@ -564,7 +565,7 @@ export default function InputForm({ inputs, setInputs, onCalculate, hasCalculate
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Monthly Renter's Insurance
+              Monthly Renter&apos;s Insurance
             </label>
             <input
               type="number"

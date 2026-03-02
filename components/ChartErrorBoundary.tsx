@@ -67,7 +67,7 @@ const DefaultChartFallback: React.FC<FallbackProps> = ({ error, onRetry }) => (
     </div>
     <h3 className="text-lg font-medium text-gray-900 mb-2">Chart Unavailable</h3>
     <p className="text-sm text-gray-600 mb-4">
-      We're having trouble displaying the chart. The data table below shows the same information.
+      We&apos;re having trouble displaying the chart. The data table below shows the same information.
     </p>
     {onRetry && (
       <button

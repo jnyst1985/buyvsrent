@@ -88,7 +88,7 @@ export default function MonthlyPaymentSummary({ inputs, currency }: MonthlyPayme
               <span className="font-medium text-green-900">{formatCurrencyLocal(inputs.rental.monthlyRent)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-green-700">Renter's Insurance:</span>
+              <span className="text-green-700">Renter&apos;s Insurance:</span>
               <span className="font-medium text-green-900">{formatCurrencyLocal(inputs.rental.rentersInsurance)}</span>
             </div>
             <div className="flex justify-between">

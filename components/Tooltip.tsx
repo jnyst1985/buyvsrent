@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 
 interface TooltipProps {
   content: string;
@@ -12,7 +12,8 @@ export default function Tooltip({ content, children, id }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const tooltipId = id || `tooltip-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const tooltipId = id || `tooltip-${generatedId}`;
 
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent) => {

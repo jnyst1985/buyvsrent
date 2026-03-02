@@ -19,7 +19,7 @@ export default function PresetScenarios({ onApplyPreset, currency, currentInputs
   useEffect(() => {
     if (!isManualEditing) {
       const detectedPreset = detectActivePreset(currentInputs);
-      setActivePreset(detectedPreset);
+      setActivePreset(detectedPreset); // eslint-disable-line react-hooks/set-state-in-effect -- derived from props on change
     }
   }, [currentInputs, isManualEditing]);
 

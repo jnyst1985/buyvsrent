@@ -194,7 +194,7 @@ export default function ResultsDisplay({ results, currency, sellingCostPercent, 
               <span className="font-medium">{formatCurrencyLocal(results.totalCosts.rent.totalRent)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Total Renter's Insurance:</span>
+              <span>Total Renter&apos;s Insurance:</span>
               <span className="font-medium">{formatCurrencyLocal(results.totalCosts.rent.totalRentersInsurance)}</span>
             </div>
             <div className="flex justify-between border-t pt-2 font-semibold">

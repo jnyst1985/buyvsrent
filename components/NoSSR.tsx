@@ -11,7 +11,7 @@ export default function NoSSR({ children, fallback = null }: NoSSRProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect -- standard hydration-safety pattern
   }, []);
 
   if (!mounted) {

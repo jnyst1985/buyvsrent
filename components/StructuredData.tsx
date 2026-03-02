@@ -1,20 +1,13 @@
-import Script from 'next/script';
-
 interface StructuredDataProps {
   data: object;
 }
 
 export default function StructuredData({ data }: StructuredDataProps) {
-  // Safely serialize JSON and escape any potentially dangerous content
-  const jsonString = JSON.stringify(data, null, 0);
-  
+  // Render JSON-LD inline so crawlers see it in the initial HTML
   return (
-    <Script
-      id="structured-data"
+    <script
       type="application/ld+json"
-      strategy="afterInteractive"
-    >
-      {jsonString}
-    </Script>
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
   );
 }

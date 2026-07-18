@@ -1,0 +1,139 @@
+---
+import ContentPage from '../layouts/ContentPage.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Methodology: Exactly How We Compare Renting vs. Buying',
+  description:
+    'The complete, documented model behind the BuyVsRent calculator: symmetric opportunity cost, monthly amortization, US tax rules, PMI, and liquidation math.',
+  datePublished: '2026-07-18',
+  dateModified: '2026-07-18',
+  author: { '@type': 'Organization', name: 'BuyVsRent' },
+};
+---
+
+<ContentPage
+  title="Methodology: Exactly How We Compare Renting vs. Buying | BuyVsRent"
+  description="Every formula in the BuyVsRent calculator, documented: symmetric opportunity cost, monthly amortization, 2026 US tax rules, PMI cancellation, selling costs, and sensitivity analysis."
+  path="/methodology"
+  heading="How the math works"
+  subheading="Every formula, every convention, every simplification — so you can check our work."
+  updated="July 18, 2026"
+  jsonLd={jsonLd}
+>
+  <p>
+    The calculator answers one question: <strong>after your planned stay, which path leaves you
+    with more money — buying a home, or renting a similar one and investing the difference?</strong>
+    It simulates both paths month by month, then "cashes out" both sides at the end, with all exit
+    costs and taxes paid. The engine is open source and covered by 33 automated tests, including
+    ten verification scenarios derived by hand with closed-form math, independently of the code.
+  </p>
+
+  <h2>The core principle: symmetric opportunity cost</h2>
+  <p>
+    Money not spent on housing doesn't vanish — it gets invested. Each month we compute both
+    sides' total housing cost. If owning costs more (the usual case early on), the renter invests
+    the difference. If renting costs more (common after rents have grown for a decade, after the
+    mortgage is paid off, or in cash purchases), <em>the buyer invests the surplus instead</em>.
+    Both portfolios grow at the same rate and both are taxed the same way at the end. Most
+    calculators only credit the renter's side; that asymmetry quietly biases results, and it's the
+    single most common flaw we found when auditing other tools.
+  </p>
+  <p>
+    The renter's portfolio starts with what the buyer spent upfront (down payment + closing
+    costs, minus the renter's own security deposit). If the deposit somehow exceeds the buyer's
+    upfront cash, the buyer's portfolio is seeded with the difference instead — the comparison is
+    symmetric in both directions.
+  </p>
+
+  <h2>The buyer's monthly cost</h2>
+  <ul>
+    <li><strong>Mortgage payment</strong> — standard amortization: monthly rate r = annual/12; payment = L·r(1+r)<sup>n</sup>/((1+r)<sup>n</sup>−1) on loan L over n months. Payments stop when the loan is paid off (if your stay outlasts the term, later years have no payment). A 0% rate divides principal evenly; a 100% down payment means no loan at all.</li>
+    <li><strong>Property tax</strong> — year 1 charges exactly your stated rate on the purchase price; the bill then grows at your property-tax growth rate each year.</li>
+    <li><strong>Homeowner's insurance and HOA</strong> — grow with general inflation each year.</li>
+    <li><strong>Maintenance</strong> — your maintenance percentage applied to the home's value at the start of each year (1%/year is the common rule of thumb).</li>
+    <li><strong>PMI</strong> — with under 20% down, PMI (your annual rate on the original loan) is charged in any month that begins with the balance above 80% of the <em>original</em> purchase price, then stops permanently. That's the federally guaranteed automatic-termination schedule; borrowers can often cancel earlier by request once appreciation lifts equity, so our treatment is slightly conservative toward buying.</li>
+    <li><strong>Minus tax savings</strong> — see taxes below; spread across the year's months.</li>
+  </ul>
+
+  <h2>The renter's monthly cost</h2>
+  <p>
+    Rent plus renter's insurance. Rent steps up once per year at your rent-growth rate (lease
+    renewals); renter's insurance grows with inflation. The security deposit is locked up at move-in
+    and returned without interest at the end — its cost is the investment growth it missed.
+  </p>
+
+  <h2>Growth conventions</h2>
+  <ul>
+    <li><strong>Home value</strong> compounds monthly at (1+a)<sup>1/12</sup>, so each year-end value matches your stated annual appreciation exactly.</li>
+    <li><strong>Investments</strong> compound monthly at (return − fund fees)/12, with contributions added at month-end. The return you enter is <em>total</em> return, dividends included — entering price growth and dividends separately double-counts (a flaw we found in several tools, including the previous version of this one).</li>
+    <li><strong>Rent and recurring bills</strong> step annually, as they do in real life.</li>
+  </ul>
+
+  <h2>Taxes (US model, 2026 rules)</h2>
+  <p>
+    <strong>While owning:</strong> if you choose to itemize, the deductible amount is mortgage
+    interest (capped pro-rata using the IRS average-balance method when the loan exceeds the
+    $750,000 acquisition-debt cap) plus property tax (capped by the $40,400 SALT limit for 2026).
+    Only the excess over your standard deduction ($16,100 single / $32,200 married for 2026)
+    produces a benefit, valued at your marginal rate. This is why mortgage tax breaks help far
+    less than commonly believed: for most buyers since 2018, the standard deduction already beats
+    itemizing, and the calculator defaults to that.
+  </p>
+  <p>
+    <strong>At the end:</strong> the home sale pays selling costs, then capital-gains tax at your
+    rate on any gain beyond the Section 121 exclusion ($250,000 single / $500,000 married); gain
+    is the net sale proceeds minus the purchase price. Both investment portfolios pay
+    capital-gains tax on growth above contributed basis — we track every contribution, so the
+    basis is exact. The renter also gets the security deposit back.
+  </p>
+
+  <h2>The verdict, break-even, and tipping point</h2>
+  <ul>
+    <li><strong>Net worth series</strong> — for every year we compute both sides' liquidate-now value with the exact same exit math as the final year. The chart, the table, and the headline all use this one consistent basis.</li>
+    <li><strong>Break-even year</strong> — the first year buying pulls ahead <em>and stays ahead</em> through your horizon; temporary crossovers don't count.</li>
+    <li><strong>Tipping-point rent</strong> — a binary search for the rent at which both paths tie at your horizon. Above it, buying wins; below it, renting wins.</li>
+    <li><strong>Tie band</strong> — verdicts within 1% of the larger side are called a tie, because no model is that precise.</li>
+    <li><strong>Sensitivity table</strong> — we re-run the full simulation with each key assumption (appreciation, investment return, rent growth, mortgage rate) moved ±1 point and flag any that flips the verdict.</li>
+  </ul>
+
+  <h2>Default assumptions (July 2026)</h2>
+  <table>
+    <thead><tr><th>Input</th><th>Default</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Mortgage rate</td><td>6.5%</td><td>~30-yr fixed average, mid-2026</td></tr>
+      <tr><td>Home appreciation</td><td>3%/yr</td><td>long-run US nominal average, cooled 2026 market</td></tr>
+      <tr><td>Rent growth</td><td>2.5%/yr</td><td>national rent indices, 2025–26 trend</td></tr>
+      <tr><td>Investment return</td><td>7%/yr total</td><td>conservative nominal total-return expectation</td></tr>
+      <tr><td>Property tax</td><td>1.1%/yr</td><td>US effective-rate median</td></tr>
+      <tr><td>Home insurance</td><td>$2,500/yr</td><td>2026 premium levels</td></tr>
+      <tr><td>Maintenance</td><td>1% of value/yr</td><td>standard industry rule of thumb</td></tr>
+      <tr><td>Closing / selling costs</td><td>3% / 6%</td><td>typical buyer costs; commissions + transfer at sale</td></tr>
+      <tr><td>PMI</td><td>0.6%/yr</td><td>typical conventional-loan range (0.3–1.1%)</td></tr>
+      <tr><td>Stay length</td><td>10 years</td><td>median US owner tenure ≈ 12 years; 30-year defaults overstate buying</td></tr>
+      <tr><td>Inflation</td><td>2.5%/yr</td><td>drives insurance/HOA growth</td></tr>
+    </tbody>
+  </table>
+  <p>Every default is editable, and shared links preserve your exact inputs.</p>
+
+  <h2>Known simplifications</h2>
+  <p>We prefer honest simplifications to false precision. The ones that matter:</p>
+  <ul>
+    <li>Returns and appreciation are steady averages — no volatility, crashes, or sequence-of-returns risk. Real outcomes vary around these paths.</li>
+    <li>Investment taxes are settled once at the end (no annual dividend-tax drag; in tax-advantaged accounts the end-tax can also be set to 0).</li>
+    <li>No refinancing, no extra principal payments, no rent control, no moving costs on the rent side.</li>
+    <li>State/local income taxes, transfer taxes, and non-US tax systems aren't modeled — set taxes to 0 for a clean pre-tax comparison anywhere.</li>
+    <li>The "renter invests the difference" assumption requires discipline real renters don't always have — we model the math, you know your behavior.</li>
+  </ul>
+
+  <h2>Check our work</h2>
+  <p>
+    The engine ships with tests for every rule above — amortization against standard tables,
+    hand-enumerable zero-rate scenarios, PMI cancellation timing, the $750k cap math, Section 121,
+    and full 10-year composite scenarios derived independently with closed-form formulas. The code
+    is open source at
+    <a href="https://github.com/jnyst1985/buyvsrent" rel="noopener">github.com/jnyst1985/buyvsrent</a>.
+    Found an error? <a href="/contact">Report it</a> — verified corrections get credited here.
+  </p>
+</ContentPage>

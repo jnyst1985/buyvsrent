@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import ContentPage from '../../layouts/ContentPage.astro';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides');
+  return guides.map((entry) => ({ params: { slug: entry.id.replace(/\.md$/, '') }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const slug = entry.id.replace(/\.md$/, '');
+const published = entry.data.pubDate.toISOString().slice(0, 10);
+const modified = (entry.data.updatedDate ?? entry.data.pubDate).toISOString().slice(0, 10);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: published,
+  dateModified: modified,
+  author: { '@type': 'Organization', name: 'BuyVsRent', url: 'https://buyvsrent.xyz/about' },
+  mainEntityOfPage: `https://buyvsrent.xyz/guides/${slug}`,
+};
+---
+
+<ContentPage
+  title={`${entry.data.title} | BuyVsRent`}
+  description={entry.data.description}
+  path={`/guides/${slug}`}
+  heading={entry.data.title}
+  updated={new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(entry.data.updatedDate ?? entry.data.pubDate)}
+  jsonLd={jsonLd}
+  article={{ published, modified }}
+>
+  <Content />
+  <hr class="my-8 border-hairline" />
+  <p>
+    <strong>Run your own numbers:</strong> the
+    <a href="/">calculator</a> recomputes all of this live for your exact scenario — and the
+    <a href="/methodology">methodology page</a> documents every formula it uses.
+  </p>
+</ContentPage>

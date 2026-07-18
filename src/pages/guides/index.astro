@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const guides = (await getCollection('guides')).sort(
+  (a, b) => a.data.title.localeCompare(b.data.title),
+);
+---
+
+<BaseLayout
+  title="Rent vs. Buy Guides — The Math, Explained | BuyVsRent"
+  description="Deep-dive guides on the rent-vs-buy decision: the 2026 math, break-even years, when renting wins, and what today's mortgage rates change."
+  path="/guides"
+>
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Guides</h1>
+    <p class="mt-3 text-lg text-ink-secondary">
+      The rent-vs-buy decision, explained with real numbers from
+      <a href="/methodology" class="underline underline-offset-2">a documented model</a> — not
+      rules of thumb.
+    </p>
+    <ul class="mt-8 space-y-6">
+      {
+        guides.map((g) => {
+          const slug = g.id.replace(/\.md$/, '');
+          return (
+            <li class="border-b border-hairline pb-6">
+              <a href={`/guides/${slug}`} class="group block">
+                <h2 class="text-xl font-semibold text-ink group-hover:text-buy">
+                  {g.data.title}
+                </h2>
+                <p class="mt-1.5 text-ink-secondary">{g.data.description}</p>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <p class="mt-8 text-ink-secondary">
+      Prefer quick answers? Try the <a href="/faq" class="text-buy underline underline-offset-2">FAQ</a>
+      or the <a href="/glossary" class="text-buy underline underline-offset-2">glossary</a>.
+    </p>
+  </div>
+</BaseLayout>

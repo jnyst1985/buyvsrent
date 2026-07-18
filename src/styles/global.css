@@ -1,0 +1,150 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Brand + chart palette (validated for contrast and CVD separation) */
+  --color-buy: #2563eb;
+  --color-buy-soft: #dbeafe;
+  --color-rent: #059669;
+  --color-rent-soft: #d1fae5;
+  --color-ink: #111827;
+  --color-ink-secondary: #4b5563;
+  --color-ink-muted: #6b7280;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f9fafb;
+  --color-hairline: #e5e7eb;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Numeric alignment in tables and axis labels only */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Range sliders (calculator inputs) */
+.slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-hairline);
+  outline: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--color-buy);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+  cursor: grab;
+}
+.slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+.slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-buy);
+  border: 3px solid #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+  cursor: grab;
+}
+.slider:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-buy-soft);
+}
+
+/* Prose defaults for content pages (no typography plugin needed) */
+.prose-content {
+  max-width: 42rem;
+  line-height: 1.75;
+}
+.prose-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+.prose-content h3 {
+  font-size: 1.17rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.prose-content p {
+  margin-bottom: 1rem;
+  color: var(--color-ink-secondary);
+}
+.prose-content ul,
+.prose-content ol {
+  margin: 0 0 1rem 1.25rem;
+  color: var(--color-ink-secondary);
+}
+.prose-content ul {
+  list-style: disc;
+}
+.prose-content ol {
+  list-style: decimal;
+}
+.prose-content li {
+  margin-bottom: 0.35rem;
+}
+.prose-content a {
+  color: var(--color-buy);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-content strong {
+  color: var(--color-ink);
+}
+.prose-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.9rem;
+}
+.prose-content th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-ink);
+  border-bottom: 2px solid var(--color-hairline);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+}
+.prose-content td {
+  border-bottom: 1px solid var(--color-hairline);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  color: var(--color-ink-secondary);
+}
+.prose-content blockquote {
+  border-left: 3px solid var(--color-hairline);
+  padding-left: 1rem;
+  color: var(--color-ink-muted);
+  margin: 1.25rem 0;
+}
+.prose-content code {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+}

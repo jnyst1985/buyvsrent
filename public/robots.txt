@@ -1,0 +1,21 @@
+# buyvsrent.xyz — all crawlers welcome, including AI assistants.
+User-agent: *
+Allow: /
+
+# AI crawlers (explicitly allowed; methodology and data are meant to be cited)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://buyvsrent.xyz/sitemap-index.xml

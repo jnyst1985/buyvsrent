@@ -1,0 +1,30 @@
+---
+import ContentPage from './ContentPage.astro';
+
+/** Layout for root-level .md pages (frontmatter-driven). */
+const { frontmatter } = Astro.props;
+const path = '/' + frontmatter.slug;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: frontmatter.heading,
+  description: frontmatter.description,
+  datePublished: frontmatter.pubDate,
+  dateModified: frontmatter.updatedDate ?? frontmatter.pubDate,
+  author: { '@type': 'Organization', name: 'BuyVsRent' },
+  mainEntityOfPage: `https://buyvsrent.xyz${path}`,
+};
+---
+
+<ContentPage
+  title={frontmatter.title}
+  description={frontmatter.description}
+  {path}
+  heading={frontmatter.heading}
+  subheading={frontmatter.subheading}
+  updated={frontmatter.updated}
+  jsonLd={jsonLd}
+>
+  <slot />
+</ContentPage>

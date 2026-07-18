@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found | BuyVsRent"
+  description="That page doesn't exist. Try the rent vs. buy calculator instead."
+  path="/404"
+>
+  <div class="mx-auto max-w-2xl px-4 py-24 text-center">
+    <p class="text-sm font-medium tracking-wide text-ink-muted uppercase">404</p>
+    <h1 class="mt-2 text-3xl font-bold text-ink">This page doesn't exist</h1>
+    <p class="mt-4 text-ink-secondary">
+      The math still does, though. Head back to the calculator to run your numbers.
+    </p>
+    <a
+      href="/"
+      class="mt-8 inline-block rounded-lg bg-buy px-5 py-2.5 font-medium text-white hover:opacity-90"
+    >
+      Open the calculator
+    </a>
+  </div>
+</BaseLayout>

@@ -1,8 +1,14 @@
+import { Component, type ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import type { EngineInputs } from '../../lib/engine/types';
-import { simulate, tippingPointRent } from '../../lib/engine/engine';
+import type { EngineInputs, SensitivityRow } from '../../lib/engine/types';
+import { analyzeScenario, simulateCore } from '../../lib/engine/engine';
 import { DEFAULT_INPUTS, SUPPORTED_CURRENCIES } from '../../lib/engine/defaults';
-import { decodeParams, encodeParams } from '../../lib/engine/urlParams';
+import {
+  decodeParams,
+  encodeParams,
+  hasScenarioParams,
+  OWNED_PARAMS,
+} from '../../lib/engine/urlParams';
 import { formatCurrency, formatNumber, formatPercent } from '../../lib/engine/format';
 import { CompactNumber, Group, SliderField, Toggle } from './fields';
 import { PRESETS } from './presets';
@@ -17,9 +23,39 @@ const STORAGE_KEY = 'bvr-scenario-v2';
 /** Comparable rent heuristic while linked: 0.5% of the price per month. */
 const linkedRent = (price: number) => Math.round((price * 0.005) / 25) * 25;
 
+/** Renders a recoverable fallback instead of blanking the island on a crash. */
+class CalcErrorBoundary extends Component<{ children: ComponentChildren }, { failed: boolean }> {
+  state = { failed: false };
+  componentDidCatch() {
+    this.setState({ failed: true });
+  }
+  render() {
+    if (this.state.failed) {
+      return (
+        <div class="mx-auto max-w-xl rounded-xl border-2 border-hairline p-6 text-center">
+          <p class="font-semibold text-ink">The calculator hit an unexpected error.</p>
+          <p class="mt-1 text-sm text-ink-secondary">
+            Your inputs are saved in the URL — reloading usually fixes it.
+          </p>
+          <button
+            type="button"
+            class="mt-4 rounded-lg bg-buy px-4 py-2 text-sm font-medium text-white"
+            onClick={() => window.location.reload()}
+          >
+            Reload the calculator
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function initialState(): { inputs: EngineInputs; rentLinked: boolean } {
   if (typeof window !== 'undefined') {
-    if (window.location.search) {
+    // Only treat the URL as a scenario when it carries params we understand —
+    // ?utm_source=… alone must not mask the visitor's saved scenario.
+    if (hasScenarioParams(window.location.search)) {
       return { inputs: decodeParams(window.location.search), rentLinked: false };
     }
     try {
@@ -53,13 +89,17 @@ export default function Calculator() {
     setActivePreset(null);
   };
 
-  // Debounced URL + localStorage sync: the URL is the share artifact.
+  // Debounced URL + localStorage sync: the URL is the share artifact. Params
+  // we don't own (utm_*, ref, …) are preserved for analytics attribution.
   useEffect(() => {
     clearTimeout(syncTimer.current);
     syncTimer.current = setTimeout(() => {
-      const params = encodeParams(inputs);
-      const url = params ? `?${params}` : window.location.pathname;
-      window.history.replaceState(null, '', params ? url : '/');
+      const merged = new URLSearchParams(encodeParams(inputs));
+      for (const [key, value] of new URLSearchParams(window.location.search)) {
+        if (!OWNED_PARAMS.has(key)) merged.set(key, value);
+      }
+      const qs = merged.toString();
+      window.history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
       } catch {
@@ -69,8 +109,20 @@ export default function Calculator() {
     return () => clearTimeout(syncTimer.current);
   }, [inputs]);
 
-  const results = useMemo(() => simulate(inputs), [inputs]);
-  const tippingRent = useMemo(() => tippingPointRent(inputs), [inputs]);
+  // The core simulation is ~1ms and runs on every input; the sensitivity and
+  // tipping-point extras are ~50 more simulations, so they trail by 150ms and
+  // never block slider feedback.
+  const results = useMemo(() => simulateCore(inputs), [inputs]);
+  const [analysis, setAnalysis] = useState<{
+    sensitivity: SensitivityRow[];
+    tippingRent: number | null;
+  } | null>(null);
+  useEffect(() => {
+    setAnalysis(null);
+    const timer = setTimeout(() => setAnalysis(analyzeScenario(inputs)), 150);
+    return () => clearTimeout(timer);
+  }, [inputs]);
+
   const shareUrl = `https://buyvsrent.xyz/${(() => {
     const p = encodeParams(inputs);
     return p ? `?${p}` : '';
@@ -91,10 +143,11 @@ export default function Calculator() {
   };
 
   return (
+    <CalcErrorBoundary>
     <div class="mx-auto max-w-5xl px-4">
       <VerdictBanner
         results={results}
-        tippingRent={tippingRent}
+        tippingRent={analysis?.tippingRent ?? null}
         currency={inputs.currency}
         horizon={inputs.timeHorizonYears}
       />
@@ -330,7 +383,11 @@ export default function Calculator() {
         <div class="min-w-0 space-y-8">
           <NetWorthChart results={results} currency={inputs.currency} />
           <MonthlyCosts results={results} currency={inputs.currency} />
-          <Sensitivity results={results} currency={inputs.currency} />
+          <Sensitivity
+            sensitivity={analysis?.sensitivity ?? null}
+            difference={results.difference}
+            currency={inputs.currency}
+          />
           <YearTable results={results} currency={inputs.currency} />
           <ShareSheet
             results={results}
@@ -341,6 +398,7 @@ export default function Calculator() {
         </div>
       </div>
     </div>
+    </CalcErrorBoundary>
   );
 }
 

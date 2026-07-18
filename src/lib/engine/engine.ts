@@ -41,6 +41,52 @@ export function simulate(inputs: EngineInputs): EngineResults {
   return { ...core, sensitivity: computeSensitivity(inputs, core.difference) };
 }
 
+/**
+ * The simulation without the sensitivity re-runs — the cheap path for live
+ * recompute. Pair with analyzeScenario() for the deferred expensive extras.
+ */
+export function simulateCore(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
+  return run(inputs);
+}
+
+/** The expensive extras (~50 extra simulations): sensitivity + tipping rent. */
+export function analyzeScenario(inputs: EngineInputs): {
+  sensitivity: SensitivityRow[];
+  tippingRent: number | null;
+} {
+  const base = run(inputs);
+  return {
+    sensitivity: computeSensitivity(inputs, base.difference),
+    tippingRent: tippingPointRent(inputs),
+  };
+}
+
+/** One month of amortization for every month of a year — the single source of
+ *  truth used both for the tax projection and the actual cash-flow loop. */
+function amortizeYear(
+  startBalance: number,
+  monthlyRate: number,
+  payment: number,
+  monthsThisYear: number,
+  firstMonthIndex: number,
+  termMonths: number,
+): { months: Array<{ interest: number; principal: number }>; endBalance: number } {
+  const months: Array<{ interest: number; principal: number }> = [];
+  let bal = startBalance;
+  for (let m = 0; m < monthsThisYear; m++) {
+    const monthIndex = firstMonthIndex + m;
+    if (bal <= 0 || monthIndex > termMonths) {
+      months.push({ interest: 0, principal: 0 });
+      continue;
+    }
+    const interest = bal * monthlyRate;
+    const principal = Math.min(payment - interest, bal);
+    months.push({ interest, principal });
+    bal -= principal;
+  }
+  return { months, endBalance: bal };
+}
+
 function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
   const horizonMonths = Math.round(inputs.timeHorizonYears * 12);
   const termMonths = Math.round(inputs.mortgageTermYears * 12);
@@ -109,6 +155,7 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
     hoa: inputs.hoaMonthly,
     maintenance: (inputs.homePrice * inputs.maintenancePct) / 100 / 12,
     pmi: monthlyPmi,
+    taxSavings: 0,
     buyTotal: 0,
     rent: inputs.monthlyRent,
     rentersInsurance: inputs.rentersInsuranceMonthly,
@@ -134,26 +181,26 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
       annualRentersInsurance *= 1 + inputs.inflationPct / 100;
     }
 
-    // Projected mortgage interest for this calendar year (needed up front so
-    // the tax benefit can be spread across the year's months).
+    const monthsThisYear = Math.min(12, horizonMonths - (year - 1) * 12);
+    const yearFraction = monthsThisYear / 12;
+
+    // This year's amortization, computed once and used both for the tax
+    // projection and for the actual cash-flow loop below.
     const yearStartBalance = loanBalance;
-    let projectedInterest = 0;
-    let projectedEndBalance = loanBalance;
-    {
-      let bal = loanBalance;
-      const monthsThisYear = Math.min(12, horizonMonths - (year - 1) * 12);
-      for (let m = 0; m < monthsThisYear; m++) {
-        const monthIndex = (year - 1) * 12 + m + 1;
-        if (bal <= 0 || monthIndex > termMonths) break;
-        const interest = bal * monthlyRate;
-        const principal = Math.min(mortgagePayment - interest, bal);
-        projectedInterest += interest;
-        bal -= principal;
-      }
-      projectedEndBalance = bal;
-    }
+    const schedule = amortizeYear(
+      loanBalance,
+      monthlyRate,
+      mortgagePayment,
+      monthsThisYear,
+      (year - 1) * 12 + 1,
+      termMonths,
+    );
+    const projectedInterest = schedule.months.reduce((s, m) => s + m.interest, 0);
+    const projectedEndBalance = schedule.endBalance;
 
     // Tax savings from itemizing, over and above the standard deduction.
+    // Deduction amounts pro-rate for a partial final year so the interest
+    // (already partial) is compared against matching-period figures.
     let taxSavings = 0;
     if (inputs.itemizeDeductions) {
       // IRS Pub. 936 convention: average acquisition debt for the year.
@@ -163,13 +210,14 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
           ? inputs.mortgageInterestDeductionCap / averageBalance
           : 1;
       const deductibleInterest = projectedInterest * capRatio;
-      const deductibleSalt = Math.min(annualPropertyTax, inputs.saltCap);
+      const deductibleSalt = Math.min(annualPropertyTax * yearFraction, inputs.saltCap * yearFraction);
       const excess = Math.max(
         0,
-        deductibleInterest + deductibleSalt - inputs.standardDeduction,
+        deductibleInterest + deductibleSalt - inputs.standardDeduction * yearFraction,
       );
       taxSavings = (excess * inputs.marginalTaxRatePct) / 100;
     }
+    const monthlyTaxCredit = monthsThisYear > 0 ? taxSavings / monthsThisYear : 0;
 
     let interestPaidThisYear = 0;
     let principalPaidThisYear = 0;
@@ -180,10 +228,7 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
     // Maintenance is a % of the home's value at the START of the year.
     const maintenanceMonthly = (homeValue * inputs.maintenancePct) / 100 / 12;
 
-    const monthsThisYear = Math.min(12, horizonMonths - (year - 1) * 12);
     for (let m = 0; m < monthsThisYear; m++) {
-      const monthIndex = (year - 1) * 12 + m + 1;
-
       // PMI is due for any month that STARTS above 80% LTV of original price.
       let pmiThisMonth = 0;
       if (pmiRequired && loanBalance > 0.8 * inputs.homePrice) {
@@ -191,16 +236,12 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
         pmiPaidThisYear += pmiThisMonth;
       }
 
-      // Mortgage payment for this month.
-      let paymentThisMonth = 0;
-      if (loanBalance > 0 && monthIndex <= termMonths) {
-        const interest = loanBalance * monthlyRate;
-        const principal = Math.min(mortgagePayment - interest, loanBalance);
-        paymentThisMonth = interest + principal;
-        interestPaidThisYear += interest;
-        principalPaidThisYear += principal;
-        loanBalance -= principal;
-      }
+      // Mortgage cash flow from the precomputed schedule.
+      const { interest, principal } = schedule.months[m];
+      const paymentThisMonth = interest + principal;
+      interestPaidThisYear += interest;
+      principalPaidThisYear += principal;
+      loanBalance -= principal;
 
       const buyCost =
         paymentThisMonth +
@@ -209,7 +250,7 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
         annualHoa / 12 +
         maintenanceMonthly +
         pmiThisMonth -
-        taxSavings / 12;
+        monthlyTaxCredit;
       const rentCost = annualRent / 12 + annualRentersInsurance / 12;
 
       buyCostThisYear += buyCost;
@@ -230,22 +271,18 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
       homeValue *= homeMonthlyGrowth;
     }
 
+    if (year === 1) {
+      yearOneMonthly.taxSavings = monthlyTaxCredit;
+    }
+
     totals.buy.totalInterest += interestPaidThisYear;
     totals.buy.totalPrincipal += principalPaidThisYear;
     totals.buy.totalPropertyTax += (annualPropertyTax / 12) * monthsThisYear;
     totals.buy.totalInsurance += (annualInsurance / 12) * monthsThisYear;
     totals.buy.totalHoa += (annualHoa / 12) * monthsThisYear;
     totals.buy.totalPmi += pmiPaidThisYear;
-    totals.buy.totalTaxSavings += (taxSavings / 12) * monthsThisYear;
-    totals.buy.totalMaintenance +=
-      buyCostThisYear -
-      interestPaidThisYear -
-      principalPaidThisYear -
-      (annualPropertyTax / 12) * monthsThisYear -
-      (annualInsurance / 12) * monthsThisYear -
-      (annualHoa / 12) * monthsThisYear -
-      pmiPaidThisYear +
-      (taxSavings / 12) * monthsThisYear;
+    totals.buy.totalTaxSavings += taxSavings;
+    totals.buy.totalMaintenance += maintenanceMonthly * monthsThisYear;
     totals.rent.totalRent += (annualRent / 12) * monthsThisYear;
     totals.rent.totalRentersInsurance += (annualRentersInsurance / 12) * monthsThisYear;
 
@@ -263,7 +300,7 @@ function run(inputs: EngineInputs): Omit<EngineResults, 'sensitivity'> {
       monthlyRent: annualRent / 12,
       interestPaid: interestPaidThisYear,
       principalPaid: principalPaidThisYear,
-      taxSavings: (taxSavings / 12) * monthsThisYear,
+      taxSavings,
       pmiPaid: pmiPaidThisYear,
     });
   }

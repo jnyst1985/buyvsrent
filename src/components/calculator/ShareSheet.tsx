@@ -1,9 +1,9 @@
-import { useState } from 'preact/hooks';
-import type { EngineResults } from '../../lib/engine/types';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import type { CoreResults } from '../../lib/engine/types';
 import { formatCurrency } from '../../lib/engine/format';
 
 interface Props {
-  results: EngineResults;
+  results: CoreResults;
   currency: string;
   horizon: number;
   /** Current share URL (kept in sync with inputs by the root). */
@@ -12,6 +12,8 @@ interface Props {
 
 export function ShareSheet({ results, currency, horizon, shareUrl }: Props) {
   const [copied, setCopied] = useState<'link' | 'verdict' | null>(null);
+  const resetTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   const verdictText =
     results.verdict === 'tie'
@@ -24,7 +26,8 @@ export function ShareSheet({ results, currency, horizon, shareUrl }: Props) {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(which);
-      setTimeout(() => setCopied(null), 2000);
+      clearTimeout(resetTimer.current);
+      resetTimer.current = setTimeout(() => setCopied(null), 2000);
     } catch {
       // Clipboard unavailable (permissions/http): fall back to prompt.
       window.prompt('Copy this link:', text);

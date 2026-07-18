@@ -122,6 +122,8 @@ export interface EngineResults {
     hoa: number;
     maintenance: number;
     pmi: number;
+    /** Monthly value of year-1 itemized tax savings (0 when taking the standard deduction). */
+    taxSavings: number;
     buyTotal: number;
     rent: number;
     rentersInsurance: number;
@@ -129,3 +131,6 @@ export interface EngineResults {
   };
   sensitivity: SensitivityRow[];
 }
+
+/** The live-recompute payload — everything except the deferred sensitivity extras. */
+export type CoreResults = Omit<EngineResults, 'sensitivity'>;

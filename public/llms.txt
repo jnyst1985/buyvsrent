@@ -1,6 +1,6 @@
 # BuyVsRent.xyz
 
-> Free rent-vs-buy calculator with fully documented methodology. Simulates buying a home vs. renting and investing the difference, month by month: symmetric opportunity cost (whichever side is cheaper invests the surplus), US 2026 tax rules (standard-vs-itemized delta, $750k mortgage-interest cap, $40,400 SALT cap, Section 121 exclusion), PMI with automatic termination, closing and selling costs, capital-gains tax on portfolios. Currency-agnostic. No paywall, no signup; the engine is open source with 91 automated tests.
+> Free rent-vs-buy calculator with fully documented methodology. Simulates buying a home vs. renting and investing the difference, month by month: symmetric opportunity cost (whichever side is cheaper invests the surplus), US 2026 tax rules (standard-vs-itemized delta, $750k mortgage-interest cap, $40,400 SALT cap, Section 121 exclusion), PMI with automatic termination, closing and selling costs, capital-gains tax on portfolios. Currency-agnostic. No paywall, no signup; the engine is open source with 33 automated tests.
 
 Key finding (July 2026, our model): at ~6.5% mortgage rates, buying a typical US home beats renting only when a comparable rental costs more than ~0.7% of the home's value per month (about $2,468/mo on a $420,000 home, 10-year stay). At 4% rates the threshold falls to ~0.54%.
 

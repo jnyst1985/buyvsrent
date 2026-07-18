@@ -1,8 +1,10 @@
-import type { EngineResults } from '../../lib/engine/types';
+import type { SensitivityRow } from '../../lib/engine/types';
 import { formatCompact } from '../../lib/engine/format';
 
 interface Props {
-  results: EngineResults;
+  /** Null while the deferred analysis is still computing. */
+  sensitivity: SensitivityRow[] | null;
+  difference: number;
   currency: string;
 }
 
@@ -10,8 +12,18 @@ interface Props {
  * The honesty feature: shows how the final gap moves if each key assumption
  * is off by one percentage point, and flags assumptions that flip the verdict.
  */
-export function Sensitivity({ results, currency }: Props) {
-  const anyFlips = results.sensitivity.some((s) => s.flips);
+export function Sensitivity({ sensitivity, difference, currency }: Props) {
+  if (sensitivity === null) {
+    return (
+      <section aria-labelledby="sensitivity-heading">
+        <h2 id="sensitivity-heading" class="mb-1 font-semibold text-ink">
+          How solid is this answer?
+        </h2>
+        <div class="h-40 animate-pulse rounded-lg bg-surface-raised" aria-hidden="true" />
+      </section>
+    );
+  }
+  const anyFlips = sensitivity.some((s) => s.flips);
 
   return (
     <section aria-labelledby="sensitivity-heading">
@@ -32,7 +44,7 @@ export function Sensitivity({ results, currency }: Props) {
             </tr>
           </thead>
           <tbody>
-            {results.sensitivity.map((s) => (
+            {sensitivity.map((s) => (
               <tr key={s.key} class="border-b border-hairline">
                 <td class="py-1.5 pr-3 text-ink-secondary">
                   {s.label}
@@ -46,7 +58,7 @@ export function Sensitivity({ results, currency }: Props) {
                   {signed(s.minusOne, currency)}
                 </td>
                 <td class="py-1.5 pr-3 text-right text-ink-muted tabular">
-                  {signed(results.difference, currency)}
+                  {signed(difference, currency)}
                 </td>
                 <td class="py-1.5 text-right text-ink tabular">{signed(s.plusOne, currency)}</td>
               </tr>

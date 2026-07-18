@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import type { EngineResults } from '../../lib/engine/types';
+import type { CoreResults } from '../../lib/engine/types';
 import { formatCurrency } from '../../lib/engine/format';
 
 interface Props {
-  results: EngineResults;
+  results: CoreResults;
   tippingRent: number | null;
   currency: string;
   horizon: number;

@@ -1,9 +1,9 @@
 import { useState } from 'preact/hooks';
-import type { EngineResults } from '../../lib/engine/types';
+import type { CoreResults } from '../../lib/engine/types';
 import { formatCompact } from '../../lib/engine/format';
 
 interface Props {
-  results: EngineResults;
+  results: CoreResults;
   currency: string;
 }
 

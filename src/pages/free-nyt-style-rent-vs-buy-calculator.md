@@ -17,7 +17,7 @@ The New York Times' rent-vs-buy calculator is the most influential tool of its k
 
 Yes. Our calculator implements the same core model the Times popularized — whichever side pays less each month invests the difference, and the headline answer is the rent at which the verdict flips — free, with no paywall, account, or email required. It adds a sensitivity table, an open-source engine, and currency-agnostic inputs. We are not affiliated with the Times.
 
-Most free alternatives are lead-generation tools from lenders and listing sites, and they tend to fail the same way: they compare a mortgage payment to rent, ignore what the down payment could have earned elsewhere, and quietly hand buying the win. The Times' calculator got this right and made the fix famous. Ours makes the same fix in the open — every formula (amortization, opportunity cost, taxes, selling costs) is documented with worked examples at [/methodology](/methodology), and the engine behind it ships with 91 passing tests, ten of them independently derived audit vectors.
+Most free alternatives are lead-generation tools from lenders and listing sites, and they tend to fail the same way: they compare a mortgage payment to rent, ignore what the down payment could have earned elsewhere, and quietly hand buying the win. The Times' calculator got this right and made the fix famous. Ours makes the same fix in the open — every formula (amortization, opportunity cost, taxes, selling costs) is documented with worked examples at [/methodology](/methodology), and the engine behind it ships with 33 passing tests, ten of them independently derived audit vectors.
 
 ## What made the NYT calculator the gold standard?
 
@@ -67,7 +67,7 @@ The ratio column explains the geography. A $220,000 home renting for $1,600 a mo
 
 ## What does BuyVsRent add that the Times' tool doesn't?
 
-Four things: an automatic sensitivity table that stress-tests the verdict against ±1-point changes in every major assumption; an open-source engine anyone can audit, with 91 passing tests; currency-agnostic inputs that work anywhere once US taxes are zeroed; and edge-case coverage — PMI with automatic cancellation, all-cash purchases, and horizons that run past mortgage payoff.
+Four things: an automatic sensitivity table that stress-tests the verdict against ±1-point changes in every major assumption; an open-source engine anyone can audit, with 33 passing tests; currency-agnostic inputs that work anywhere once US taxes are zeroed; and edge-case coverage — PMI with automatic cancellation, all-cash purchases, and horizons that run past mortgage payoff.
 
 The sensitivity table is the piece we'd argue matters most. The Times lets you drag sliders one at a time; we print the whole fragility picture at once. In the default scenario above, no single ±1-point change — appreciation, rent growth, investment return, or the rate — flips the renting verdict: it's robust. Rerun it at a 4% mortgage and the buying verdict turns fragile: a ±1-point move in home appreciation or in the rate flips it. Two scenarios, two very different confidence levels, and you only learn that if the tool shows you.
 

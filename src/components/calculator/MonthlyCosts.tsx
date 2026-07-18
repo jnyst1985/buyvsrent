@@ -1,14 +1,15 @@
-import type { EngineResults } from '../../lib/engine/types';
+import type { CoreResults } from '../../lib/engine/types';
 import { formatCurrency } from '../../lib/engine/format';
 
 interface Props {
-  results: EngineResults;
+  results: CoreResults;
   currency: string;
 }
 
 export function MonthlyCosts({ results, currency }: Props) {
   const m = results.monthly;
-  const diff = m.buyTotal - m.rentTotal;
+  // The engine invests the AFTER-tax-savings difference; quote that number.
+  const diff = m.buyTotal - m.taxSavings - m.rentTotal;
   const fmt = (v: number) => formatCurrency(v, currency);
 
   const allRows: Array<[string, number]> = [
@@ -39,9 +40,15 @@ export function MonthlyCosts({ results, currency }: Props) {
                 <dd class="text-ink tabular">{fmt(v)}</dd>
               </div>
             ))}
+            {m.taxSavings > 0.005 && (
+              <div class="flex justify-between gap-3">
+                <dt class="text-ink-secondary">Tax savings (itemizing)</dt>
+                <dd class="text-rent tabular">−{fmt(m.taxSavings)}</dd>
+              </div>
+            )}
             <div class="flex justify-between gap-3 border-t border-hairline pt-1.5 font-semibold">
               <dt class="text-ink">Total</dt>
-              <dd class="text-ink tabular">{fmt(m.buyTotal)}</dd>
+              <dd class="text-ink tabular">{fmt(m.buyTotal - m.taxSavings)}</dd>
             </div>
           </dl>
         </div>

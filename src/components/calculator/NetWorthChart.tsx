@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'preact/hooks';
-import type { EngineResults } from '../../lib/engine/types';
+import type { CoreResults } from '../../lib/engine/types';
 import { linearScale, linePath, niceTicks } from '../../lib/chart';
 import { formatCompact, formatCurrency } from '../../lib/engine/format';
 
@@ -11,7 +11,7 @@ const PLOT_H = H - M.top - M.bottom;
 // Y-axis labels sit inside the plot's left edge to save horizontal space.
 
 interface Props {
-  results: EngineResults;
+  results: CoreResults;
   currency: string;
 }
 
@@ -70,13 +70,16 @@ export function NetWorthChart({ results, currency }: Props) {
     setHoverYear(Math.min(horizon, Math.max(0, yr)));
   };
 
+  // Clamp against the current horizon: a stale hoverYear can outlive a
+  // shrinking "how long you'll stay" while the pointer stays on the SVG.
+  const clampedHover = hoverYear === null ? null : Math.min(hoverYear, horizon);
   const hover =
-    hoverYear === null
+    clampedHover === null
       ? null
       : {
-          year: hoverYear,
-          buy: hoverYear === 0 ? yearZero.buyNetWorth : years[hoverYear - 1].buyNetWorth,
-          rent: hoverYear === 0 ? yearZero.rentNetWorth : years[hoverYear - 1].rentNetWorth,
+          year: clampedHover,
+          buy: clampedHover === 0 ? yearZero.buyNetWorth : years[clampedHover - 1].buyNetWorth,
+          rent: clampedHover === 0 ? yearZero.rentNetWorth : years[clampedHover - 1].rentNetWorth,
         };
   const hoverOnLeft = hover !== null && hover.year > horizon * 0.55;
 
@@ -138,7 +141,7 @@ export function NetWorthChart({ results, currency }: Props) {
               key={t}
               x={x(t)}
               y={M.top + PLOT_H + 16}
-              text-anchor="middle"
+              text-anchor={t === 0 ? 'start' : 'middle'}
               class="fill-ink-muted tabular"
               font-size="10"
             >

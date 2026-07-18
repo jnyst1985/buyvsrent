@@ -1,0 +1,85 @@
+{
+ "description": "Twenty real rent-vs-buy questions answered with numbers from our verified model: the 5% rule at 2026 rates, break-even years, PMI, tax deductions, tipping-point rents, and exactly when each side wins.",
+ "questions": [
+  {
+   "q": "Is it cheaper to rent or buy in 2026?",
+   "a": "At 2026 rates, renting usually wins on pure finances. Our model's default scenario \u2014 $420,000 home, $2,100 comparable rent, 20% down, 6.5% thirty-year mortgage, 3% home appreciation, 7% investment return, 10-year stay \u2014 ends with the renter who invests the difference ahead by about $67,000. Drop the mortgage rate to 4% and buying wins by about $38,000 instead. The answer is a ratio between your rent, price, and rate \u2014 not a rule. <a href=\"/?pp=420000&rent=2100&mr=6.5\">Run the default scenario</a> and change the numbers to yours."
+  },
+  {
+   "q": "Is rent money wasted?",
+   "a": "No more than mortgage interest, property tax, insurance, and maintenance are wasted \u2014 that money is gone either way. In year one of our default scenario ($420,000 home, 6.5% mortgage), the owner pays $3,067 a month, of which only $304 reduces the loan; the other $2,763 is unrecoverable. The renter pays $2,115 all-in (rent plus renters insurance) \u2014 also unrecoverable, but $648 less. Whichever side wastes less each month can invest the difference, and that compounding, not the throwing-money-away slogan, decides who ends up wealthier."
+  },
+  {
+   "q": "What does owning really cost per month?",
+   "a": "Roughly 40-50% more than the mortgage payment. In our default scenario, principal and interest on a $420,000 home (20% down, 6.5%) is $2,124 a month, but the true year-one cost is $3,067 \u2014 44% higher \u2014 once property tax (1.1%, $4,620 a year), insurance ($2,500), and maintenance (1% of value, $4,200) are added. That extra $943 a month, about 2.7% of the home's value per year, continues even after the mortgage is gone. Comparing sticker P&I to rent is the most common rent-vs-buy math error."
+  },
+  {
+   "q": "How much of a mortgage payment is interest?",
+   "a": "Early on, nearly all of it. On our default $336,000 loan ($420,000 home, 20% down, 6.5%, 30 years) the payment is $2,124; the first month's interest is $1,820 \u2014 86% of the payment \u2014 leaving $304 for equity. Principal doesn't overtake interest until around year 19. Held the full 30 years, total interest reaches about $429,000, more than the amount borrowed. This is why short ownership stints build little equity while closing and selling costs pile up."
+  },
+  {
+   "q": "What is the 5% rule for rent vs. buy?",
+   "a": "Ben Felix's shorthand (PWL Capital, 2019): unrecoverable ownership costs run about 5% of home value a year \u2014 roughly 1% property tax, 1% maintenance, 3% cost of capital \u2014 so if annual rent is under 5% of the price (monthly rent below price \u00f7 240), renting is favored. On $420,000 that is $1,750 a month. Our model shows the threshold moves with rates: at a 4% mortgage the breakeven rent is $1,890 (5.4% of value a year, close to the rule), but at 6.5% it is $2,468 \u2014 effectively a 7% rule. Details at <a href=\"/calculators/5-percent-rule\">the 5% rule calculator</a>."
+  },
+  {
+   "q": "How high does rent have to be before buying wins?",
+   "a": "For our default $420,000 home (20% down, 10-year stay, 3% appreciation, 7% investment return), the tipping-point monthly rent is $1,890 at a 4% mortgage, $2,067 at 5%, $2,340 at 6%, $2,468 at 6.5%, $2,590 at 7%, and $2,830 at 8%. Below those rents, renting the comparable home wins; above them, buying does. As a share of home value, breakeven annual rent climbs from 5.4% to 8.1% as rates rise from 4% to 8% \u2014 on average, each point of mortgage rate demands about $235 more monthly rent to justify buying."
+  },
+  {
+   "q": "What price-to-rent ratio favors buying?",
+   "a": "Price-to-rent is home price divided by annual rent. In our model at a 6.5% mortgage and a 10-year stay, buying won at a ratio of 11.5 ($220,000 home, $1,600 rent), lost at 16.7 ($420,000, $2,100), and lost by about $560,000 at 24 ($1.1M, $3,800). The default scenario's breakeven sits near 14. That tracks the classic rule of thumb \u2014 under 15 favors buying, over 20 favors renting \u2014 but the threshold slides lower as rates rise. Compute yours with the <a href=\"/calculators/price-to-rent-ratio\">price-to-rent calculator</a>."
+  },
+  {
+   "q": "What does break-even year mean?",
+   "a": "The first year the buyer's net wealth \u2014 home equity minus selling costs and taxes \u2014 catches the renter's portfolio and stays ahead. Sell before it and renting won; after it, buying did. In our default $420,000 scenario at a 4% mortgage, break-even lands in year 6. At 6.5% there is no break-even: the renter's lead grows from about $49,000 at year 5 to $389,000 at year 30. A break-even that never arrives means the rent is too cheap relative to the price and rate. More definitions in <a href=\"/glossary\">the glossary</a>."
+  },
+  {
+   "q": "How long do I need to stay for buying to make sense?",
+   "a": "Five years is the usual floor, because round-trip transaction costs \u2014 our model defaults to 3% of the price when buying and 6% when selling, about $46,000 total in the default scenario \u2014 need years of appreciation to absorb. But tenure can't fix a bad price-to-rent-to-rate combination: at 6.5%, renting wins at 5 years (~$49,000), 10 years (~$67,000), and 30 years (~$389,000). At 4%, buying breaks even in year 6 and stays ahead. Time amplifies whichever side is winning; it doesn't switch sides. More in <a href=\"/guides/when-does-buying-beat-renting\">when does buying beat renting</a>."
+  },
+  {
+   "q": "Do mortgage rates really flip the answer?",
+   "a": "More than any other input. Same $420,000 house, same $2,100 rent, same 10-year stay: at 6.5% renting wins by about $67,000; at 4% buying wins by about $38,000 \u2014 a $105,000 swing from the rate alone. Our sensitivity tests show the 6.5% verdict is robust (no single assumption shifted one point either way flips it), while the 4% verdict sits on a knife edge, where one point of mortgage rate or home appreciation flips the winner. If rates move materially, rerun everything. This year's landscape is covered in <a href=\"/guides/rent-vs-buy-2026\">rent vs. buy in 2026</a>."
+  },
+  {
+   "q": "How does PMI change the math if I put less than 20% down?",
+   "a": "Private mortgage insurance protects the lender, not you \u2014 pure unrecoverable cost. Our model defaults to 0.6% of the loan per year: $189 a month on the $378,000 loan left by a 10% down payment on a $420,000 home, inside Freddie Mac's typical range of $30-$70 monthly per $100,000 borrowed. Under the Homeowners Protection Act you can request cancellation at 80% loan-to-value and it must auto-terminate at 78%; our calculator cancels it automatically as equity grows, so low-down-payment scenarios are penalized exactly as long as they should be \u2014 no longer."
+  },
+  {
+   "q": "Do mortgage tax deductions make buying worth it?",
+   "a": "Rarely, since the 2018 tax law. Deductions only help to the extent itemizing beats the standard deduction \u2014 $16,100 single, $32,200 married filing jointly in 2026 \u2014 and roughly nine in ten filers take the standard deduction (IRS). In our default scenario, year-one mortgage interest is about $21,800: for a joint filer, that alone doesn't clear the bar, so its tax value is zero. Our model prices the itemized-versus-standard difference exactly, including the 2026 $40,400 SALT cap and $750,000 mortgage-interest limit. Even a $1.1M home for a couple who genuinely itemizes still lost to renting by about $560,000 over 15 years."
+  },
+  {
+   "q": "How much do closing and selling costs matter?",
+   "a": "They are the main reason short stays favor renting. Our model defaults to 3% of the purchase price in buyer closing costs ($12,600 on a $420,000 home) and 6% of the sale price when selling \u2014 about $34,000 when the default home sells for $564,000 in year 10 after 3% annual appreciation. That $46,000 round trip is two-thirds of the renter's entire $67,000 winning margin. Typical US ranges are 2-5% to buy and 6-10% to sell once commissions, transfer taxes, and fees are counted. Calculators that skip selling costs systematically flatter buying."
+  },
+  {
+   "q": "Is a house a better investment than stocks?",
+   "a": "As a pure asset, no. US house prices have appreciated roughly 4% a year nominal over recent decades (FHFA house price index) versus about 10% for the S&P 500 with dividends; our model conservatively assumes 3% and 7%. A home fights back with leverage \u2014 20% down but 100% of the gain \u2014 and an implicit dividend, the rent you stop paying. But it costs about 2.7% of its value a year to hold and roughly 9% round trip to trade. Net of everything, our default leveraged house still trails the renter's portfolio by about $67,000 over 10 years. Full breakdown in <a href=\"/guides/is-it-better-to-rent-or-buy\">is it better to rent or buy</a>."
+  },
+  {
+   "q": "What if I stay forever and never sell?",
+   "a": "Staying forever eliminates selling costs and future rent hikes \u2014 but it also gives compounding maximum runway, and compounding favors the higher-return asset. In our default scenario (3% home appreciation, 7% investment return, 6.5% mortgage), the renter's lead grows from about $67,000 at 10 years to $389,000 at 30. At a 4% mortgage the same math runs the other way: buying is ahead from year 6 and stays ahead. A lifetime stay locks in whichever side your rent, price, and rate already favor. It is not an automatic win for the house."
+  },
+  {
+   "q": "What happens after the mortgage is paid off?",
+   "a": "Housing gets cheaper, not free. The $2,124 principal-and-interest payment in our default scenario disappears after year 30, but property tax, insurance, and maintenance \u2014 $943 a month in year one, about 2.7% of home value annually \u2014 continue and grow with the home's value. Meanwhile the renter is paying rent that has compounded at 2.5% for three decades. Our calculator is one of the few that models years beyond payoff: the owner's freed-up cash flow gets invested from then on, which is exactly when owning's cash-flow advantage kicks in. Whether it arrives soon enough is what break-even analysis answers."
+  },
+  {
+   "q": "Why does renting win in expensive cities and buying win in cheap markets?",
+   "a": "Because rents don't scale with prices. Our expensive-metro scenario \u2014 a $1.1M home renting for $3,800, just 0.35% of the price per month \u2014 has renting ahead by about $560,000 over 15 years, even for a couple who itemizes. Our affordable-market scenario \u2014 a $220,000 home renting for $1,600, or 0.73% per month \u2014 flips to buying at the same 6.5% mortgage rate. High-priced markets compress rental yields; cheap markets support them. The rent-to-price ratio, not the price tag, is the signal. More in <a href=\"/guides/is-buying-always-better-than-renting\">is buying always better than renting</a>."
+  },
+  {
+   "q": "How does the calculator handle opportunity cost?",
+   "a": "Symmetrically, which is its most important design choice. The renter invests the skipped down payment and closing costs \u2014 $84,000 down alone grows to about $165,000 in 10 years at 7% \u2014 plus the monthly savings whenever renting is cheaper. But whenever owning is cheaper (after rent growth overtakes a fixed payment, or post-payoff), the owner invests the difference too. Most calculators only credit the renter, which overstates renting. We also tax the portfolio's capital gains at the end, which most tools skip. The full model is documented at <a href=\"/methodology\">/methodology</a> and verified by 91 automated tests, including 10 independently computed audit scenarios."
+  },
+  {
+   "q": "Does buying with all cash change the answer?",
+   "a": "It changes the numbers, not the logic. Cash removes mortgage interest and PMI but maximizes opportunity cost: $420,000 not invested at 7% forgoes about $406,000 of growth over 10 years, while the house gains about $144,000 at 3% appreciation. The comparison becomes appreciation plus avoided rent versus portfolio returns, with no leverage on either side. Our calculator supports all-cash purchases directly \u2014 set the down payment to 100% \u2014 and still charges both sides their true costs. High mortgage rates make paying cash relatively more attractive; they don't repeal opportunity cost."
+  },
+  {
+   "q": "Does the calculator work outside the US, in other currencies?",
+   "a": "Yes. The engine is currency-agnostic \u2014 eight currencies from USD to INR are built in, and every input is just a number, so the math is identical anywhere. The US-specific layer is taxes: standard-versus-itemized deduction logic, the $40,400 SALT cap, the $750,000 mortgage-interest cap, and the Section 121 home-sale exclusion. Each can be zeroed or adjusted \u2014 set the marginal and capital-gains rates to your country's, or to zero. Rate-versus-rent ratios, transaction costs, and opportunity cost, which decide most outcomes, are universal. <a href=\"/\">Run your own numbers</a> with local price, rent, and rate."
+  }
+ ]
+}

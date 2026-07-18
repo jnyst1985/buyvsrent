@@ -55,7 +55,7 @@ describe('methodology audit vectors', () => {
   for (const vector of vectors) {
     it(vector.name, () => {
       const inputs = toEngineInputs(vector.inputs as LegacyInputs);
-      const expected = vector.expected as Record<string, number | boolean | string>;
+      const expected = vector.expected as unknown as Record<string, number | boolean | string | null>;
       const tol = typeof expected.tolerance_abs === 'number' ? expected.tolerance_abs : 1;
 
       const r = simulate(inputs);

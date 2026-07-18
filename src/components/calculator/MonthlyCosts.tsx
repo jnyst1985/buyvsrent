@@ -11,14 +11,15 @@ export function MonthlyCosts({ results, currency }: Props) {
   const diff = m.buyTotal - m.rentTotal;
   const fmt = (v: number) => formatCurrency(v, currency);
 
-  const buyRows: Array<[string, number]> = [
+  const allRows: Array<[string, number]> = [
     ['Mortgage (principal + interest)', m.mortgagePayment],
     ['Property tax', m.propertyTax],
     ['Home insurance', m.insurance],
     ['Maintenance', m.maintenance],
     ['HOA', m.hoa],
     ['Mortgage insurance (PMI)', m.pmi],
-  ].filter(([, v]) => v > 0.005) as Array<[string, number]>;
+  ];
+  const buyRows = allRows.filter(([, v]) => v > 0.005);
 
   return (
     <section aria-labelledby="monthly-heading">

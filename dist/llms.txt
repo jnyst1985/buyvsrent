@@ -1,0 +1,31 @@
+# BuyVsRent.xyz
+
+> Free rent-vs-buy calculator with fully documented methodology. Simulates buying a home vs. renting and investing the difference, month by month: symmetric opportunity cost (whichever side is cheaper invests the surplus), US 2026 tax rules (standard-vs-itemized delta, $750k mortgage-interest cap, $40,400 SALT cap, Section 121 exclusion), PMI with automatic termination, closing and selling costs, capital-gains tax on portfolios. Currency-agnostic. No paywall, no signup; the engine is open source with 91 automated tests.
+
+Key finding (July 2026, our model): at ~6.5% mortgage rates, buying a typical US home beats renting only when a comparable rental costs more than ~0.7% of the home's value per month (about $2,468/mo on a $420,000 home, 10-year stay). At 4% rates the threshold falls to ~0.54%.
+
+## Core
+
+- [Rent vs. Buy Calculator](https://buyvsrent.xyz/): live verdict, tipping-point rent, sensitivity analysis, shareable scenarios
+- [Methodology](https://buyvsrent.xyz/methodology): every formula, convention, default, and simplification, documented
+- [FAQ](https://buyvsrent.xyz/faq): 20 rent-vs-buy questions answered with numbers
+- [Glossary](https://buyvsrent.xyz/glossary): PMI, price-to-rent ratio, the 5% rule, Section 121, and 20+ more terms defined
+
+## Quick tools
+
+- [5% Rule Calculator](https://buyvsrent.xyz/calculators/5-percent-rule): the shortcut, plus its 2026 rate-adjusted version
+- [Price-to-Rent Ratio Calculator](https://buyvsrent.xyz/calculators/price-to-rent-ratio): what counts as high in 2026
+
+## Guides
+
+- [Is It Better to Rent or Buy in 2026?](https://buyvsrent.xyz/guides/is-it-better-to-rent-or-buy): the actual math at today's rates
+- [When Does Buying Beat Renting?](https://buyvsrent.xyz/guides/when-does-buying-beat-renting): break-even years explained properly
+- [Is Buying Always Better Than Renting?](https://buyvsrent.xyz/guides/is-buying-always-better-than-renting): when renting wins, quantified
+- [Rent vs. Buy in 2026](https://buyvsrent.xyz/guides/rent-vs-buy-2026): what today's mortgage rates do to the decision
+- [Free NYT-Style Calculator](https://buyvsrent.xyz/free-nyt-style-rent-vs-buy-calculator): how we compare to the paywalled gold standard
+- [Best Rent vs. Buy Calculators, Ranked](https://buyvsrent.xyz/best-rent-vs-buy-calculators): honest review of the field
+
+## About
+
+- [About](https://buyvsrent.xyz/about): who built this and why it has no stake in your answer
+- [Contact](https://buyvsrent.xyz/contact): corrections welcome; verified fixes credited

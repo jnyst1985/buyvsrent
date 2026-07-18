@@ -1,0 +1,44 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PriceToRent from '../../components/calculator/PriceToRent';
+
+const entry = await getEntry('sections', 'price-to-rent-ratio');
+const Content = entry ? (await render(entry)).Content : null;
+
+const title = 'Price-to-Rent Ratio Calculator (2026 Interpretation) | BuyVsRent';
+const description =
+  'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting — and how mortgage rates shift those bands.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Price-to-Rent Ratio Calculator',
+  url: 'https://buyvsrent.xyz/calculators/price-to-rent-ratio',
+  description,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<BaseLayout {title} {description} path="/calculators/price-to-rent-ratio" jsonLd={jsonLd}>
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+      Price-to-rent ratio calculator
+    </h1>
+    <p class="mt-3 text-lg text-ink-secondary">
+      Home price ÷ annual rent. One number that tells you which way your market leans — and how
+      2026 mortgage rates move the goalposts.
+    </p>
+    <div class="mt-6">
+      <PriceToRent client:visible />
+    </div>
+    <article class="prose-content mt-10">
+      {Content && <Content />}
+    </article>
+    <p class="mt-8 border-t border-hairline pt-6 text-ink-secondary">
+      The ratio is a screen, not a verdict — <a href="/" class="text-buy underline underline-offset-2">the full calculator</a> weighs your stay length, taxes, and rates.
+    </p>
+  </div>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FivePercentRule from '../../components/calculator/FivePercentRule';
+
+const entry = await getEntry('sections', 'five-percent-rule');
+const Content = entry ? (await render(entry)).Content : null;
+
+const title = '5% Rule Calculator: Rent vs. Buy in 10 Seconds | BuyVsRent';
+const description =
+  'Check the rent-vs-buy 5% rule instantly: if annual rent is under ~5% of the home price, renting is reasonable. Includes the 2026 rate-adjusted version of the rule.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: '5% Rule Rent vs. Buy Calculator',
+  url: 'https://buyvsrent.xyz/calculators/5-percent-rule',
+  description,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+
+<BaseLayout {title} {description} path="/calculators/5-percent-rule" jsonLd={jsonLd}>
+  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
+    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+      The 5% rule, in 10 seconds
+    </h1>
+    <p class="mt-3 text-lg text-ink-secondary">
+      The famous shortcut: if a year of rent costs less than ~5% of the home's price, renting is
+      financially reasonable. Check your numbers, then read why 5% is really 7%+ at 2026 rates.
+    </p>
+    <div class="mt-6">
+      <FivePercentRule client:visible />
+    </div>
+    <article class="prose-content mt-10">
+      {Content && <Content />}
+    </article>
+    <p class="mt-8 border-t border-hairline pt-6 text-ink-secondary">
+      Rules of thumb screen; models decide. <a href="/" class="text-buy underline underline-offset-2">Run the full month-by-month comparison</a>.
+    </p>
+  </div>
+</BaseLayout>

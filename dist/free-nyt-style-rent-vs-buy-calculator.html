@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Free NYT-Style Rent vs Buy Calculator (No Paywall) | BuyVsRent</title><meta name="description" content="The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine."><link rel="canonical" href="https://buyvsrent.xyz/free-nyt-style-rent-vs-buy-calculator"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/apple-icon.png"><link rel="sitemap" href="/sitemap-index.xml"><meta name="theme-color" content="#2563eb"><meta property="og:site_name" content="BuyVsRent"><meta property="og:type" content="website"><meta property="og:title" content="Free NYT-Style Rent vs Buy Calculator (No Paywall) | BuyVsRent"><meta property="og:description" content="The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine."><meta property="og:url" content="https://buyvsrent.xyz/free-nyt-style-rent-vs-buy-calculator"><meta property="og:image" content="https://buyvsrent.xyz/og/default.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Free NYT-Style Rent vs Buy Calculator (No Paywall) | BuyVsRent"><meta name="twitter:description" content="The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine."><meta name="twitter:image" content="https://buyvsrent.xyz/og/default.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A free, NYT-style rent vs. buy calculator","description":"The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine.","datePublished":"2026-07-18T00:00:00.000Z","dateModified":"2026-07-18T00:00:00.000Z","author":{"@type":"Organization","name":"BuyVsRent"},"mainEntityOfPage":"https://buyvsrent.xyz/free-nyt-style-rent-vs-buy-calculator"}</script><link rel="stylesheet" href="/_astro/best-rent-vs-buy-calculators.BK8IwnaF.css"></head> <body> <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:shadow">
+Skip to content
+</a> <header class="border-b border-hairline"> <nav class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3" aria-label="Main"> <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-ink"> <svg width="22" height="22" viewBox="0 0 32 32" fill="none" aria-hidden="true"> <rect x="3" y="14" width="11" height="15" rx="1.5" fill="#2563eb"></rect> <path d="M2 15 8.5 8 15 15" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M18 29V17m5 12V12m5 17V7" stroke="#059669" stroke-width="3" stroke-linecap="round"></path> </svg>
+BuyVsRent<span class="text-ink-muted">.xyz</span> </a> <div class="flex items-center gap-5 text-sm text-ink-secondary"> <a href="/" class="hover:text-ink">Calculator</a> <a href="/methodology" class="hidden hover:text-ink sm:inline">Methodology</a> <a href="/guides" class="hover:text-ink">Guides</a> <a href="/faq" class="hidden hover:text-ink sm:inline">FAQ</a> </div> </nav> </header> <main id="main">  <article class="mx-auto max-w-2xl px-4 py-10 sm:py-14"> <header class="mb-8"> <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">A free, NYT-style rent vs. buy calculator</h1> <p class="mt-3 text-lg text-ink-secondary">The methodology that made the Times calculator famous — free, open, and documented.</p> <p class="mt-3 text-sm text-ink-muted">Last updated July 18, 2026</p> </header> <div class="prose-content">  <p>The New York Times’ rent-vs-buy calculator is the most influential tool of its kind — and for most readers it now sits behind the Times’ subscription paywall. The <a href="/">free calculator on this site</a> follows the same core methodology: a verdict that updates as you type, a tipping-point rent, and symmetric opportunity-cost accounting on both sides of the ledger — no paywall, no signup, no email capture. This page credits what the Times got right, shows how the tools compare feature by feature, and is honest about what theirs still does better.</p>
+<p><em>BuyVsRent.xyz is not affiliated with, endorsed by, or connected to The New York Times Company in any way. “The New York Times” and “The Upshot” are its trademarks; we name them only to credit and compare. The original interactive lives at nytimes.com and requires a subscription — if you have one, it is still worth using.</em></p>
+<h2 id="is-there-a-free-alternative-to-the-nyt-rent-vs-buy-calculator">Is there a free alternative to the NYT rent-vs-buy calculator?</h2>
+<p>Yes. Our calculator implements the same core model the Times popularized — whichever side pays less each month invests the difference, and the headline answer is the rent at which the verdict flips — free, with no paywall, account, or email required. It adds a sensitivity table, an open-source engine, and currency-agnostic inputs. We are not affiliated with the Times.</p>
+<p>Most free alternatives are lead-generation tools from lenders and listing sites, and they tend to fail the same way: they compare a mortgage payment to rent, ignore what the down payment could have earned elsewhere, and quietly hand buying the win. The Times’ calculator got this right and made the fix famous. Ours makes the same fix in the open — every formula (amortization, opportunity cost, taxes, selling costs) is documented with worked examples at <a href="/methodology">/methodology</a>, and the engine behind it ships with 91 passing tests, ten of them independently derived audit vectors.</p>
+<h2 id="what-made-the-nyt-calculator-the-gold-standard">What made the NYT calculator the gold standard?</h2>
+<p>Three design decisions, rare in 2014 and still rare now. The answer updated live as you moved any slider. The verdict was a single number — the monthly rent above which buying wins — rather than a vague score. And it treated opportunity cost symmetrically, investing the cheaper path’s savings instead of assuming a renter burns the difference.</p>
+<p>First built in 2007 and famously rebuilt by The Upshot in 2014, the Times’ interactive answered with a sentence people still quote: if you can rent a similar home for less than $X a month, renting is the better deal. That one number compresses fifteen assumptions into something you can check against real listings.</p>
+<p>The symmetric accounting is the part most imitators skip. In our model’s default scenario — a $420,000 home, 20% down, 6.5% thirty-year fixed — the owner’s true first-year cost is about $3,067 a month ($2,124 of principal and interest, the rest property tax, insurance, and maintenance) against $2,115 all-in for the renter. An honest model invests the renter’s roughly $950 monthly savings on top of the $84,000 they never handed over as a down payment. Symmetry also cuts both ways: hold long enough and rent growth pushes the renter’s cost above the owner’s, at which point the <em>owner</em> invests the difference. Most calculators run this logic in one direction, or not at all.</p>
+<p>The third trick was progressive disclosure: a handful of big sliders up front — price, rent, rate, how long you’ll stay — with maintenance, closing costs, and taxes tucked into collapsible sections carrying sane defaults. Approachable without being simplistic. We copied that pattern deliberately.</p>
+<h2 id="how-do-the-major-rent-vs-buy-calculators-compare">How do the major rent-vs-buy calculators compare?</h2>
+<p>Four tools dominate this search: the NYT/Upshot interactive, NerdWallet, Zillow, and this site. Only the Times and BuyVsRent compute a tipping-point rent and invest both sides’ savings symmetrically. Only the Times charges for access. Only BuyVsRent publishes its full engine and runs an automatic sensitivity analysis. Snapshot as of July 2026:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Feature</th><th>BuyVsRent</th><th>NYT / Upshot</th><th>NerdWallet</th><th>Zillow</th></tr></thead><tbody><tr><td>Paywall or signup</td><td>None</td><td>Subscription</td><td>None (lead-supported)</td><td>None (lead-supported)</td></tr><tr><td>Live answer as you type</td><td>Yes</td><td>Yes</td><td>Form-based</td><td>Form-based</td></tr><tr><td>Tipping-point rent</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr><tr><td>Symmetric opportunity cost</td><td>Yes</td><td>Yes</td><td>Not documented</td><td>Not documented</td></tr><tr><td>Open methodology</td><td>Full write-up + open-source engine</td><td>Assumptions explained; code closed</td><td>Brief notes</td><td>Brief notes</td></tr><tr><td>Currency support</td><td>Any (taxes can be zeroed)</td><td>USD</td><td>USD</td><td>USD</td></tr><tr><td>Sensitivity analysis</td><td>Built-in ±1-point grid</td><td>Manual (drag sliders)</td><td>No</td><td>No</td></tr><tr><td>Inflation-adjusted display</td><td>No (nominal dollars)</td><td>Yes</td><td>No</td><td>No</td></tr></tbody></table>
+<p>“Form-based” means you fill in fields and read a results panel; the verdict doesn’t reprice under your cursor. Competitors change their tools, so treat this as a mid-2026 snapshot — including the last row, where the Times beats us.</p>
+<h2 id="what-does-a-tipping-point-answer-look-like-at-2026-rates">What does a tipping-point answer look like at 2026 rates?</h2>
+<p>In our model’s default scenario — $420,000 home, 20% down, 30-year fixed, 10-year stay, 3% home appreciation, 2.5% rent growth, 7% investment return, standard deduction — the tipping-point rent at a 6.5% mortgage is $2,468 a month. Rent a comparable home for less and renting-plus-investing wins; pay more and buying wins.</p>
+<p>The tipping point moves mostly with the mortgage rate. Here is the same scenario across the rate range, with the <a href="/calculators/price-to-rent-ratio">price-to-rent ratio</a> each threshold implies:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>30-year rate</th><th>Tipping-point rent</th><th>Implied price-to-rent ratio</th></tr></thead><tbody><tr><td>4%</td><td>$1,890/mo</td><td>18.5</td></tr><tr><td>5%</td><td>$2,067/mo</td><td>16.9</td></tr><tr><td>6%</td><td>$2,340/mo</td><td>15.0</td></tr><tr><td>6.5%</td><td>$2,468/mo</td><td>14.2</td></tr><tr><td>7%</td><td>$2,590/mo</td><td>13.5</td></tr><tr><td>8%</td><td>$2,830/mo</td><td>12.4</td></tr></tbody></table>
+<p>Freddie Mac’s survey put the 30-year average near 6.7% in mid-2026, so the middle rows are today’s reality. Our default comparable rent of $2,100 — 0.5% of the home’s price per month — sits below the $2,468 threshold, and renting wins by about $67,000 over ten years. Rerun the identical house at the 4% rates of 2021 and buying wins by about $38,000, breaking even in year six. Nothing about the house changed; the rate flipped the answer, which is the story of the whole <a href="/guides/rent-vs-buy-2026">2026 market</a>.</p>
+<p>The ratio column explains the geography. A $220,000 home renting for $1,600 a month (ratio ≈ 11.5) clears the bar easily: buying wins in our model. A $1.1 million home renting for $3,800 (ratio ≈ 24) doesn’t come close: renting wins by roughly $560,000 over fifteen years, even for a married couple itemizing deductions. And when rent sits far below the tipping point, waiting doesn’t rescue buying — in the default scenario renting’s lead grows from about $49,000 at five years to $67,000 at ten to $389,000 (nominal) at thirty. The horizon logic gets its own treatment in <a href="/guides/when-does-buying-beat-renting">when does buying beat renting</a>.</p>
+<h2 id="what-does-buyvsrent-add-that-the-times-tool-doesnt">What does BuyVsRent add that the Times’ tool doesn’t?</h2>
+<p>Four things: an automatic sensitivity table that stress-tests the verdict against ±1-point changes in every major assumption; an open-source engine anyone can audit, with 91 passing tests; currency-agnostic inputs that work anywhere once US taxes are zeroed; and edge-case coverage — PMI with automatic cancellation, all-cash purchases, and horizons that run past mortgage payoff.</p>
+<p>The sensitivity table is the piece we’d argue matters most. The Times lets you drag sliders one at a time; we print the whole fragility picture at once. In the default scenario above, no single ±1-point change — appreciation, rent growth, investment return, or the rate — flips the renting verdict: it’s robust. Rerun it at a 4% mortgage and the buying verdict turns fragile: a ±1-point move in home appreciation or in the rate flips it. Two scenarios, two very different confidence levels, and you only learn that if the tool shows you.</p>
+<p>On taxes, the engine models the part most tools fake: only the itemized-minus-standard-deduction <em>delta</em> counts, under 2026 rules — the $40,400 SALT cap, the $750,000 mortgage-interest cap, the Section 121 exclusion on home-sale gains, and capital-gains tax on the renter’s portfolio at exit. Outside the US? Zero the tax fields and the rest is arithmetic in whatever currency you typed.</p>
+<h2 id="what-does-the-nyt-calculator-still-do-better">What does the NYT calculator still do better?</h2>
+<p>Two real things: inflation-adjusted display and editorial polish. The Times can present results in today’s dollars, which makes 25-year comparisons far more intuitive; our engine reports nominal dollars, so that $389,000 thirty-year figure overstates its present-day purchasing power. And a decade of newsroom craft shows in their prose, defaults, and slider feel.</p>
+<p>If you subscribe to the Times, genuinely: use both. Two tools built on symmetric opportunity-cost accounting should agree directionally, and where they differ you’ll learn something about defaults — their maintenance and closing-cost assumptions versus ours. If either disagrees with a lender’s calculator, trust the ones that invest the down payment.</p>
+<h2 id="run-your-own-numbers">Run your own numbers</h2>
+<p>Every figure on this page assumes our defaults, and your rent-to-price ratio, mortgage rate, and time horizon can move the verdict by six figures in either direction. <a href="/?price=420000&#x26;rent=2100&#x26;rate=6.5&#x26;years=10">Open the calculator</a> — that link preloads this page’s default scenario — then swap in a real listing price and a real comparable rent, and watch the tipping point reprice as you type. No paywall, no signup: the answer, and every assumption behind it, is the whole product.</p>  </div> </article>  </main> <footer class="mt-16 border-t border-hairline"> <div class="mx-auto max-w-5xl px-4 py-8 text-sm text-ink-muted"> <div class="flex flex-wrap items-start justify-between gap-6"> <div class="max-w-md"> <p class="mb-2 font-medium text-ink-secondary">BuyVsRent.xyz</p> <p>
+A free, transparent rent-vs-buy calculator. Every formula is documented on the
+<a href="/methodology" class="underline underline-offset-2 hover:text-ink">methodology page</a>.
+</p> </div> <nav class="grid grid-cols-2 gap-x-10 gap-y-1.5" aria-label="Footer"> <a href="/methodology" class="hover:text-ink">Methodology</a> <a href="/about" class="hover:text-ink">About</a> <a href="/guides" class="hover:text-ink">Guides</a> <a href="/contact" class="hover:text-ink">Contact</a> <a href="/faq" class="hover:text-ink">FAQ</a> <a href="/privacy" class="hover:text-ink">Privacy</a> <a href="/glossary" class="hover:text-ink">Glossary</a> <a href="/terms" class="hover:text-ink">Terms</a> </nav> </div> <p class="mt-8 border-t border-hairline pt-4 text-xs leading-relaxed">
+BuyVsRent.xyz provides educational estimates, not financial, tax, or investment advice.
+          Results depend entirely on your assumptions. Consult a qualified professional before
+          making housing or investment decisions. &copy; 2026 BuyVsRent.
+</p> </div> </footer> </body></html>

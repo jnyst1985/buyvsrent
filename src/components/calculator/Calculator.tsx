@@ -123,7 +123,7 @@ export default function Calculator() {
     return () => clearTimeout(timer);
   }, [inputs]);
 
-  const shareUrl = `https://buyvsrent.xyz/${(() => {
+  const shareUrl = `https://rentvsbuymath.com/${(() => {
     const p = encodeParams(inputs);
     return p ? `?${p}` : '';
   })()}`;

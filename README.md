@@ -1,9 +1,9 @@
-# BuyVsRent.xyz
+# RentVsBuyMath.com
 
 A free, transparent rent-vs-buy calculator. Simulates buying a home versus renting and investing the difference, month by month, and tells you which path leaves you wealthier — with every formula documented.
 
-🌐 **Live**: [buyvsrent.xyz](https://buyvsrent.xyz)
-📖 **Methodology**: [buyvsrent.xyz/methodology](https://buyvsrent.xyz/methodology)
+🌐 **Live**: [rentvsbuymath.com](https://rentvsbuymath.com)
+📖 **Methodology**: [rentvsbuymath.com/methodology](https://rentvsbuymath.com/methodology)
 
 ## Why another rent-vs-buy calculator?
 
@@ -55,4 +55,4 @@ Found an error in the math? [Open an issue](https://github.com/jnyst1985/buyvsre
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Content (guides, methodology text) © BuyVsRent, quotable with attribution + link.
+MIT — see [LICENSE](LICENSE). Content (guides, methodology text) © RentVsBuyMath, quotable with attribution + link.

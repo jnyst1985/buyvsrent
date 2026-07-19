@@ -16,7 +16,7 @@ export interface Props {
 }
 
 const { title, description, path, ogImage = '/og/default.png', jsonLd, article } = Astro.props;
-const site = 'https://buyvsrent.xyz';
+const site = 'https://rentvsbuymath.com';
 const canonical = `${site}${path === '/' ? '' : path}`;
 const ogImageUrl = `${site}${ogImage}`;
 const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
@@ -36,7 +36,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#2563eb" />
 
-    <meta property="og:site_name" content="BuyVsRent" />
+    <meta property="og:site_name" content="RentVsBuyMath" />
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -76,7 +76,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
             <path d="M2 15 8.5 8 15 15" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
             <path d="M18 29V17m5 12V12m5 17V7" stroke="#059669" stroke-width="3" stroke-linecap="round" />
           </svg>
-          BuyVsRent<span class="text-ink-muted">.xyz</span>
+          RentVsBuyMath<span class="text-ink-muted">.com</span>
         </a>
         <div class="flex items-center gap-5 text-sm text-ink-secondary">
           <a href="/" class="hover:text-ink">Calculator</a>
@@ -95,7 +95,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <div class="mx-auto max-w-5xl px-4 py-8 text-sm text-ink-muted">
         <div class="flex flex-wrap items-start justify-between gap-6">
           <div class="max-w-md">
-            <p class="mb-2 font-medium text-ink-secondary">BuyVsRent.xyz</p>
+            <p class="mb-2 font-medium text-ink-secondary">RentVsBuyMath.com</p>
             <p>
               A free, transparent rent-vs-buy calculator. Every formula is documented on the
               <a href="/methodology" class="underline underline-offset-2 hover:text-ink">methodology page</a>.
@@ -113,9 +113,9 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
           </nav>
         </div>
         <p class="mt-8 border-t border-hairline pt-4 text-xs leading-relaxed">
-          BuyVsRent.xyz provides educational estimates, not financial, tax, or investment advice.
+          RentVsBuyMath.com provides educational estimates, not financial, tax, or investment advice.
           Results depend entirely on your assumptions. Consult a qualified professional before
-          making housing or investment decisions. &copy; 2026 BuyVsRent.
+          making housing or investment decisions. &copy; 2026 RentVsBuyMath.
         </p>
       </div>
     </footer>

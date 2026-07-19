@@ -1,4 +1,4 @@
-# buyvsrent.xyz — all crawlers welcome, including AI assistants.
+# rentvsbuymath.com — all crawlers welcome, including AI assistants.
 User-agent: *
 Allow: /
 
@@ -18,4 +18,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://buyvsrent.xyz/sitemap-index.xml
+Sitemap: https://rentvsbuymath.com/sitemap-index.xml

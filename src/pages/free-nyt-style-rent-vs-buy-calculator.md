@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 slug: free-nyt-style-rent-vs-buy-calculator
-title: "Free NYT-Style Rent vs Buy Calculator (No Paywall) | BuyVsRent"
+title: "Free NYT-Style Rent vs Buy Calculator (No Paywall) | RentVsBuyMath"
 heading: "A free, NYT-style rent vs. buy calculator"
 subheading: "The methodology that made the Times calculator famous — free, open, and documented."
 description: "The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine."
@@ -11,7 +11,7 @@ updated: "July 18, 2026"
 
 The New York Times' rent-vs-buy calculator is the most influential tool of its kind — and for most readers it now sits behind the Times' subscription paywall. The [free calculator on this site](/) follows the same core methodology: a verdict that updates as you type, a tipping-point rent, and symmetric opportunity-cost accounting on both sides of the ledger — no paywall, no signup, no email capture. This page credits what the Times got right, shows how the tools compare feature by feature, and is honest about what theirs still does better.
 
-*BuyVsRent.xyz is not affiliated with, endorsed by, or connected to The New York Times Company in any way. "The New York Times" and "The Upshot" are its trademarks; we name them only to credit and compare. The original interactive lives at nytimes.com and requires a subscription — if you have one, it is still worth using.*
+*RentVsBuyMath.com is not affiliated with, endorsed by, or connected to The New York Times Company in any way. "The New York Times" and "The Upshot" are its trademarks; we name them only to credit and compare. The original interactive lives at nytimes.com and requires a subscription — if you have one, it is still worth using.*
 
 ## Is there a free alternative to the NYT rent-vs-buy calculator?
 
@@ -31,9 +31,9 @@ The third trick was progressive disclosure: a handful of big sliders up front �
 
 ## How do the major rent-vs-buy calculators compare?
 
-Four tools dominate this search: the NYT/Upshot interactive, NerdWallet, Zillow, and this site. Only the Times and BuyVsRent compute a tipping-point rent and invest both sides' savings symmetrically. Only the Times charges for access. Only BuyVsRent publishes its full engine and runs an automatic sensitivity analysis. Snapshot as of July 2026:
+Four tools dominate this search: the NYT/Upshot interactive, NerdWallet, Zillow, and this site. Only the Times and RentVsBuyMath compute a tipping-point rent and invest both sides' savings symmetrically. Only the Times charges for access. Only RentVsBuyMath publishes its full engine and runs an automatic sensitivity analysis. Snapshot as of July 2026:
 
-| Feature | BuyVsRent | NYT / Upshot | NerdWallet | Zillow |
+| Feature | RentVsBuyMath | NYT / Upshot | NerdWallet | Zillow |
 |---|---|---|---|---|
 | Paywall or signup | None | Subscription | None (lead-supported) | None (lead-supported) |
 | Live answer as you type | Yes | Yes | Form-based | Form-based |
@@ -65,7 +65,7 @@ Freddie Mac's survey put the 30-year average near 6.7% in mid-2026, so the middl
 
 The ratio column explains the geography. A $220,000 home renting for $1,600 a month (ratio ≈ 11.5) clears the bar easily: buying wins in our model. A $1.1 million home renting for $3,800 (ratio ≈ 24) doesn't come close: renting wins by roughly $560,000 over fifteen years, even for a married couple itemizing deductions. And when rent sits far below the tipping point, waiting doesn't rescue buying — in the default scenario renting's lead grows from about $49,000 at five years to $67,000 at ten to $389,000 (nominal) at thirty. The horizon logic gets its own treatment in [when does buying beat renting](/guides/when-does-buying-beat-renting).
 
-## What does BuyVsRent add that the Times' tool doesn't?
+## What does RentVsBuyMath add that the Times' tool doesn't?
 
 Four things: an automatic sensitivity table that stress-tests the verdict against ±1-point changes in every major assumption; an open-source engine anyone can audit, with 33 passing tests; currency-agnostic inputs that work anywhere once US taxes are zeroed; and edge-case coverage — PMI with automatic cancellation, all-cash purchases, and horizons that run past mortgage payoff.
 

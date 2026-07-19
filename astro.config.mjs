@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://buyvsrent.xyz',
+  site: 'https://rentvsbuymath.com',
   trailingSlash: 'never',
   build: { format: 'file' },
   integrations: [preact(), sitemap()],

@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 slug: best-rent-vs-buy-calculators
-title: "The 7 Best Rent vs Buy Calculators in 2026, Honestly Ranked | BuyVsRent"
+title: "The 7 Best Rent vs Buy Calculators in 2026, Honestly Ranked | RentVsBuyMath"
 heading: "The best rent vs. buy calculators in 2026, honestly ranked"
 subheading: "Including ours — bias disclosed, reasoning shown."
 description: "Seven rent vs buy calculators ranked — NYT, NerdWallet, Zillow, SmartAsset — on methodology, transparency, UX and price. Ours included, bias disclosed."
@@ -19,11 +19,11 @@ Methodology gets the most weight because it is where calculators quietly disagre
 
 ## Which rent vs buy calculator is best in 2026?
 
-The best free option, by our admittedly interested assessment, is our own calculator here at buyvsrent.xyz; the best tool at any price is the New York Times/Upshot calculator, which sits behind a subscription. NerdWallet is the strongest big-brand free pick, and The Measure of a Plan is the most transparent if you will work in Excel.
+The best free option, by our admittedly interested assessment, is our own calculator here at rentvsbuymath.com; the best tool at any price is the New York Times/Upshot calculator, which sits behind a subscription. NerdWallet is the strongest big-brand free pick, and The Measure of a Plan is the most transparent if you will work in Excel.
 
 | Calculator | Price | Opportunity cost | Selling costs | Tax modeling | Methodology published |
 |---|---|---|---|---|---|
-| 1. BuyVsRent.xyz (ours) | Free | Both sides, symmetric | Full | Standard-vs-itemized, 2026 SALT/interest caps, Section 121 | Yes, with test vectors |
+| 1. RentVsBuyMath.com (ours) | Free | Both sides, symmetric | Full | Standard-vs-itemized, 2026 SALT/interest caps, Section 121 | Yes, with test vectors |
 | 2. NYT / The Upshot | Subscription | Upfront + recurring | Both directions | Post-2017 law, editable bracket | Partial, in-tool |
 | 3. NerdWallet | Free | All cash flows | Not clearly surfaced | Single marginal-rate input | Partial |
 | 4. The Measure of a Plan | Free (Excel) | Yes | Yes | Tax shield; 2023-era parameters | Full — open spreadsheet |
@@ -33,7 +33,7 @@ The best free option, by our admittedly interested assessment, is our own calcul
 
 ## The rankings: what each one gets right, and what it skips
 
-### 1. BuyVsRent.xyz — ours; here is the case, judge for yourself
+### 1. RentVsBuyMath.com — ours; here is the case, judge for yourself
 
 Yes, this is our site ranking itself first, which is exactly what a biased reviewer would do. So here is the falsifiable version. Our engine models opportunity cost symmetrically: whichever side pays less in a given month invests the difference — most calculators only credit the renter, which quietly biases results toward renting. Taxes are modeled as they actually work in 2026: the standard-versus-itemized delta rather than a flat deduction, the $40,400 SALT cap, the $750,000 mortgage-interest cap, the Section 121 exclusion on home-sale gains, and capital gains tax on the renter's portfolio. It handles PMI with automatic cancellation, full selling costs, all-cash purchases, and horizons past mortgage payoff. Every formula is documented on our [methodology page](/methodology), and the engine passes 37 tests including 10 audit vectors computed independently of the code. What it skips: location-aware defaults. You bring your own property-tax rate and insurance quote, where NYT and SmartAsset prefill from your metro. It is free, with no account and no lead-gen. If you do not trust us yet — reasonable — run #2 or #3 with identical inputs and compare.
 

@@ -24,8 +24,20 @@
   "redirects": [
     {
       "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.rentvsbuymath.com" }],
+      "destination": "https://rentvsbuymath.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "buyvsrent.xyz" }],
+      "destination": "https://rentvsbuymath.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
       "has": [{ "type": "host", "value": "www.buyvsrent.xyz" }],
-      "destination": "https://buyvsrent.xyz/:path*",
+      "destination": "https://rentvsbuymath.com/:path*",
       "permanent": true
     },
     {

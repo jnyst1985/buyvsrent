@@ -6,7 +6,7 @@ import PriceToRent from '../../components/calculator/PriceToRent';
 const entry = await getEntry('sections', 'price-to-rent-ratio');
 const Content = entry ? (await render(entry)).Content : null;
 
-const title = 'Price-to-Rent Ratio Calculator (2026 Interpretation) | BuyVsRent';
+const title = 'Price-to-Rent Ratio Calculator (2026 Interpretation) | RentVsBuyMath';
 const description =
   'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting — and how mortgage rates shift those bands.';
 
@@ -14,7 +14,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'Price-to-Rent Ratio Calculator',
-  url: 'https://buyvsrent.xyz/calculators/price-to-rent-ratio',
+  url: 'https://rentvsbuymath.com/calculators/price-to-rent-ratio',
   description,
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Any',

@@ -2,19 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import glossaryData from '../data/glossary.json';
 
-const title = 'Rent vs. Buy Glossary: Every Term, Plainly Defined | BuyVsRent';
+const title = 'Rent vs. Buy Glossary: Every Term, Plainly Defined | RentVsBuyMath';
 const { description, terms } = glossaryData;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'DefinedTermSet',
   name: 'Rent vs. Buy Glossary',
-  url: 'https://buyvsrent.xyz/glossary',
+  url: 'https://rentvsbuymath.com/glossary',
   hasDefinedTerm: terms.map((t) => ({
     '@type': 'DefinedTerm',
     name: t.term,
     description: t.definition,
-    url: `https://buyvsrent.xyz/glossary#${t.slug}`,
+    url: `https://rentvsbuymath.com/glossary#${t.slug}`,
   })),
 };
 

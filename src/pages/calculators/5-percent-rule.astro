@@ -6,7 +6,7 @@ import FivePercentRule from '../../components/calculator/FivePercentRule';
 const entry = await getEntry('sections', 'five-percent-rule');
 const Content = entry ? (await render(entry)).Content : null;
 
-const title = '5% Rule Calculator: Rent vs. Buy in 10 Seconds | BuyVsRent';
+const title = '5% Rule Calculator: Rent vs. Buy in 10 Seconds | RentVsBuyMath';
 const description =
   'Check the rent-vs-buy 5% rule instantly: if annual rent is under ~5% of the home price, renting is reasonable. Includes the 2026 rate-adjusted version of the rule.';
 
@@ -14,7 +14,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: '5% Rule Rent vs. Buy Calculator',
-  url: 'https://buyvsrent.xyz/calculators/5-percent-rule',
+  url: 'https://rentvsbuymath.com/calculators/5-percent-rule',
   description,
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Any',

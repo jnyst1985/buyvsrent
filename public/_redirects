@@ -1,0 +1,3 @@
+# Host-level redirects (www -> apex, old domain -> new) live as Cloudflare
+# zone Redirect Rules — Workers _redirects only supports relative paths.
+/sitemap.xml /sitemap-index.xml 301

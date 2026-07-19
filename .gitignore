@@ -21,3 +21,6 @@ dist/
 *.pem
 npm-debug.log*
 *.tsbuildinfo
+
+# wrangler local state
+.wrangler/

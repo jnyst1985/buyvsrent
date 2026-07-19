@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rentvsbuymath",
+  "compatibility_date": "2026-07-19",
+  // Assets-only Worker: no code, just the static Astro build.
+  // Static asset requests are free and unlimited on the Workers free plan.
+  "assets": {
+    "directory": "./dist",
+    // Matches Astro's build.format: 'file' + trailingSlash: 'never'
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "rentvsbuymath.com", "custom_domain": true },
+    // www is served by the same Worker; _redirects sends it to the apex
+    { "pattern": "www.rentvsbuymath.com", "custom_domain": true }
+  ]
+}

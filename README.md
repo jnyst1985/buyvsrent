@@ -19,7 +19,7 @@ Most are built by parties with a stake in your answer, and most skip the hard pa
 
 - [Astro 5](https://astro.build) static output — content pages ship zero JavaScript
 - One [Preact](https://preactjs.com) island for the calculator (~15 kB gz), hand-rolled SVG chart
-- Tailwind CSS 4, deployed on Vercel
+- Tailwind CSS 4, hosted on Cloudflare Workers (static assets)
 
 ## Engine
 
@@ -47,7 +47,7 @@ npm run build     # static build to dist/
 npm test          # engine + codec tests
 ```
 
-Deploys automatically to Vercel on push to `main` (`vercel.json` pins the Astro build).
+Deploys to Cloudflare Workers: `npm run build && npx wrangler deploy`. Security headers live in `public/_headers`, redirects in `public/_redirects` and zone-level Redirect Rules.
 
 ## Corrections
 

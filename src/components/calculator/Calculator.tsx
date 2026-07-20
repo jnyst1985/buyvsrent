@@ -117,9 +117,16 @@ export default function Calculator() {
     sensitivity: SensitivityRow[];
     tippingRent: number | null;
   } | null>(null);
+  // Keep the previous analysis on screen while the next one computes; a separate
+  // pending flag lets the UI dim the stale values in place rather than nulling
+  // them, which would unmount rows and shift the layout on every slider move.
+  const [analysisPending, setAnalysisPending] = useState(true);
   useEffect(() => {
-    setAnalysis(null);
-    const timer = setTimeout(() => setAnalysis(analyzeScenario(inputs)), 150);
+    setAnalysisPending(true);
+    const timer = setTimeout(() => {
+      setAnalysis(analyzeScenario(inputs));
+      setAnalysisPending(false);
+    }, 150);
     return () => clearTimeout(timer);
   }, [inputs]);
 
@@ -148,6 +155,8 @@ export default function Calculator() {
       <VerdictBanner
         results={results}
         tippingRent={analysis?.tippingRent ?? null}
+        analysisReady={analysis !== null}
+        analysisPending={analysisPending}
         currency={inputs.currency}
         horizon={inputs.timeHorizonYears}
       />
@@ -387,6 +396,7 @@ export default function Calculator() {
             sensitivity={analysis?.sensitivity ?? null}
             difference={results.difference}
             currency={inputs.currency}
+            analysisPending={analysisPending}
           />
           <YearTable results={results} currency={inputs.currency} />
           <ShareSheet

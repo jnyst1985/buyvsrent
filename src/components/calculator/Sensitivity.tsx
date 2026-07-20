@@ -2,17 +2,22 @@ import type { SensitivityRow } from '../../lib/engine/types';
 import { formatCompact } from '../../lib/engine/format';
 
 interface Props {
-  /** Null while the deferred analysis is still computing. */
+  /** Null only before the first analysis lands; kept populated afterwards. */
   sensitivity: SensitivityRow[] | null;
   difference: number;
   currency: string;
+  /** True while a fresh analysis computes; the last table stays, dimmed. */
+  analysisPending: boolean;
 }
 
 /**
  * The honesty feature: shows how the final gap moves if each key assumption
  * is off by one percentage point, and flags assumptions that flip the verdict.
  */
-export function Sensitivity({ sensitivity, difference, currency }: Props) {
+export function Sensitivity({ sensitivity, difference, currency, analysisPending }: Props) {
+  // Skeleton only before the first analysis ever lands. Once we have data we
+  // keep the last table on screen and dim it during recomputes (see below),
+  // rather than swapping back to the skeleton and shifting the layout.
   if (sensitivity === null) {
     return (
       <section aria-labelledby="sensitivity-heading">
@@ -33,7 +38,9 @@ export function Sensitivity({ sensitivity, difference, currency }: Props) {
       <p class="mb-3 text-sm text-ink-secondary">
         Final gap (buying − renting) if each assumption moves by one percentage point:
       </p>
-      <div class="overflow-x-auto">
+      <div
+        class={`overflow-x-auto transition-opacity duration-200 ${analysisPending ? 'opacity-50' : 'opacity-100'}`}
+      >
         <table class="w-full min-w-105 text-sm">
           <thead>
             <tr class="border-b-2 border-hairline text-left text-ink">
@@ -66,7 +73,9 @@ export function Sensitivity({ sensitivity, difference, currency }: Props) {
           </tbody>
         </table>
       </div>
-      <p class="mt-2 text-xs text-ink-muted">
+      <p
+        class={`mt-2 text-xs text-ink-muted transition-opacity duration-200 ${analysisPending ? 'opacity-50' : 'opacity-100'}`}
+      >
         {anyFlips
           ? 'At least one assumption can flip this result by itself — treat the verdict as a lean, not a law.'
           : 'No single assumption flips this result by one point — the verdict is fairly robust for your inputs.'}

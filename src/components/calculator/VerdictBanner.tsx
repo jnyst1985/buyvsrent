@@ -5,6 +5,10 @@ import { formatCurrency } from '../../lib/engine/format';
 interface Props {
   results: CoreResults;
   tippingRent: number | null;
+  /** Whether the deferred analysis has produced a value at least once. */
+  analysisReady: boolean;
+  /** True while a fresh analysis computes; the last value stays, dimmed. */
+  analysisPending: boolean;
   currency: string;
   horizon: number;
 }
@@ -42,7 +46,14 @@ function useCountUp(target: number): number {
   return display;
 }
 
-export function VerdictBanner({ results, tippingRent, currency, horizon }: Props) {
+export function VerdictBanner({
+  results,
+  tippingRent,
+  analysisReady,
+  analysisPending,
+  currency,
+  horizon,
+}: Props) {
   const { verdict, difference } = results;
   const amount = useCountUp(roundVerdict(Math.abs(difference)));
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -97,10 +108,20 @@ export function VerdictBanner({ results, tippingRent, currency, horizon }: Props
             </p>
           </>
         )}
-        {tippingRent !== null && (
-          <p class="mt-3 border-t border-hairline pt-3 text-sm text-ink-secondary">
-            Tipping point: buying becomes the better deal if a similar rental costs more than{' '}
-            <strong class="text-ink">{formatCurrency(tippingRent, currency)}/month</strong>.
+        {analysisReady ? (
+          tippingRent !== null && (
+            <p
+              class={`mt-3 border-t border-hairline pt-3 text-sm text-ink-secondary transition-opacity duration-200 ${analysisPending ? 'opacity-50' : 'opacity-100'}`}
+            >
+              Tipping point: buying becomes the better deal if a similar rental costs more than{' '}
+              <strong class="text-ink">{formatCurrency(tippingRent, currency)}/month</strong>.
+            </p>
+          )
+        ) : (
+          // Before the first analysis lands, reserve the row's height so the
+          // sentence appearing doesn't shift the layout on initial load.
+          <p class="invisible mt-3 border-t border-hairline pt-3 text-sm" aria-hidden="true">
+            &nbsp;
           </p>
         )}
       </div>

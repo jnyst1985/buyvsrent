@@ -13,14 +13,6 @@ interface Props {
   horizon: number;
 }
 
-/** Round to 3 significant figures for the verdict sentence. */
-function roundVerdict(v: number): number {
-  const abs = Math.abs(v);
-  if (abs < 1000) return Math.round(v / 100) * 100;
-  const magnitude = 10 ** (Math.floor(Math.log10(abs)) - 2);
-  return Math.round(v / magnitude) * magnitude;
-}
-
 /** Animates numeric changes over ~300ms so recomputation is felt. */
 function useCountUp(target: number): number {
   const [display, setDisplay] = useState(target);
@@ -46,16 +38,19 @@ function useCountUp(target: number): number {
   return display;
 }
 
-export function VerdictBanner({
-  results,
-  tippingRent,
-  analysisReady,
-  analysisPending,
-  currency,
-  horizon,
-}: Props) {
-  const { verdict, difference } = results;
-  const amount = useCountUp(roundVerdict(Math.abs(difference)));
+export function VerdictBanner({ results, tippingRent, analysisReady, analysisPending, currency, horizon }: Props) {
+  const { verdict, difference, rentNetWorth, buyNetWorth } = results;
+  const rentWins = verdict === 'rent';
+  const isTie = verdict === 'tie';
+
+  // The sentence leans on two figures: the winner's ending net worth (the hero)
+  // and the gap. Both ride the same 300ms curve, so they start and land in step
+  // and never drift out of sync — tabular-nums keeps their width steady mid-count.
+  const heroNetWorth = useCountUp(rentWins ? rentNetWorth : buyNetWorth);
+  const gap = useCountUp(Math.abs(difference));
+  const heroText = formatCurrency(heroNetWorth, currency);
+  const gapText = formatCurrency(gap, currency);
+
   const bannerRef = useRef<HTMLDivElement>(null);
   const [stuck, setStuck] = useState(false);
 
@@ -69,42 +64,37 @@ export function VerdictBanner({
     return () => observer.disconnect();
   }, []);
 
-  const rentWins = verdict === 'rent';
-  const isTie = verdict === 'tie';
   const accent = isTie ? 'border-hairline' : rentWins ? 'border-rent' : 'border-buy';
-  const amountText = formatCurrency(amount, currency);
-
-  const sentence = isTie
-    ? "It's basically a tie"
-    : rentWins
-      ? 'Renting and investing wins'
-      : 'Buying wins';
+  const winColor = rentWins ? 'text-rent' : 'text-buy';
 
   return (
     <>
-      <div
-        ref={bannerRef}
-        class={`rounded-xl border-2 ${accent} bg-white p-5 sm:p-6`}
-        aria-live="polite"
-      >
+      <div ref={bannerRef} class={`rounded-xl border-2 ${accent} bg-white p-5 sm:p-6`} aria-live="polite">
         {isTie ? (
           <>
-            <p class="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              It's basically a tie
+            <p class="text-[19px] leading-[1.42] tracking-[-0.005em] text-ink sm:text-[21px]">
+              After {horizon} years, renting and buying finish within{' '}
+              <span class="text-[23px] font-[750] tracking-[-0.02em] tabular-nums sm:text-[27px]">{gapText}</span> of
+              each other — essentially a tie.
             </p>
-            <p class="mt-1.5 text-ink-secondary">
-              The gap is under 1% after {horizon} years — your assumptions matter more than the
-              math. Try the sliders below to see what tips it.
+            <p class="mt-[9px] text-[15px] leading-[1.5] text-ink-secondary">
+              The gap is under 1%, so your assumptions matter more than the math. Try the sliders below to see what tips
+              it.
             </p>
           </>
         ) : (
           <>
-            <p class="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              {sentence}{' '}
-              <span class={rentWins ? 'text-rent' : 'text-buy'}>by {amountText}</span>
+            <p class="text-[19px] leading-[1.42] tracking-[-0.005em] text-ink sm:text-[21px]">
+              After {horizon} years, {rentWins ? 'renting and investing' : 'buying'} leaves you with{' '}
+              <span class={`text-[23px] font-[750] tracking-[-0.02em] tabular-nums sm:text-[27px] ${winColor}`}>
+                {heroText}
+              </span>
+              {' — '}
+              <span class={`font-bold tabular-nums ${winColor}`}>{gapText} more</span> than{' '}
+              {rentWins ? 'buying' : 'renting'}.
             </p>
-            <p class="mt-1.5 text-ink-secondary">
-              over your {horizon}-year stay, counting every cost, tax, and selling fee.
+            <p class="mt-[9px] text-[15px] leading-[1.5] text-ink-secondary">
+              every mortgage payment, tax break, and selling fee counted.
             </p>
           </>
         )}
@@ -140,9 +130,11 @@ export function VerdictBanner({
             'Basically a tie — see why'
           ) : (
             <>
-              {rentWins ? 'Renting + investing' : 'Buying'}
-              <span class={rentWins ? 'text-rent' : 'text-buy'}>+{amountText}</span>
-              <span aria-hidden="true" class="text-ink-muted">▲</span>
+              {rentWins ? 'Renting' : 'Buying'}
+              <span class={winColor}>+{gapText}</span>
+              <span aria-hidden="true" class="text-ink-muted">
+                ▲
+              </span>
             </>
           )}
         </button>

@@ -17,4 +17,7 @@ SUMMARY=$(claude -p "$(cat automation/seo-review-prompt.md)" \
   2>automation/logs/seo-weekly.err)
 
 echo "$SUMMARY" > automation/logs/seo-weekly.last
+zsh automation/telegram-send.sh "📊 SEO weekly — rentvsbuymath.com
+
+$SUMMARY"
 /usr/bin/osascript -e "display notification \"${SUMMARY//\"/'}\" with title \"SEO weekly: rentvsbuymath.com\"" 2>/dev/null || true

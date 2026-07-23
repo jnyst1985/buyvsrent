@@ -12,6 +12,7 @@ cd "$REPO" || exit 1
 mkdir -p reports automation/logs
 
 SUMMARY=$(claude -p "$(cat automation/seo-review-prompt.md)" \
+  --model sonnet \
   --allowedTools "Bash" "Read" "Write" "Glob" "Grep" \
   2>automation/logs/seo-weekly.err)
 

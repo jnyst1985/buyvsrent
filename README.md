@@ -49,6 +49,8 @@ npm test          # engine + codec tests
 
 Deploys to Cloudflare Workers: `npm run build && npx wrangler deploy`. Security headers live in `public/_headers`, redirects in `public/_redirects` and zone-level Redirect Rules.
 
+New to the repo or setting up a second machine? See **[DEVELOPMENT.md](DEVELOPMENT.md)** — clone-and-run steps, what lives outside Git, the project map, and the design-system / calculator-island notes for UI work.
+
 ## Corrections
 
 Found an error in the math? [Open an issue](https://github.com/jnyst1985/buyvsrent/issues) with a share-link reproducing it. Verified corrections are credited on the methodology page.

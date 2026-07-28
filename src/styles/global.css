@@ -1,38 +1,153 @@
 @import 'tailwindcss';
 
+/* ---------------------------------------------------------------------------
+   Self-hosted type. Latin subset only (this site is US/English), pulled from
+   Google Fonts and served from our own origin so the CSP can keep
+   `font-src 'self'` and no third party sees a request. OFL licensed.
+   --------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-400.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF,
+    U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-600.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF,
+    U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/manrope-800.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF,
+    U+FFFD;
+}
+
 @theme {
-  /* Brand + chart palette (validated for contrast and CVD separation) */
+  /* ---- Accent. One acid green, used scarcely. -------------------------------
+     It is a SURFACE colour, not an ink: #b6f25c on white measures ~1.4:1.
+     Anything that has to be legible as type or a line uses -deep instead.
+     See "the ink rule" in .lavish/DESIGN-rentvsbuymath.md.                     */
+  --color-primary: #b6f25c;
+  --color-primary-pale: #ecfbd2;
+  --color-primary-deep: #35590a;
+  --color-on-primary: #0e0f0c;
+
+  /* ---- Text ---------------------------------------------------------------- */
+  --color-ink: #0e0f0c;
+  --color-body: #454745;
+  --color-lose: #6f746d;
+  --color-on-dark: #ffffff;
+  --color-on-dark-mute: #b3bbae;
+
+  /* ---- Surface ------------------------------------------------------------- */
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #e8ebe6;
+  --color-hairline: #d3d8d1;
+
+  /* ---- Cost ramp -----------------------------------------------------------
+     Six neutral steps, used ONLY for cost segments in the money bars and
+     assigned in order of appearance. They carry no meaning individually, so
+     never build anything that depends on a segment's specific shade. Money
+     that stays yours is always --color-primary, never a ramp step.            */
+  --color-cost-1: #9aa197;
+  --color-cost-2: #aeb4aa;
+  --color-cost-3: #c0c6bc;
+  --color-cost-4: #cfd4cb;
+  --color-cost-5: #dbe0d7;
+  --color-cost-6: #e5e9e1;
+
+  /* ---- Type ---------------------------------------------------------------- */
+  --font-display: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-input: 12px;
+  --radius-card: 24px;
+
+  /* ---- DEPRECATED: the old blue/green identity palette ----------------------
+     Still referenced by the calculator island (86 utility usages). The locked
+     system bans fixed rent=green / buy=blue mapping - colour now encodes WHO
+     IS AHEAD, and identity is carried by position and label. These tokens go
+     when the components migrate; do not use them in new code.                 */
   --color-buy: #2563eb;
   --color-buy-soft: #dbeafe;
   --color-rent: #059669;
   --color-rent-soft: #d1fae5;
-  --color-ink: #111827;
   --color-ink-secondary: #4b5563;
   --color-ink-muted: #6b7280;
   --color-surface: #ffffff;
   --color-surface-raised: #f9fafb;
-  --color-hairline: #e5e7eb;
+}
 
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+:root {
+  /* The single section rhythm token. Every full-bleed band uses it for BOTH
+     top and bottom padding - inconsistent rhythm is the most visible
+     sloppiness in a long page, so it is never hand-tuned per section. */
+  --sect: 64px;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --sect: 44px;
+  }
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background: var(--color-surface);
+  background: var(--color-canvas);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Numeric alignment in tables and axis labels only */
+/* Every band gets the same vertical rhythm. Use this, not ad-hoc py-* values. */
+.band {
+  padding-top: var(--sect);
+  padding-bottom: var(--sect);
+}
+
+/* Numeric alignment in tables, figures and axis labels */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Display role: headlines AND money. The heaviness is the brand voice. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.028em;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
 /* Range sliders (calculator inputs) */
@@ -51,7 +166,7 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 9999px;
-  background: var(--color-buy);
+  background: var(--color-primary-deep);
   border: 3px solid #fff;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
   cursor: grab;
@@ -64,41 +179,56 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 9999px;
-  background: var(--color-buy);
+  background: var(--color-primary-deep);
   border: 3px solid #fff;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
   cursor: grab;
 }
 .slider:focus-visible {
-  box-shadow: 0 0 0 3px var(--color-buy-soft);
+  box-shadow: 0 0 0 3px var(--color-primary-pale);
 }
 
-/* Prose defaults for content pages (no typography plugin needed) */
+/* ---------------------------------------------------------------------------
+   Prose for content pages (no typography plugin needed).
+   Measure is capped at 62ch: past ~85 characters the eye loses its place
+   returning to the next line, and 72ch renders at ~91 actual characters.
+   Nothing renders below 11px.
+   --------------------------------------------------------------------------- */
 .prose-content {
-  max-width: 42rem;
-  line-height: 1.75;
+  max-width: 62ch;
+  line-height: 1.5;
+  color: var(--color-body);
 }
 .prose-content h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  color: var(--color-ink);
+  max-width: 32ch;
+  text-wrap: balance;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
-  letter-spacing: -0.01em;
 }
 .prose-content h3 {
-  font-size: 1.17rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(20px, 2.8vw, 24px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+  text-wrap: balance;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 .prose-content p {
   margin-bottom: 1rem;
-  color: var(--color-ink-secondary);
+  text-wrap: pretty;
 }
 .prose-content ul,
 .prose-content ol {
   margin: 0 0 1rem 1.25rem;
-  color: var(--color-ink-secondary);
 }
 .prose-content ul {
   list-style: disc;
@@ -108,41 +238,52 @@ body {
 }
 .prose-content li {
   margin-bottom: 0.35rem;
+  text-wrap: pretty;
 }
 .prose-content a {
-  color: var(--color-buy);
+  color: var(--color-primary-deep);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+.prose-content a:focus-visible {
+  outline: 2px solid var(--color-primary-deep);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 .prose-content strong {
   color: var(--color-ink);
+  font-weight: 600;
 }
 .prose-content table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.25rem 0;
-  font-size: 0.9rem;
+  font-size: 14.5px;
+  font-variant-numeric: tabular-nums;
 }
 .prose-content th {
   text-align: left;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--color-ink);
-  border-bottom: 2px solid var(--color-hairline);
-  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 2px solid var(--color-ink);
+  padding: 12px 14px 12px 0;
 }
 .prose-content td {
   border-bottom: 1px solid var(--color-hairline);
-  padding: 0.5rem 0.75rem 0.5rem 0;
-  color: var(--color-ink-secondary);
+  padding: 12px 14px 12px 0;
 }
 .prose-content blockquote {
-  border-left: 3px solid var(--color-hairline);
+  border-left: 3px solid var(--color-primary);
   padding-left: 1rem;
-  color: var(--color-ink-muted);
+  color: var(--color-body);
   margin: 1.25rem 0;
 }
 .prose-content code {
-  background: var(--color-surface-raised);
+  font-family: var(--font-mono);
+  background: var(--color-canvas-soft);
   border: 1px solid var(--color-hairline);
   border-radius: 4px;
   padding: 0.1em 0.35em;

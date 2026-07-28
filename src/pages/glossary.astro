@@ -19,30 +19,79 @@ const jsonLd = {
 };
 
 const sorted = [...terms].sort((a, b) => a.term.localeCompare(b.term));
+
+// Grouped by initial so the alphabet strip has something to jump to. Built from
+// the data rather than a hard-coded A-Z list, so a letter is only ever offered
+// when there is a term under it.
+const letters = [...new Set(sorted.map((t) => t.term[0].toUpperCase()))];
+const byLetter = letters.map((l) => ({
+  letter: l,
+  items: sorted.filter((t) => t.term[0].toUpperCase() === l),
+}));
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 ---
 
 <BaseLayout {title} {description} path="/glossary" jsonLd={jsonLd}>
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Glossary</h1>
-    <p class="mt-3 text-lg text-body">
-      Every term in the rent-vs-buy decision, defined in plain language. Each definition stands on
-      its own — quote freely with a link.
-    </p>
-    <dl class="mt-8 space-y-6">
-      {
-        sorted.map((t) => (
-          <div id={t.slug} class="scroll-mt-20 border-b border-hairline pb-5">
-            <dt class="font-semibold text-ink">
-              <a href={`#${t.slug}`} class="hover:text-primary-deep">{t.term}</a>
-            </dt>
-            <dd class="mt-1.5 leading-relaxed text-body">{t.definition}</dd>
+  <section class="phero">
+    <div class="wrap">
+      <h1>Every term, defined plainly</h1>
+      <p class="lede">
+        The whole vocabulary of the rent-versus-buy decision, in the same language the calculator
+        uses. Each definition stands on its own - quote it freely, with a link.
+      </p>
+      <div class="cats">
+        <a href="/">Use the calculator</a>
+        <span>{terms.length} terms</span>
+        <span>Every one used by the model</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="msplit">
+        <nav class="toc" aria-label="Jump to a letter">
+          <div class="alpha">
+            {
+              ALPHABET.map((l) =>
+                letters.includes(l) ? <a href={`#letter-${l}`}>{l}</a> : <span aria-hidden="true">{l}</span>
+              )
+            }
           </div>
-        ))
-      }
-    </dl>
-    <p class="mt-8 text-body">
-      See the terms in action: <a href="/" class="text-primary-deep underline underline-offset-2">the calculator</a> ·
-      <a href="/methodology" class="text-primary-deep underline underline-offset-2">full methodology</a>
-    </p>
-  </div>
+        </nav>
+
+        <div>
+          {byLetter.map((group, gi) => (
+            <section aria-labelledby={`letter-${group.letter}`}>
+              <h2
+                class="gletter"
+                id={`letter-${group.letter}`}
+                style={gi === 0 ? 'margin-top:0' : undefined}
+              >
+                {group.letter}
+              </h2>
+              <dl class="qlist">
+                {group.items.map((t) => (
+                  <div class="qitem" id={t.slug}>
+                    <dt>
+                      <a href={`#${t.slug}`} class="qanchor">
+                        {t.term}
+                        <span aria-hidden="true">#</span>
+                      </a>
+                    </dt>
+                    <dd>{t.definition}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))}
+
+          <p class="racenote" style="margin-top:38px">
+            See the terms in action in <a href="/">the calculator</a>, or read how each one is
+            applied on the <a href="/methodology">methodology page</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

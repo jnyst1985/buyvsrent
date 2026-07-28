@@ -1,9 +1,31 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import faqData from '../data/faq.json';
+import { DEFAULT_INPUTS as D } from '../lib/engine/defaults';
+import { simulateCore, tippingPointRent } from '../lib/engine/engine';
+import { formatCurrency } from '../lib/engine/format';
 
 const title = 'Rent vs. Buy: 20 Questions, Answered With Numbers | RentVsBuyMath';
-const { description, questions } = faqData;
+const { description, questions, groups } = faqData;
+
+const fmt = (v: number) => formatCurrency(v, 'USD');
+const round1k = (v: number) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US');
+
+// The headline answer comes from the same engine the calculator runs, so this
+// page cannot quote a figure the calculator disagrees with.
+const results = simulateCore(D);
+const tip = tippingPointRent(D);
+const rentWins = results.difference < 0;
+const gap = Math.abs(results.difference);
+
+const UPDATED = 'July 28, 2026';
+
+// Questions arrive already grouped and in reading order (see data/faq.json);
+// this only slices them so each group renders under its own heading.
+const grouped = groups.map((g) => ({
+  ...g,
+  items: questions.filter((q) => q.catId === g.id),
+}));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -11,33 +33,77 @@ const jsonLd = {
   mainEntity: questions.map((f) => ({
     '@type': 'Question',
     name: f.q,
+    url: `https://rentvsbuymath.com/faq#${f.slug}`,
     acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') },
   })),
 };
 ---
 
 <BaseLayout {title} {description} path="/faq" jsonLd={jsonLd}>
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-      Rent vs. buy: 20 questions, answered with numbers
-    </h1>
-    <p class="mt-3 text-lg text-body">
-      Straight answers from <a href="/methodology" class="underline underline-offset-2">a documented model</a>,
-      not vibes. Numbers reference our national-typical 2026 scenario unless stated otherwise.
-    </p>
-    <div class="mt-8 space-y-8">
-      {
-        questions.map((f, i) => (
-          <section id={`q${i + 1}`}>
-            <h2 class="text-lg font-semibold text-ink">{f.q}</h2>
-            <p class="mt-2 leading-relaxed text-body" set:html={f.a} />
-          </section>
-        ))
-      }
+  <section class="phero">
+    <div class="wrap">
+      <h1>Twenty questions, answered with numbers</h1>
+      <p class="lede">
+        Every answer here comes out of the same model the calculator runs, at the same defaults - so
+        none of them can drift from what the page in front of you says.
+      </p>
+      <div class="cats">
+        <a href="/methodology">See the methodology</a>
+        <span>Answers cite the model, not opinion</span>
+        <span>Last updated {UPDATED}</span>
+      </div>
     </div>
-    <p class="mt-10 border-t border-hairline pt-6 text-body">
-      Have a question we didn't answer? <a href="/contact" class="text-primary-deep underline underline-offset-2">Ask us</a> —
-      or just <a href="/" class="text-primary-deep underline underline-offset-2">run your own numbers</a>.
-    </p>
-  </div>
+  </section>
+
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="msplit">
+        <nav class="toc" aria-label="On this page">
+          {grouped.map((g) => <a href={`#${g.id}`}>{g.name}</a>)}
+        </nav>
+
+        <div>
+          {/* The scenario every answer below is quoted at, stated once rather
+              than repeated inside twenty answers. */}
+          <div class="fscen">
+            <p class="ab-scn">
+              Answers use the default scenario: {fmt(D.monthlyRent)} rent against a{' '}
+              {fmt(D.homePrice)} home at {D.mortgageRatePct}% over {D.timeHorizonYears} years
+            </p>
+            {/* No line break between </b> and the comma - JSX turns it into a
+                space, which renders as "$67,000 , and buying...". */}
+            <p class="fscen-v">
+              {rentWins ? 'Renting and investing wins by' : 'Buying wins by'}{' '}
+              <b>{round1k(gap)}</b>{tip ? `, and buying takes over above ${fmt(tip)} a month in rent` : '.'}
+            </p>
+            <a class="pill" href="/">Change the numbers</a>
+          </div>
+
+          {grouped.map((g, gi) => (
+            <section class={gi === 0 ? 'fgroup' : 'fgroup spaced'} aria-labelledby={g.id}>
+              <h2 id={g.id}>{g.name}</h2>
+              <dl class="qlist">
+                {g.items.map((f) => (
+                  <div class="qitem" id={f.slug}>
+                    <dt>
+                      <a href={`#${f.slug}`} class="qanchor">
+                        {f.q}
+                        <span aria-hidden="true">#</span>
+                      </a>
+                    </dt>
+                    <dd set:html={f.a} />
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))}
+
+          <p class="racenote" style="margin-top:38px">
+            Still not answered? The <a href="/methodology">methodology page</a> documents every
+            formula, or <a href="/contact">ask</a> and it gets added here.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

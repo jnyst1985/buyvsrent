@@ -393,8 +393,18 @@ control heights across the site. A unit longer than `months` means raising
 | 3 | Inversion to `{colors.ink}` | Answer band, tipping card, footer, code block |
 | 4 | Radial acid bloom, 55% opacity, clipped by the card | Winner card only |
 
-The only drop shadow in the system is on `{component.segment-tooltip}`. Cards never
-have one.
+The only drop shadow in the system is on `{component.segment-tooltip}` and the
+chart's crosshair readout. Cards never have one.
+
+**Bands butt directly against each other.** Rhythm is always a band's own
+`--sect` padding, never a margin between bands - a margin sits outside the band,
+on the body background, so after a sage section it renders as a stray white
+stripe. The footer is a band like any other and obeys this.
+
+**Footnotes are one treatment.** A note explaining how to read the thing
+immediately above it - under the money bars, the chart, the rate table, the audit
+table - takes the 3px acid left rule at 62ch. Not some of them: all of them.
+A card's own fine print is not a footnote and does not take the rule.
 
 ## Components
 
@@ -471,6 +481,15 @@ when the table is built.
 ## Known gaps
 
 - No dark mode, by design. Do not invent one.
+- **The two `/calculators/*` tool pages are still on the pre-redesign utility
+  classes.** They are the last unported surface: their interactive components
+  (`FivePercentRule`, `PriceToRent`) need re-speccing, not just a reskin, so they
+  were left rather than half-done. FAQ and Glossary had the same problem and are
+  now on the `phero` + sticky-TOC shell.
+- The brand mark is two paths leaving the same point and never meeting, acid over
+  ink - the thesis, and the shape of the race chart. The favicon set and the OG
+  card both use it. The OG card carries **no figures on purpose**: a static image
+  quoting a number is the drift bug the engine tests exist to prevent.
 - Methodology and Guides page templates are not yet covered here. The guide
   answer box (`.answerbox`) is: read top to bottom it is the scenario, the
   answer, the one condition that would flip it, then the way out to the

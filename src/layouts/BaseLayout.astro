@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Analytics from '../components/Analytics.astro';
+import { TEST_COUNT } from '../lib/site';
 
 export interface Props {
   title: string;
@@ -144,7 +145,7 @@ const year = 2026;
         </nav>
         <p>
           A free, transparent rent-vs-buy calculator. Every formula is documented on the
-          <a href="/methodology">methodology page</a>, and the code is open source with 57
+          <a href="/methodology">methodology page</a>, and the code is open source with {TEST_COUNT}
           automated tests.
         </p>
         <p>

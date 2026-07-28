@@ -261,11 +261,16 @@ body {
   align-items: center;
 }
 
+/* No margin-top. The footer is a full-bleed band like any other, and in this
+   system rhythm comes from a band's OWN padding - bands butt directly against
+   each other (see .answer). A 64px top margin sat outside the band on the body
+   background, so after a sage section it rendered as a stray white stripe
+   between the last section and the footer. It was on every page; it was only
+   visible where the band above was not white. */
 .sitefooter {
   background: var(--color-ink);
   color: var(--color-canvas-soft);
-  padding: 48px 0 40px;
-  margin-top: var(--sect);
+  padding: var(--sect) 0 40px;
 }
 .sitefooter .brand {
   font-family: var(--font-display);
@@ -718,16 +723,7 @@ summary:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-.mfoot {
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-body);
-  margin: 22px 0 0;
-  max-width: 62ch;
-  border-left: 3px solid var(--color-primary);
-  padding-left: 15px;
-  text-wrap: pretty;
-}
+/* Treatment is defined once, with .racenote, further down. */
 .mfoot b {
   color: var(--color-ink);
 }
@@ -1384,11 +1380,23 @@ summary:focus-visible {
   margin-left: 8px;
 }
 
+/* ONE footnote treatment. `.mfoot` and `.racenote` are the same role - a note
+   telling you how to read the thing directly above it - and only .mfoot had the
+   acid rule, which read as a decision but was an accident. The rule is in the
+   spec ("footnotes anchored with a 3px primary left rule so the narrow column
+   reads as deliberate"); both now honour it.
+
+   `.fine` is deliberately NOT in here: that is a card's own fine print, sitting
+   inside a bordered card, where a second vertical rule would just be noise. */
+.mfoot,
 .racenote {
   font-size: 14px;
+  line-height: 1.5;
   color: var(--color-body);
-  margin: 12px 0 0;
+  margin: 18px 0 0;
   max-width: 62ch;
+  border-left: 3px solid var(--color-primary);
+  padding-left: 15px;
   text-wrap: pretty;
 }
 
@@ -2049,6 +2057,146 @@ summary:focus-visible {
   margin: 0;
   max-width: 34ch;
 }
+/* ---------------------------------------------------------------------------
+   FAQ and glossary: a long list of short entries, grouped, in a prose column.
+
+   Both were still on the pre-redesign utility classes - a bare 2xl column of
+   h2/p pairs - which is why they read as a different, much plainer site. They
+   now use the same phero + sticky-TOC shell as the methodology page.
+   --------------------------------------------------------------------------- */
+
+/* The scenario every FAQ answer is quoted at, stated once instead of repeated
+   inside twenty answers. */
+.fscen {
+  background: var(--color-canvas-soft);
+  border-radius: var(--radius-card);
+  padding: 20px 22px;
+  margin-bottom: 8px;
+}
+.fscen-v {
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--color-ink);
+  margin: 8px 0 16px;
+  max-width: 54ch;
+  text-wrap: pretty;
+}
+.fscen-v b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-deep);
+}
+
+.fgroup.spaced {
+  margin-top: 46px;
+}
+.fgroup h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(23px, 2.6vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 34px 0 4px;
+  max-width: none;
+  text-wrap: balance;
+}
+
+.qlist {
+  margin: 0;
+}
+.qitem {
+  border-top: 1px solid var(--color-hairline);
+  padding: 20px 0;
+  /* Clears the sticky nav when arriving on a deep link. */
+  scroll-margin-top: 76px;
+}
+.qitem dt {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  margin: 0 0 7px;
+}
+/* Every answer is separately linkable - the site invites quoting, and an
+   answer nobody can link to cannot be quoted with a source. */
+.qanchor {
+  color: inherit;
+  text-decoration: none;
+}
+.qanchor span {
+  color: var(--color-hairline);
+  margin-left: 7px;
+  font-weight: 800;
+}
+.qanchor:hover span,
+.qanchor:focus-visible span {
+  color: var(--color-primary-deep);
+}
+.qitem dd {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-body);
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+.qitem dd a {
+  color: var(--color-primary-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.qitem dd p + p {
+  margin-top: 10px;
+}
+
+/* Glossary: same list, plus a jump strip because it is alphabetical rather
+   than grouped by theme. */
+.alpha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.alpha a {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-primary-deep);
+  background: var(--color-canvas-soft);
+  border-radius: 8px;
+  min-width: 30px;
+  padding: 6px 8px;
+  text-align: center;
+  text-decoration: none;
+}
+.alpha a:hover,
+.alpha a:focus-visible {
+  background: var(--color-primary-pale);
+}
+.alpha span {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-hairline);
+  min-width: 30px;
+  padding: 6px 8px;
+  text-align: center;
+}
+.gletter {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin: 38px 0 0;
+  padding-bottom: 6px;
+  scroll-margin-top: 76px;
+}
+
 /* ---------------------------------------------------------------------------
    Answer box at the head of a guide.
 

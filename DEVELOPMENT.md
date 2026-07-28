@@ -176,6 +176,21 @@ without checking its cards produces invisible cards.
 Every full-bleed band uses the `.band` helper, which carries the single `--sect`
 rhythm token (64px desktop / 44px mobile). Do not hand-tune section padding.
 
+**Bands butt directly against each other; spacing is always a band's own
+padding, never a margin between them.** The footer had `margin-top: var(--sect)`,
+which put 64px of *body background* between the last section and the footer — on
+every page. It was invisible wherever the band above happened to be white, and
+rendered as a stray white stripe wherever it was sage. If a band looks like it
+needs breathing room, increase its padding.
+
+**One footnote treatment.** A note that tells you how to read the thing directly
+above it — `.mfoot` under the money bars, `.racenote` under the chart, the rate
+table and the audit table — gets the 3px acid left rule and a 62ch measure.
+They are defined in a single rule block for that reason; only `.mfoot` used to
+have the rule, which read as a decision but was an accident. `.fine` is
+deliberately excluded: that is a card's own fine print, already inside a
+bordered card, where a second vertical rule is just noise.
+
 Type is self-hosted from `public/fonts/` — **Manrope 800** for every headline
 *and* every figure, **Inter 400/600** for everything else. Latin subset only.
 They are not loaded from Google Fonts: the CSP allows neither
@@ -183,6 +198,30 @@ They are not loaded from Google Fonts: the CSP allows neither
 the wrong trade on a site that advertises no third-party data collection.
 
 The site is **light-mode only** by deliberate choice. Do not invent a dark theme.
+
+### Brand marks
+
+`public/favicon.svg` (plus the 32px PNG, the 180px apple icon, and a hand-built
+`favicon.ico`) and `public/og/default.png` are **acid-on-ink**, drawing two paths
+that leave the same point and never meet — the site's thesis and the shape of its
+own race chart. The previous set was a blue house with green bars, i.e. the
+retired palette, which is why they had to be redrawn.
+
+There is no image tooling on this machine: the PNGs are rendered by screenshotting
+the SVG at exact pixel sizes through Playwright, and the `.ico` is a hand-written
+ICO container wrapping the 32px PNG (valid, and what every current browser reads).
+The OG card is built from HTML using the self-hosted woff2 files so it matches the
+site's type exactly. **It deliberately carries no figures** — a static image
+quoting `$67,000` is the same drift bug the engine tests exist to prevent.
+
+### Facts published in more than one place
+
+`src/lib/site.ts` holds them, `site-facts.test.ts` guards them. The test count
+had drifted twice: the footer said 57 on *every page* while the README said 72 and
+the suite ran 88. The footer now imports `TEST_COUNT`; the two files that state it
+as literal text are asserted to contain the current value, so bumping the constant
+names what is left to edit. Note the constant is self-referential — adding tests
+changes the number it must state.
 
 ### The homepage island
 

@@ -40,7 +40,12 @@
     U+FFFD;
 }
 
-@theme {
+/* `static` is load-bearing, not decoration. Tailwind 4 tree-shakes @theme
+   variables that no CSS rule references - and several of these are consumed
+   only from JS (cost-ramp segments as inline styles, chart line colours as SVG
+   attributes). Without `static` they silently resolve to an empty string and
+   elements render transparent. */
+@theme static {
   /* ---- Accent. One acid green, used scarcely. -------------------------------
      It is a SURFACE colour, not an ink: #b6f25c on white measures ~1.4:1.
      Anything that has to be legible as type or a line uses -deep instead.
@@ -314,6 +319,441 @@ summary:focus-visible {
   .sitenav .ext {
     display: none;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons
+   --------------------------------------------------------------------------- */
+
+.pill {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 0;
+  border-radius: var(--radius-card);
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+}
+.pill.sm {
+  padding: 8px 18px;
+  font-size: 14px;
+}
+.pill.ghost {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Hero + converter card - the signature component. Rent goes in the top field,
+   the connector rows are the terms, and a ten-year position comes out the
+   bottom: the product converts a monthly rent into a net-worth outcome.
+   --------------------------------------------------------------------------- */
+
+.hero {
+  background: var(--color-canvas-soft);
+  padding: var(--sect) 0;
+}
+.hero .split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+  gap: 48px;
+  align-items: center;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(34px, 5vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin: 0 0 18px;
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.hero .lede {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--color-body);
+  max-width: 40ch;
+  margin: 0 0 22px;
+}
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip {
+  background: var(--color-canvas);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.conv {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+.conv .pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+.flabel {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-body);
+  margin-bottom: 7px;
+}
+
+.amt {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-input);
+}
+.amt:focus-within {
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgb(53 89 10 / 0.14);
+}
+.amt .pre {
+  align-self: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  padding-left: 13px;
+}
+.amt input,
+.amt .val {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  padding: 12px 8px 12px 1px;
+  width: 100%;
+  min-width: 0;
+}
+.amt .val {
+  flex: 1;
+  width: auto;
+}
+.amt .unit {
+  flex: none;
+  align-self: center;
+  margin: 5px;
+  background: var(--color-canvas-soft);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+/* Clamp feedback: the unit chip becomes the ceiling while the typed number is
+   above it, so the field never silently shows 999 and computes 100. */
+.amt .unit.flagamber {
+  background: #fdf1d6;
+  color: #6b4c05;
+}
+.amt.out.win {
+  background: var(--color-primary-pale);
+  border-color: transparent;
+}
+.amt.out.win .val,
+.amt.out.win .pre {
+  color: var(--color-primary-deep);
+}
+.amt.out.win .unit {
+  background: rgb(53 89 10 / 0.1);
+  color: var(--color-primary-deep);
+}
+
+.wintag {
+  display: inline-block;
+  background: var(--color-primary-deep);
+  color: var(--color-on-dark);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+.conn {
+  position: relative;
+  padding: 14px 0 14px 36px;
+}
+.conn::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 18px;
+  bottom: 18px;
+  width: 1px;
+  background: var(--color-hairline);
+}
+.crow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  position: relative;
+  font-size: 15px;
+}
+.crow .nd {
+  position: absolute;
+  left: -36px;
+  top: 6px;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: var(--color-canvas-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.crow .nd i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  display: block;
+}
+.crow label {
+  color: var(--color-body);
+}
+.crow .ed {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-bottom: 1.5px solid var(--color-hairline);
+}
+.crow .ed:focus-within {
+  border-color: var(--color-primary-deep);
+}
+.crow .ed input {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  text-align: right;
+  width: 68px;
+  padding: 3px 0;
+}
+.crow .ed .sfx {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-body);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-canvas-soft);
+  color: var(--color-body);
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 14px;
+}
+.convcta {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 14px;
+}
+.fine {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--color-body);
+  margin: 12px 0 0;
+  text-wrap: pretty;
+}
+.fine b {
+  color: var(--color-ink);
+}
+
+@media (max-width: 1000px) {
+  .hero .split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Money decomposition. The mock carried four legend variants behind a toggle
+   so Jon could choose; he locked the receipt style, so only that ships and the
+   toggle is gone.
+   --------------------------------------------------------------------------- */
+
+.mcard {
+  background: var(--color-canvas);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  position: relative;
+}
+.mcol + .mcol {
+  margin-top: 26px;
+  padding-top: 26px;
+  border-top: 1px solid var(--color-hairline);
+}
+.mhead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.mhead b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+.mhead .per {
+  font-size: 13.5px;
+  color: var(--color-body);
+  font-weight: 400;
+}
+.mhead .tot {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  display: flex;
+  height: 46px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-canvas-soft);
+}
+.bar .sg {
+  height: 100%;
+}
+.bar .sg + .sg {
+  border-left: 1.5px solid var(--color-canvas);
+}
+
+/* Receipt legend: every segment on its own row with a dotted leader, including
+   the ones too thin to draw in the bar. */
+.mkey {
+  display: block;
+  margin-top: 12px;
+}
+.mkey .k {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f2ee;
+  font-size: 14.5px;
+}
+.mkey .k:last-child {
+  border-bottom: 0;
+}
+.mkey .k .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+  align-self: center;
+}
+.mkey .k .nm {
+  color: var(--color-ink);
+}
+.mkey .k .lead {
+  flex: 1;
+  border-bottom: 1px dotted var(--color-hairline);
+  min-width: 18px;
+}
+.mkey .k .vv {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mfoot {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-body);
+  margin: 22px 0 0;
+  max-width: 62ch;
+  border-left: 3px solid var(--color-primary);
+  padding-left: 15px;
+  text-wrap: pretty;
+}
+.mfoot b {
+  color: var(--color-ink);
+}
+
+/* The one drop shadow in the system. Cards never get one. */
+.mtip {
+  position: fixed;
+  z-index: 60;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: var(--color-ink);
+  color: var(--color-on-dark);
+  border-radius: var(--radius-input);
+  padding: 10px 13px;
+  pointer-events: none;
+  max-width: 250px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.mtip.on {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mtip {
+    transition: none;
+  }
+}
+.mtip .tn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.mtip .tdot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+.mtip .tv {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+.mtip .tp {
+  display: block;
+  color: var(--color-on-dark-mute);
+  font-size: 12px;
+  margin-top: 2px;
 }
 
 /* Range sliders (calculator inputs) */

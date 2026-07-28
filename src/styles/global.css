@@ -756,6 +756,193 @@ summary:focus-visible {
   margin-top: 2px;
 }
 
+/* ---------------------------------------------------------------------------
+   Data tables + the keep-your-result card
+   --------------------------------------------------------------------------- */
+
+.rwrap {
+  overflow-x: auto;
+}
+.rtable,
+.atable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rtable th,
+.atable th {
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-body);
+  padding: 0 14px 10px;
+  border-bottom: 2px solid var(--color-ink);
+}
+.rtable td,
+.atable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-hairline);
+  font-size: 15.5px;
+  font-variant-numeric: tabular-nums;
+}
+.rtable th.num,
+.rtable td.num,
+.atable th.num,
+.atable td.num {
+  text-align: right;
+}
+.rtable tr.you td {
+  background: var(--color-primary-pale);
+  font-weight: 700;
+}
+.rtable tr.you td:first-child {
+  border-radius: 12px 0 0 12px;
+}
+.rtable tr.you td:last-child {
+  border-radius: 0 12px 12px 0;
+}
+.youtag {
+  display: inline-block;
+  background: var(--color-primary-deep);
+  color: var(--color-on-dark);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.racenote {
+  font-size: 14px;
+  color: var(--color-body);
+  margin: 12px 0 0;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+.kcard {
+  background: var(--color-canvas);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+.kpre {
+  background: var(--color-ink);
+  color: var(--color-canvas-soft);
+  border-radius: 16px;
+  padding: 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.62;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0 0 14px;
+  /* No max-height. The mock capped this at 300px with overflow-y:auto, which
+     cut the text mid-line - on mobile it hid the assumptions and the whole
+     "what I want to talk through" block. Same reasoning as the no-horizontal-
+     scroll table rule: a clipped line reads as broken, not as scrollable. And
+     this block is the thing we are asking people to copy, so hiding half of it
+     undercuts the point of the section. It is ~22 lines; show them. */
+}
+.krow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.kmsg {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary-deep);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.kmsg.on {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kmsg {
+    transition: none;
+  }
+}
+
+@media (max-width: 700px) {
+  /* 4-5 columns with one row that matters: stack each row into its own block.
+     Horizontal scroll cuts the last column mid-word and reads as broken. */
+  .rwrap {
+    overflow-x: visible;
+  }
+  .rtable,
+  .rtable tbody,
+  .rtable tr,
+  .rtable td {
+    display: block;
+    width: 100%;
+  }
+  .rtable thead {
+    display: none;
+  }
+  .rtable tr {
+    border: 1px solid var(--color-hairline);
+    border-radius: 16px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+  }
+  .rtable tr.you {
+    background: var(--color-primary-pale);
+    border-color: transparent;
+  }
+  .rtable td {
+    border: 0;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: baseline;
+    text-align: left;
+  }
+  .rtable tr.you td {
+    background: transparent;
+    border-radius: 0;
+  }
+  .rtable td::before {
+    content: attr(data-label);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--color-body);
+    flex: none;
+  }
+  .rtable td.num {
+    text-align: right;
+  }
+  .rtable td:first-child {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    padding-bottom: 9px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .rtable tr.you td:first-child {
+    border-bottom-color: rgb(53 89 10 / 0.25);
+  }
+  .rtable td:first-child::before {
+    content: none;
+  }
+  .rtable .youtag {
+    margin-left: 0;
+  }
+
+  /* 6 columns being scanned by column: drop the supporting ones rather than
+     stacking every year of the simulation into its own block. */
+  .atable .sup {
+    display: none;
+  }
+}
+
 /* Range sliders (calculator inputs) */
 .slider {
   appearance: none;

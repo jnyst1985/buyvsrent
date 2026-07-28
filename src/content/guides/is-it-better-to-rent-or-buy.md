@@ -1,5 +1,6 @@
 ---
 title: "Is It Better to Rent or Buy in 2026? The Actual Math"
+seoTitle: "Is It Better to Rent or Buy in 2026?"
 description: "At 2026's ~6.5% rates, our model shows renting beats buying by ~$67,000 over 10 years on a typical home. The 3 numbers that decide it, and when buying wins."
 pubDate: 2026-07-18
 category: "The math"

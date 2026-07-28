@@ -2,6 +2,17 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 
 const withCommas = (n: number) => n.toLocaleString('en-US');
 
+/**
+ * Singularise a counted unit at 1.
+ *
+ * The default security deposit is 1, so the plural label rendered "1 months" on
+ * every first load. Only the two count nouns need this - "%", "% /yr" and
+ * "$ /mo" are not counted. The unit column is a fixed `--field-unit-w`, so a
+ * shorter word never changes the field's width.
+ */
+export const unitFor = (suffix: string, value: number) =>
+  value === 1 && (suffix === 'months' || suffix === 'years') ? suffix.slice(0, -1) : suffix;
+
 interface MoneyFieldProps {
   id: string;
   value: number;
@@ -128,7 +139,7 @@ export function NumField({
             if (ref.current) ref.current.value = fmt(value);
           }}
         />
-        <span class="sfx">{suffix}</span>
+        <span class="sfx">{unitFor(suffix, value)}</span>
       </span>
     </div>
   );

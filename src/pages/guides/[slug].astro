@@ -68,7 +68,7 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  title={`${entry.data.title} | RentVsBuyMath`}
+  title={`${entry.data.seoTitle ?? entry.data.title} | RentVsBuyMath`}
   description={entry.data.description}
   path={`/guides/${slug}`}
   {jsonLd}

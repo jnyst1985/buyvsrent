@@ -22,6 +22,15 @@ const guides = defineCollection({
     updatedDate: z.coerce.date().optional(),
     /** Short label for cards/nav, defaults to title. */
     shortTitle: z.string().optional(),
+    /**
+     * Overrides the <title> tag only, never the H1 or the card.
+     *
+     * A headline that reads well on the page is often longer than the ~62
+     * characters a SERP shows before truncating, and shortening the H1 to suit
+     * Google is the wrong trade. Set this when the two jobs disagree; the
+     * brand suffix is appended by the layout either way.
+     */
+    seoTitle: z.string().optional(),
     category: z.enum(CATEGORIES),
     /** The one guide featured at the top of /guides. Exactly one should set it. */
     pillar: z.boolean().optional(),

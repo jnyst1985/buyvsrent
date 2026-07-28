@@ -1,5 +1,6 @@
 ---
 title: "When Does Buying Beat Renting? Finding Your Break-Even Year"
+seoTitle: "When Does Buying Beat Renting?"
 description: "Break-even is a net-worth crossover, not monthly-cost parity. Our model: no break-even within 30 years at 6.5%, but year 6 at 4%. Find your break-even year."
 pubDate: 2026-07-18
 category: "The math"

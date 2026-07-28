@@ -1,5 +1,6 @@
 ---
 title: "Rent vs Buy in 2026: What Today’s Rates Do to the Math"
+seoTitle: "Rent vs Buy in 2026: What Today’s Rates Do"
 description: "Rent vs buy as of July 2026: 30-year rates near 6.5-7% keep renting ahead in most US markets. See the exact rent, by rate, at which buying starts to win."
 pubDate: 2026-07-18
 category: "Rates & timing"

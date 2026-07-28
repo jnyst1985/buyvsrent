@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
+import { unitFor } from './inputs';
 import { DEFAULT_INPUTS } from '../../lib/engine/defaults';
 import type { EngineInputs } from '../../lib/engine/types';
 
@@ -124,7 +125,7 @@ function AssumptionField({
             if (ref.current) ref.current.value = String(value);
           }}
         />
-        <span class="sfx">{spec.suffix}</span>
+        <span class="sfx">{unitFor(spec.suffix, value)}</span>
       </span>
     </div>
   );

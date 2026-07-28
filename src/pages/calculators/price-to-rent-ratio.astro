@@ -11,9 +11,9 @@ const Content = entry ? (await render(entry)).Content : null;
 const fmt = (v: number) => formatCurrency(v, 'USD');
 const defaultRatio = (D.homePrice / (D.monthlyRent * 12)).toFixed(1);
 
-const title = 'Price-to-Rent Ratio Calculator (2026 Interpretation) | RentVsBuyMath';
+const title = 'Price-to-Rent Ratio Calculator (2026) | RentVsBuyMath';
 const description =
-  'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting, and how mortgage rates shift those bands.';
+  'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting, and how rates shift them.';
 
 const jsonLd = {
   '@context': 'https://schema.org',

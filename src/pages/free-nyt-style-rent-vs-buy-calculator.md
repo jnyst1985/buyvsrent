@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 slug: free-nyt-style-rent-vs-buy-calculator
-title: "Free NYT-Style Rent vs Buy Calculator (No Paywall) | RentVsBuyMath"
+title: "Free NYT-Style Rent vs Buy Calculator | RentVsBuyMath"
 heading: "A free, NYT-style rent vs. buy calculator"
 subheading: "The methodology that made the Times calculator famous — free, open, and documented."
 description: "The famous NYT rent-vs-buy calculator is paywalled. Get the same tipping-point methodology free with no signup, plus a sensitivity table and an open engine."

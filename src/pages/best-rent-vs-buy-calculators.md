@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 slug: best-rent-vs-buy-calculators
-title: "The 7 Best Rent vs Buy Calculators in 2026, Honestly Ranked | RentVsBuyMath"
+title: "The 7 Best Rent vs Buy Calculators in 2026 | RentVsBuyMath"
 heading: "The best rent vs. buy calculators in 2026, honestly ranked"
 subheading: "Including ours — bias disclosed, reasoning shown."
 description: "Seven rent vs buy calculators ranked — NYT, NerdWallet, Zillow, SmartAsset — on methodology, transparency, UX and price. Ours included, bias disclosed."

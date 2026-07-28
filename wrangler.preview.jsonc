@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // A SEPARATE Worker, purely for reviewing an unreleased design at a real URL.
+  // It has no custom routes, so it cannot serve rentvsbuymath.com under any
+  // circumstance - the live site is only ever changed by deploying
+  // wrangler.jsonc. Deploy this with:
+  //
+  //   npm run build && npx wrangler deploy -c wrangler.preview.jsonc
+  //
+  // and delete it when the review is done:
+  //
+  //   npx wrangler delete -c wrangler.preview.jsonc
+  //
+  // Every page still canonicalises to https://rentvsbuymath.com, so the preview
+  // does not compete with the real site in search.
+  "name": "rentvsbuymath-preview",
+  "compatibility_date": "2026-07-19",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true
+}

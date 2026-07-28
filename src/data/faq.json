@@ -71,7 +71,7 @@
   },
   {
    "q": "How does the calculator handle opportunity cost?",
-   "a": "Symmetrically, which is its most important design choice. The renter invests the skipped down payment and closing costs \u2014 $84,000 down alone grows to about $165,000 in 10 years at 7% \u2014 plus the monthly savings whenever renting is cheaper. But whenever owning is cheaper (after rent growth overtakes a fixed payment, or post-payoff), the owner invests the difference too. Most calculators only credit the renter, which overstates renting. We also tax the portfolio's capital gains at the end, which most tools skip. The full model is documented at <a href=\"/methodology\">/methodology</a> and verified by 37 automated tests, including 10 independently computed audit scenarios."
+   "a": "Symmetrically, which is its most important design choice. The renter invests the skipped down payment and closing costs \u2014 $84,000 down alone grows to about $165,000 in 10 years at 7% \u2014 plus the monthly savings whenever renting is cheaper. But whenever owning is cheaper (after rent growth overtakes a fixed payment, or post-payoff), the owner invests the difference too. Most calculators only credit the renter, which overstates renting. We also tax the portfolio's capital gains at the end, which most tools skip. The full model is documented at <a href=\"/methodology\">/methodology</a> and verified by 57 automated tests, including 10 independently computed audit scenarios."
   },
   {
    "q": "Does buying with all cash change the answer?",

@@ -58,6 +58,9 @@
   /* ---- Text ---------------------------------------------------------------- */
   --color-ink: #0e0f0c;
   --color-body: #454745;
+  /* Long-form reading ink: darker than --color-body, which is tuned for labels
+     and short supporting lines. Used by the prose standard only. */
+  --color-prose: #26281f;
   --color-lose: #6f746d;
   --color-on-dark: #ffffff;
   --color-on-dark-mute: #b3bbae;
@@ -1295,10 +1298,23 @@ summary:focus-visible {
    Inline text links are exempt per WCAG 2.5.8. */
 @media (pointer: coarse) {
   .cf .box input,
-  .crow .ed input {
+  .crow .ed input,
+  .sl-row .box input {
     min-height: 24px;
     padding-top: 6px;
     padding-bottom: 6px;
+  }
+  /* The slider thumb is a drag target, so it needs the floor too. */
+  .slider {
+    height: 10px;
+  }
+  .slider::-webkit-slider-thumb {
+    width: 26px;
+    height: 26px;
+  }
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
   }
   .cf.check input {
     width: 24px;
@@ -1570,6 +1586,186 @@ summary:focus-visible {
 }
 
 /* ---------------------------------------------------------------------------
+   Standalone tool module (/calculators/*).
+
+   The TOOL is the page's module; the prose below it is the standard prose
+   column, identical to a guide's. That is the whole rule: one prose standard,
+   modules differ by page type.
+   --------------------------------------------------------------------------- */
+
+.tool {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+.sl + .sl {
+  margin-top: 18px;
+}
+.sl-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.sl-row label {
+  font-size: 14.5px;
+  color: var(--color-body);
+  flex: 1;
+  min-width: 0;
+}
+/* Same field metrics as every other numeric input on the site. */
+.sl-row .box {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) var(--field-unit-w);
+  align-items: center;
+  gap: var(--field-gap);
+  width: calc(var(--field-w) + 14px);
+  height: var(--field-h);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-input);
+  padding: 0 var(--field-pad-x);
+  background: var(--color-canvas);
+  flex: none;
+}
+.sl-row .box.nounit {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.sl-row .box:focus-within {
+  border-color: var(--color-primary-deep);
+  box-shadow: 0 0 0 3px rgb(53 89 10 / 0.12);
+}
+.sl-row .box input {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  text-align: right;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+.sl-row .box .pfx,
+.sl-row .box .sfx {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-body);
+  white-space: nowrap;
+}
+.sl .slider {
+  width: 100%;
+  display: block;
+}
+.sl-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-body);
+  margin: 8px 0 0;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* The tool's answer. One number at display size, like every other answer on
+   the site. */
+.toolout {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-hairline);
+}
+.toolout .tk {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-body);
+  margin: 0;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+.toolout .tk b {
+  color: var(--color-ink);
+}
+.toolout .tv {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 23px;
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
+  margin: 0 0 2px;
+}
+.toolout .tnum {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(38px, 5vw, 52px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-lose);
+  margin: 4px 0 2px;
+}
+.toolout .tnum.win {
+  color: var(--color-primary-deep);
+}
+.tsplit {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0 0;
+}
+.tsplit dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-body);
+  margin-bottom: 3px;
+}
+.tsplit dd {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  margin: 0;
+}
+.tsplit dd.win {
+  color: var(--color-primary-deep);
+}
+.tsplit dd span {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-body);
+  margin-left: 3px;
+}
+.toolout .tfoot {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-body);
+  margin: 16px 0 0;
+  max-width: 62ch;
+  border-left: 3px solid var(--color-primary);
+  padding-left: 15px;
+  text-wrap: pretty;
+}
+.toolout .tfoot a,
+.sl-note a {
+  color: var(--color-primary-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .tsplit {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Content pages: methodology, guides index, guide article
    --------------------------------------------------------------------------- */
 
@@ -1596,12 +1792,26 @@ summary:focus-visible {
   margin: 0 0 20px;
   text-wrap: pretty;
 }
+/* Document body inside the reference pages (methodology, about). Part of the
+   prose standard - same size, measure and ink as a guide's paragraphs. It was
+   16px at 62ch, which made those pages read a size smaller than the guides. */
 .pb {
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--color-body);
-  max-width: 62ch;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--color-prose);
+  max-width: 68ch;
   text-wrap: pretty;
+}
+
+/* A document section heading inside the TOC layout is a PROSE heading, not a
+   band's display heading - it introduces a section of an argument in an 848px
+   column, not a full-bleed band in a 1112px one. Same reasoning as
+   .prose-content h2: size the heading to its column. */
+.msplit h2 {
+  font-size: clamp(23px, 2.6vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  max-width: none;
 }
 
 .card {
@@ -1973,13 +2183,23 @@ summary:focus-visible {
   letter-spacing: -0.02em;
   margin: 26px 0 8px;
 }
-.art p {
+/* THE PROSE STANDARD. `.art` (guides) and `.prose-content` (landing pages and
+   the standalone tools) are the same archetype - one argument in one column -
+   so they share one measure, one size and one ink. They used to differ: 68ch at
+   17px against 62ch at 16px, which is a 712px column against a 626px one, and
+   that is most of why the pages read as different sites. Modules differ by page
+   type; the prose does not. */
+.art p,
+.prose-content p,
+.prose-content li {
   font-size: 17px;
   line-height: 1.65;
-  color: #26281f;
+  color: var(--color-prose);
   max-width: 68ch;
-  margin: 0 0 16px;
   text-wrap: pretty;
+}
+.art p {
+  margin: 0 0 16px;
 }
 .art ul,
 .art ol {
@@ -2186,7 +2406,10 @@ summary:focus-visible {
   padding: 6px 8px;
   text-align: center;
 }
-.gletter {
+/* Scoped to .msplit so it outranks `.msplit h2`. As a bare `.gletter` it never
+   won - it is an h2 inside the TOC layout, so the layout's heading rule beat it
+   on specificity and these markers rendered at the section-heading size. */
+.msplit h2.gletter {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 22px;
@@ -2312,10 +2535,11 @@ summary:focus-visible {
    returning to the next line, and 72ch renders at ~91 actual characters.
    Nothing renders below 11px.
    --------------------------------------------------------------------------- */
+/* No 62ch cap on the wrapper: the measure belongs on the paragraphs (68ch, with
+   .art), so tables and figures can still use the full column. */
 .prose-content {
-  max-width: 62ch;
-  line-height: 1.5;
-  color: var(--color-body);
+  line-height: 1.65;
+  color: var(--color-prose);
 }
 /* Sized to the column it sits in, and deliberately identical to .art h2.
    These were clamp(...,40px) - a 40px heading inside a 626px prose column,

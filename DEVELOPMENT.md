@@ -140,6 +140,35 @@ blind alternation: borderless cards (`.mcard`, `.hc`, `.kcard`, `.fc`) sit on
 sage, bordered ones (`.racecard`, `.cg`, `.wc`) sit on white. Flipping a band
 without checking its cards produces invisible cards.
 
+### The prose standard (one scale, modules differ)
+
+**Every page that carries an argument uses the same reading column and the same
+type scale.** What differs per page type is which *modules* attach. This is the
+rule Jon settled: the site read as four different sites because the same job was
+rendered at four different scales, not because the pages carried different
+things.
+
+| | value | applies to |
+| --- | --- | --- |
+| prose column | ~712px (`.narrow`, 760px minus gutters) | `.art`, `.prose-content`, `.msplit` content |
+| body | 17px / 1.65 / `--color-prose` / 68ch | `.art p`, `.prose-content p`, `.pb` |
+| section heading | `clamp(23px, 2.6vw, 29px)` | `.art h2`, `.prose-content h2`, `.msplit h2`, `.fgroup h2` |
+| sub-heading | 19px | `.art h3`, `.prose-content h3` |
+| page heading | sized to its container, see below | |
+
+**Modules by page type** — a guide gets byline + reading time + inline live
+calculator + related guides; a landing page gets a comparison table and a strong
+CTA; a tool gets its interactive component above the prose; a reference page gets
+the sticky TOC and deep-linkable entries. Schema follows the type
+(`Article` / `WebApplication` / `FAQPage` / `TechArticle`).
+
+**The one heading rule: size a heading to its column, never to the viewport.**
+That is why an `.art h1` is 46px (it sits in a 712px column) and a `.phero h1` is
+56px (it sits in a 1112px band) — one rule, two correct answers. The same rule is
+why `.prose-content h2` had to come down from 40px: it was sized for a much wider
+container than the 626px column it actually lived in, so nearly every heading
+broke onto two or three lines.
+
 ### Three sizing rules, all learned the hard way
 
 1. **Numeric fields are sized by tokens, never by their content.** A field is a

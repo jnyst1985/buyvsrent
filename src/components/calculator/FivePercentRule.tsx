@@ -3,8 +3,11 @@ import { formatCurrency } from '../../lib/engine/format';
 import { SliderField } from './fields';
 
 /**
- * The 5% rule shortcut: annual unrecoverable ownership cost ≈ rulePct% of home
- * value; divide by 12 and compare with rent. Rate-adjusted per our full model.
+ * The 5% rule shortcut: annual unrecoverable ownership cost is roughly
+ * rulePct% of home value; divide by 12 and compare with rent.
+ *
+ * Colour follows the site's winner rule - acid marks whichever path is ahead,
+ * never a fixed side - so the tool cannot contradict the calculator's grammar.
  */
 export default function FivePercentRule() {
   const [homePrice, setHomePrice] = useState(420_000);
@@ -14,9 +17,10 @@ export default function FivePercentRule() {
   const threshold = (homePrice * (rulePct / 100)) / 12;
   const rentWins = monthlyRent < threshold;
   const gap = Math.abs(monthlyRent - threshold);
+  const fmt = (v: number) => formatCurrency(v);
 
   return (
-    <div class="rounded-xl border border-hairline bg-white p-5">
+    <div class="tool">
       <SliderField
         id="fp-price"
         label="Home price"
@@ -48,31 +52,45 @@ export default function FivePercentRule() {
         suffix="%"
         onInput={setRulePct}
         detail={
-          <span>
-            Classic rule: 5% (built for ~3–4% mortgage eras). At 2026's ~6.5% rates, our full
-            model implies ~7–8.5% — see the table below.
-          </span>
+          <>
+            The classic rule is 5%, built for a 3-4% mortgage era. At 2026 rates the full model
+            implies more like 7-8.5% - the table below shows why.
+          </>
         }
       />
-      <div
-        class={`mt-4 rounded-lg border-2 p-4 ${rentWins ? 'border-primary-deep' : 'border-primary-deep'}`}
-        aria-live="polite"
-      >
-        <p class="text-lg font-bold text-ink">
-          {rentWins ? 'Renting looks better' : 'Buying looks better'}{' '}
-          <span class="font-normal text-body">under the {rulePct}% rule</span>
-        </p>
-        <p class="mt-1 text-sm text-body">
-          Owning ≈ <strong class="text-ink">{formatCurrency(threshold)}/mo</strong> in unrecoverable
-          costs vs rent of <strong class="text-ink">{formatCurrency(monthlyRent)}/mo</strong> — a{' '}
-          {formatCurrency(gap)}/mo {rentWins ? 'saving for renting' : 'premium for renting'}.
-        </p>
-        <p class="mt-2 text-xs text-lose">
-          This is a 10-second screen, not a verdict —{' '}
-          <a href="/" class="underline underline-offset-2">
-            run the full month-by-month model
-          </a>{' '}
-          with your numbers.
+
+      <div class="toolout" aria-live="polite">
+        <p class="tv">{rentWins ? 'Renting looks better' : 'Buying looks better'}</p>
+        <p class="tk">under the {rulePct}% rule, on these numbers</p>
+        {/* Acid marks the cheaper of the two paths - the winner rule. It used
+            to sit on the gap unconditionally, which painted the difference
+            green even when that difference was renting's PENALTY. */}
+        <dl class="tsplit">
+          <div>
+            <dt>Owning, unrecoverable</dt>
+            <dd class={rentWins ? undefined : 'win'}>
+              {fmt(threshold)}
+              <span>/mo</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Rent</dt>
+            <dd class={rentWins ? 'win' : undefined}>
+              {fmt(monthlyRent)}
+              <span>/mo</span>
+            </dd>
+          </div>
+          <div>
+            <dt>{rentWins ? 'Renting saves' : 'Renting costs'}</dt>
+            <dd>
+              {fmt(gap)}
+              <span>/mo</span>
+            </dd>
+          </div>
+        </dl>
+        <p class="tfoot">
+          This is a ten-second screen, not a verdict. <a href="/">Run the full month-by-month
+          model</a> with your own numbers.
         </p>
       </div>
     </div>

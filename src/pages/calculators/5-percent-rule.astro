@@ -2,9 +2,16 @@
 import { getEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FivePercentRule from '../../components/calculator/FivePercentRule';
+import { DEFAULT_INPUTS as D } from '../../lib/engine/defaults';
+import { tippingPointRent } from '../../lib/engine/engine';
 
 const entry = await getEntry('sections', 'five-percent-rule');
 const Content = entry ? (await render(entry)).Content : null;
+
+// The rate-adjusted equivalent of the rule, straight from the engine, so the
+// page cannot claim a multiplier the calculator disagrees with.
+const tip = tippingPointRent(D);
+const tipPct = tip ? ((tip * 12) / D.homePrice * 100).toFixed(1) : null;
 
 const title = '5% Rule Calculator: Rent vs. Buy in 10 Seconds | RentVsBuyMath';
 const description =
@@ -23,22 +30,38 @@ const jsonLd = {
 ---
 
 <BaseLayout {title} {description} path="/calculators/5-percent-rule" jsonLd={jsonLd}>
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-      The 5% rule, in 10 seconds
-    </h1>
-    <p class="mt-3 text-lg text-body">
-      The famous shortcut: if a year of rent costs less than ~5% of the home's price, renting is
-      financially reasonable. Check your numbers, then read why 5% is really 7%+ at 2026 rates.
-    </p>
-    <div class="mt-6">
-      <FivePercentRule client:visible />
+  <section class="phero">
+    <div class="wrap">
+      <h1>The 5% rule, in ten seconds</h1>
+      <p class="lede">
+        The famous shortcut: if a year of rent costs less than about 5% of the home's price, renting
+        is financially reasonable. Check your numbers, then read why 5% is really 7% or more at 2026
+        rates.
+      </p>
+      <div class="cats">
+        <a href="/">Run the full model</a>
+        <span>A screen, not a verdict</span>
+        {tipPct && <span>Our model implies {tipPct}% at {D.mortgageRatePct}%</span>}
+      </div>
     </div>
-    <article class="prose-content mt-10">
-      {Content && <Content />}
-    </article>
-    <p class="mt-8 border-t border-hairline pt-6 text-body">
-      Rules of thumb screen; models decide. <a href="/" class="text-primary-deep underline underline-offset-2">Run the full month-by-month comparison</a>.
-    </p>
-  </div>
+  </section>
+
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="narrow">
+        {/* The tool is this page's module; everything under it is the standard
+            prose column, identical to a guide's. */}
+        <FivePercentRule client:visible />
+
+        <article class="prose-content">
+          {Content && <Content />}
+        </article>
+
+        <p class="racenote" style="margin-top:34px">
+          Rules of thumb screen; models decide. <a href="/">Run the full month-by-month
+          comparison</a>, or read <a href="/methodology">how it works</a>.
+        </p>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

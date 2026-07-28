@@ -353,6 +353,27 @@ The same trap caught the featured guide card: a 20ch cap broke its title across
 two lines at 768px, where the card stacks to a single 656px column and the title
 needs 560px, leaving half the card empty.
 
+### One prose standard; modules differ by page type
+
+Every page carrying an argument shares one reading column (~712px), one body
+size (17px / 1.65 / 68ch) and one section-heading size (23-29px). What changes by
+page type is which modules attach:
+
+| Type | Modules | Schema |
+|---|---|---|
+| Guide (`/guides/*`) | byline, reading time, inline live calculator, related guides | `Article` |
+| Landing / comparison | comparison table, strong CTA | `Article` |
+| Tool (`/calculators/*`) | interactive component above the prose | `WebApplication` |
+| Reference (methodology, FAQ, glossary) | sticky TOC, deep-linkable entries | `TechArticle` / `FAQPage` / `DefinedTermSet` |
+
+The site read as four different sites because the same job was rendered at four
+different scales - 672/626/712/848px columns, 16 and 17px body, 36/46/56px h1 -
+not because pages carried different modules. Modules are the variable; the prose
+is not.
+
+**Size a heading to its column, never to the viewport.** An `.art h1` is 46px in
+a 712px column; a `.phero h1` is 56px in a 1112px band. One rule, two answers.
+
 ### Live figures are sized to fit, not to a clamp
 
 Any figure that comes from the engine can get longer than the one the design was
@@ -481,11 +502,13 @@ when the table is built.
 ## Known gaps
 
 - No dark mode, by design. Do not invent one.
-- **The two `/calculators/*` tool pages are still on the pre-redesign utility
-  classes.** They are the last unported surface: their interactive components
-  (`FivePercentRule`, `PriceToRent`) need re-speccing, not just a reskin, so they
-  were left rather than half-done. FAQ and Glossary had the same problem and are
-  now on the `phero` + sticky-TOC shell.
+- **The whole site is now ported.** The two `/calculators/*` tool pages were the
+  last surface; their widgets were re-specced, not just reskinned. Note their
+  slider fields had been silently broken by the palette deletion - they were
+  styled with utility classes bound to the retired tokens (`focus:border-buy`,
+  `text-ink-muted`, `bg-surface-raised`), so Tailwind stopped emitting the classes
+  and the focus ring, hint colour and hover state vanished with no error. **When
+  a token is deleted, grep the utility CLASS NAMES, not just `var(--token)`.**
 - The brand mark is two paths leaving the same point and never meeting, acid over
   ink - the thesis, and the shape of the race chart. The favicon set and the OG
   card both use it. The OG card carries **no figures on purpose**: a static image

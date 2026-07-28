@@ -2,13 +2,18 @@
 import { getEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PriceToRent from '../../components/calculator/PriceToRent';
+import { DEFAULT_INPUTS as D } from '../../lib/engine/defaults';
+import { formatCurrency } from '../../lib/engine/format';
 
 const entry = await getEntry('sections', 'price-to-rent-ratio');
 const Content = entry ? (await render(entry)).Content : null;
 
+const fmt = (v: number) => formatCurrency(v, 'USD');
+const defaultRatio = (D.homePrice / (D.monthlyRent * 12)).toFixed(1);
+
 const title = 'Price-to-Rent Ratio Calculator (2026 Interpretation) | RentVsBuyMath';
 const description =
-  'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting — and how mortgage rates shift those bands.';
+  'Compute the price-to-rent ratio for any home and see what counts as high in 2026: under 15 favors buying, over 20 favors renting, and how mortgage rates shift those bands.';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -23,22 +28,39 @@ const jsonLd = {
 ---
 
 <BaseLayout {title} {description} path="/calculators/price-to-rent-ratio" jsonLd={jsonLd}>
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-      Price-to-rent ratio calculator
-    </h1>
-    <p class="mt-3 text-lg text-body">
-      Home price ÷ annual rent. One number that tells you which way your market leans — and how
-      2026 mortgage rates move the goalposts.
-    </p>
-    <div class="mt-6">
-      <PriceToRent client:visible />
+  <section class="phero">
+    <div class="wrap">
+      <h1>Price-to-rent ratio calculator</h1>
+      <p class="lede">
+        Home price divided by a year of rent. One number that tells you which way your market
+        leans - and how 2026 mortgage rates move the goalposts.
+      </p>
+      <div class="cats">
+        <a href="/">Run the full model</a>
+        <span>A screen, not a verdict</span>
+        <span>
+          {fmt(D.homePrice)} at {fmt(D.monthlyRent)} is {defaultRatio}
+        </span>
+      </div>
     </div>
-    <article class="prose-content mt-10">
-      {Content && <Content />}
-    </article>
-    <p class="mt-8 border-t border-hairline pt-6 text-body">
-      The ratio is a screen, not a verdict — <a href="/" class="text-primary-deep underline underline-offset-2">the full calculator</a> weighs your stay length, taxes, and rates.
-    </p>
-  </div>
+  </section>
+
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="narrow">
+        {/* The tool is this page's module; everything under it is the standard
+            prose column, identical to a guide's. */}
+        <PriceToRent client:visible />
+
+        <article class="prose-content">
+          {Content && <Content />}
+        </article>
+
+        <p class="racenote" style="margin-top:34px">
+          The ratio is a screen, not a verdict. <a href="/">The full calculator</a> weighs your stay
+          length, taxes and rates, and <a href="/methodology">documents every formula</a>.
+        </p>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

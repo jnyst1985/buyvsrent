@@ -422,10 +422,16 @@ chart's crosshair readout. Cards never have one.
 on the body background, so after a sage section it renders as a stray white
 stripe. The footer is a band like any other and obeys this.
 
-**Footnotes are one treatment.** A note explaining how to read the thing
-immediately above it - under the money bars, the chart, the rate table, the audit
-table - takes the 3px acid left rule at 62ch. Not some of them: all of them.
-A card's own fine print is not a footnote and does not take the rule.
+**Footnotes are one treatment, and the acid marker has one rule.** Every note
+explaining how to read the thing immediately above it looks the same: 14px, 62ch,
+body ink. Unconditional.
+
+The 3px acid left rule marks an aside sitting **directly on a band**, where
+nothing else separates it from the running content. **Inside a card, the card is
+already the container** - a second vertical marker is noise, and it spends the
+accent, which the system uses scarcely. So the chart, rate-table and audit-table
+notes carry the rule; the money-card footnote and the tool-card notes do not.
+`npm run audit` fails if an accent rule appears inside a card.
 
 ## Components
 

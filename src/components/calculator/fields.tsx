@@ -64,11 +64,13 @@ export function SliderField({
     <div class="sl">
       <div class="sl-row">
         <label for={numId}>{label}</label>
-        {/* `nounit` when there is no suffix: otherwise the unit column still
-            reserves its 50px and squeezes the numeral, which clipped "420,000"
-            to "420,00". */}
-        <span class={suffix ? 'box' : 'box nounit'}>
-          {prefix && <span class="pfx">{prefix}</span>}
+        {/* The prefix and unit cells are ALWAYS rendered, empty if unused.
+            Omitting them let the input fall into whichever grid column happened
+            to be free, so the columns shifted per field and the numerals landed
+            at three different x positions in one card. Three fixed columns
+            means every numeral in every field ends on the same line. */}
+        <span class="box">
+          <span class="pfx">{prefix}</span>
           <input
             ref={ref}
             id={numId}
@@ -81,7 +83,7 @@ export function SliderField({
               if (ref.current) ref.current.value = format(value);
             }}
           />
-          {suffix && <span class="sfx">{suffix}</span>}
+          <span class="sfx">{suffix}</span>
         </span>
       </div>
       <input

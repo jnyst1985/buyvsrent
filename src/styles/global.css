@@ -117,6 +117,10 @@
   --field-h: 36px;
   --field-num-w: 62px;
   --field-unit-w: 50px;
+  /* Currency prefix column, used by the slider fields on /calculators/*. Fixed
+     rather than `auto` so an absent prefix still holds its column and the
+     numerals stay aligned down the card. */
+  --field-pfx-w: 12px;
   --field-pad-x: 11px;
   --field-gap: 6px;
   --field-w: calc(
@@ -1396,14 +1400,18 @@ summary:focus-visible {
   margin-left: 8px;
 }
 
-/* ONE footnote treatment. `.mfoot` and `.racenote` are the same role - a note
-   telling you how to read the thing directly above it - and only .mfoot had the
-   acid rule, which read as a decision but was an accident. The rule is in the
-   spec ("footnotes anchored with a 3px primary left rule so the narrow column
-   reads as deliberate"); both now honour it.
+/* ONE footnote treatment, and one rule for when it takes the acid marker.
+   Every note that explains how to read the thing above it looks the same:
+   14px, 62ch, --color-body. That part is unconditional.
 
-   `.fine` is deliberately NOT in here: that is a card's own fine print, sitting
-   inside a bordered card, where a second vertical rule would just be noise. */
+   THE MARKER RULE: the 3px acid rule marks an aside that sits directly on a
+   BAND, where nothing else separates it from the running content. Inside a
+   card the card IS the container, so a second vertical marker is pure noise -
+   the same reason `.fine` in the hero card never had one.
+
+   This is checkable, and the audit checks it: no accent rule may appear inside
+   .tool / .conv / .cg / .racecard / .mcard / .gc / .kcard. It cost `.mfoot`
+   its rule, which is inside `.mcard`. */
 .mfoot,
 .racenote {
   font-size: 14px;
@@ -1411,9 +1419,12 @@ summary:focus-visible {
   color: var(--color-body);
   margin: 18px 0 0;
   max-width: 62ch;
+  text-wrap: pretty;
+}
+/* Band-level asides only. */
+.racenote {
   border-left: 3px solid var(--color-primary);
   padding-left: 15px;
-  text-wrap: pretty;
 }
 
 .kcard {
@@ -1599,6 +1610,13 @@ summary:focus-visible {
   border-radius: var(--radius-card);
   padding: 24px;
 }
+/* A module and the prose that follows it need real air between them, or the
+   card looks welded to the first paragraph. Set on the prose rather than as a
+   sibling selector because Astro wraps the island in <astro-island>, so the
+   card and the article are not actually adjacent siblings in the DOM. */
+.prose-after-module {
+  margin-top: 40px;
+}
 .sl + .sl {
   margin-top: 18px;
 }
@@ -1614,22 +1632,26 @@ summary:focus-visible {
   flex: 1;
   min-width: 0;
 }
-/* Same field metrics as every other numeric input on the site. */
+/* Same field metrics as every other numeric input on the site, with a third
+   fixed column for a currency prefix. All three columns are fixed and always
+   present, so the numeral column starts and ends at the same x in every field
+   whether or not that field has a prefix or a unit. The numeral column is
+   sized for the widest value these tools accept ("2,000,000"). */
 .sl-row .box {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) var(--field-unit-w);
+  grid-template-columns: var(--field-pfx-w) minmax(0, 1fr) var(--field-unit-w);
   align-items: center;
   gap: var(--field-gap);
-  width: calc(var(--field-w) + 14px);
+  width: calc(
+    var(--field-pfx-w) + var(--field-num-w) + 14px + var(--field-unit-w) + 2 * var(--field-gap) + 2 *
+      var(--field-pad-x)
+  );
   height: var(--field-h);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-input);
   padding: 0 var(--field-pad-x);
   background: var(--color-canvas);
   flex: none;
-}
-.sl-row .box.nounit {
-  grid-template-columns: auto minmax(0, 1fr);
 }
 .sl-row .box:focus-within {
   border-color: var(--color-primary-deep);
@@ -1741,14 +1763,18 @@ summary:focus-visible {
   color: var(--color-body);
   margin-left: 3px;
 }
+/* NO acid rule. This is a card's own fine print, and the documented rule is
+   that the rule marks a section-level footnote sitting on a band - inside an
+   already-bordered card a second vertical rule is just noise (the same reason
+   `.fine` in the hero card is excluded). It also sat one paragraph away from
+   `.sl-note`, which is the same kind of grey aside with no rule, so the card
+   carried two treatments for one role. */
 .toolout .tfoot {
   font-size: 13px;
   line-height: 1.55;
   color: var(--color-body);
   margin: 16px 0 0;
   max-width: 62ch;
-  border-left: 3px solid var(--color-primary);
-  padding-left: 15px;
   text-wrap: pretty;
 }
 .toolout .tfoot a,

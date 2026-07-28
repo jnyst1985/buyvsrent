@@ -212,13 +212,16 @@ every page. It was invisible wherever the band above happened to be white, and
 rendered as a stray white stripe wherever it was sage. If a band looks like it
 needs breathing room, increase its padding.
 
-**One footnote treatment.** A note that tells you how to read the thing directly
-above it — `.mfoot` under the money bars, `.racenote` under the chart, the rate
-table and the audit table — gets the 3px acid left rule and a 62ch measure.
-They are defined in a single rule block for that reason; only `.mfoot` used to
-have the rule, which read as a decision but was an accident. `.fine` is
-deliberately excluded: that is a card's own fine print, already inside a
-bordered card, where a second vertical rule is just noise.
+**One footnote treatment, and one rule for the acid marker.** Every note that
+explains how to read the thing above it looks the same — 14px, 62ch,
+`--color-body`. That part is unconditional.
+
+The **3px acid left rule marks an aside that sits directly on a band**, where
+nothing else separates it from the running content. **Inside a card the card is
+already the container**, so a second vertical marker is noise — the same reason
+`.fine` in the hero card never had one. That is why `.racenote` (chart, rate
+table, audit table) carries the rule and `.mfoot` (inside `.mcard`), `.tfoot`
+and `.sl-note` (inside `.tool`) do not. `npm run audit` enforces it.
 
 Type is self-hosted from `public/fonts/` — **Manrope 800** for every headline
 *and* every figure, **Inter 400/600** for everything else. Latin subset only.
@@ -242,6 +245,37 @@ ICO container wrapping the 32px PNG (valid, and what every current browser reads
 The OG card is built from HTML using the self-hosted woff2 files so it matches the
 site's type exactly. **It deliberately carries no figures** — a static image
 quoting `$67,000` is the same drift bug the engine tests exist to prevent.
+
+### `npm run audit` — the consistency check
+
+Every class of bug found during the redesign became a check, run against **every
+page at four widths**, so "did we fix it everywhere" stops being a question
+someone answers by looking. It exits non-zero on any finding.
+
+| | check |
+| --- | --- |
+| A | a display-size figure wider than its own box |
+| B | a heading broken by a `max-width` cap tighter than its column (hero caps exempt) |
+| C | horizontal page overflow |
+| D | console errors |
+| E | adjacent bands with no seam (same colour, no hairline) |
+| F | a field group whose boxes differ in size, or whose numerals do not share one right edge |
+| G | the acid rule used inside a card |
+| H | a module butted straight against the prose below it |
+| I | the prose standard: one body size, one line-height, one h2 size, one column |
+| J | text below the 11px floor |
+| K | touch targets under 24px on coarse pointers |
+
+It needs a browser and a copy of `playwright-core`, neither of which is a
+dependency of the build:
+
+```sh
+npm run dev
+PW_CORE=/path/to/playwright-core CHROME=/path/to/chrome BASE=http://localhost:4321 npm run audit
+```
+
+Each check exists because that exact bug shipped at least once. Do not delete one
+because it is currently passing — passing is the point.
 
 ### Facts published in more than one place
 

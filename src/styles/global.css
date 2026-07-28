@@ -597,6 +597,15 @@ summary:focus-visible {
   }
 }
 
+/* Below this the two amount fields cannot share a row. At 390px the column is
+   ~141px, and the "$" prefix plus the "a month" chip leave the rent input 23px
+   wide - you cannot read the number you just typed. Stack them instead. */
+@media (max-width: 560px) {
+  .conv .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Money decomposition. The mock carried four legend variants behind a toggle
    so Jon could choose; he locked the receipt style, so only that ships and the
@@ -1195,6 +1204,21 @@ summary:focus-visible {
     padding-top: 6px;
     padding-bottom: 6px;
   }
+  .cf.check input {
+    width: 24px;
+    height: 24px;
+  }
+  /* Footer and nav links sit in flex rows, so they compute to display:block and
+     do not get the inline-link exemption from WCAG 2.5.8. Padding out, margin
+     back in, so the row spacing is unchanged. */
+  .sitefooter .fl a,
+  .sitenav .ext a {
+    padding-block: 6px;
+    margin-block: -6px;
+  }
+  /* Bar segments are focusable but their width is the data. Widening one would
+     misstate the number it represents, so they stay as drawn - the receipt
+     legend underneath lists every segment at full row height. */
   .bar .sg {
     min-height: 44px;
   }
@@ -1252,7 +1276,8 @@ summary:focus-visible {
   color: var(--color-on-dark);
   border-radius: 999px;
   padding: 1px 8px;
-  font-size: 10.5px;
+  /* 11px is the floor for the whole system; the mock had this at 10.5. */
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;

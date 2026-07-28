@@ -91,51 +91,115 @@ Content pages ship **zero JavaScript**; only the calculator hydrates.
 
 ## UI / design system
 
-Everything visual is driven by tokens in **`src/styles/global.css`** (`@theme`
-block) and consumed as Tailwind 4 utilities (`text-ink`, `bg-rent-soft`,
+The full spec is **`DESIGN.md`**. Read it before changing anything visual — it
+carries two rules that are easy to break by accident, summarised below.
+
+Everything visual is driven by tokens in **`src/styles/global.css`** (`@theme
+static` block) and consumed as Tailwind 4 utilities (`text-ink`, `bg-primary-pale`,
 `border-hairline`, …). Change a token once, it propagates everywhere.
 
 | Token | Value | Meaning |
 | --- | --- | --- |
-| `--color-buy` / `-soft` | `#2563eb` / `#dbeafe` | buying side (blue) |
-| `--color-rent` / `-soft` | `#059669` / `#d1fae5` | renting side (green) |
-| `--color-ink` / `-secondary` / `-muted` | `#111827` / `#4b5563` / `#6b7280` | text hierarchy |
-| `--color-surface` / `-raised` | `#ffffff` / `#f9fafb` | backgrounds |
-| `--color-hairline` | `#e5e7eb` | borders, dividers |
+| `--color-primary` / `-pale` / `-deep` | `#b6f25c` / `#ecfbd2` / `#35590a` | the single acid accent, its surface tint, and its legible-as-ink form |
+| `--color-ink` | `#0e0f0c` | headings, figures, inverted band backgrounds |
+| `--color-body` / `--color-lose` | `#454745` / `#6f746d` | running text; the losing path |
+| `--color-canvas` / `-soft` | `#ffffff` / `#e8ebe6` | the white/sage band alternation |
+| `--color-hairline` | `#d3d8d1` | borders, table rules |
+| `--color-cost-1…6` | neutral ramp | cost segments in the money bars only |
 
-The site is **light-mode only** by deliberate choice (standard for finance tools);
-tokens are structured so a dark theme could be added later. The blue/green pair is
-validated for contrast and color-blind separation — keep that if you re-skin.
+**`@theme static` is load-bearing.** Tailwind 4 tree-shakes `@theme` variables
+that no CSS rule references, and several of these are consumed only from JS
+(cost-ramp segments as inline styles, chart line colours as SVG attributes).
+Without `static` they resolve to an empty string and elements render transparent
+with no error.
 
-### The calculator island
+### The two rules that are easy to get wrong
 
-`Calculator.tsx` is the root, mounted with `client:only="preact"` from
-`src/pages/index.astro`. How it's wired (worth knowing before you refactor, so you
-don't reintroduce fixed bugs):
+1. **Colour means "who is ahead", not "which path."** Acid green reads as
+   positive, so binding it to the rent path would paint the loser green whenever
+   buying wins. Whichever path leads takes `--color-primary-deep` (lines,
+   figures) or `--color-primary-pale` (surfaces); the other takes
+   `--color-lose`. Identity is carried by **position and label** — rent is always
+   listed first, winning or losing — never by colour. A tie neutralises both
+   sides. *This replaces the old fixed blue/green mapping; do not reintroduce
+   it.* Colour-blind separation still holds, and more strongly than before:
+   acid-versus-grey separates by lightness, not hue.
+2. **The accent is a surface, not an ink.** `--color-primary` on white measures
+   1.33:1. Anything that must be legible as type or a thin line uses
+   `--color-primary-deep` (8.1:1 on white). Bar fills, CTA fills and pale card
+   surfaces use `--color-primary` / `-pale`. On `--color-ink` surfaces the accent
+   is fine as type (14.5:1).
 
-- **State → results**: inputs live in one state object. `simulateCore()` (the cheap
-  path) runs synchronously on every change; the expensive `analyzeScenario()`
-  (sensitivity table + tipping-point rent) is deferred ~150 ms.
-- **No layout shift**: while the deferred analysis recomputes, the last values stay
-  on screen dimmed (`analysisPending`) instead of unmounting. Preserve this in
-  `VerdictBanner.tsx` and `Sensitivity.tsx` — collapsing those rows mid-recompute
-  was a real bug we fixed.
+Band colours are chosen so every card contrasts with the band under it, not by
+blind alternation: borderless cards (`.mcard`, `.hc`, `.kcard`, `.fc`) sit on
+sage, bordered ones (`.racecard`, `.cg`, `.wc`) sit on white. Flipping a band
+without checking its cards produces invisible cards.
+
+Every full-bleed band uses the `.band` helper, which carries the single `--sect`
+rhythm token (64px desktop / 44px mobile). Do not hand-tune section padding.
+
+Type is self-hosted from `public/fonts/` — **Manrope 800** for every headline
+*and* every figure, **Inter 400/600** for everything else. Latin subset only.
+They are not loaded from Google Fonts: the CSP allows neither
+`fonts.googleapis.com` nor `fonts.gstatic.com`, and widening it for a font is
+the wrong trade on a site that advertises no third-party data collection.
+
+The site is **light-mode only** by deliberate choice. Do not invent a dark theme.
+
+### The homepage island
+
+`HomePage.tsx` is the root, mounted with **`client:load`** from
+`src/pages/index.astro` — not `client:only`. It server-renders at the default
+scenario so every figure, heading and FAQ answer is in the HTML a crawler
+receives, then hydrates for interaction. Keep it that way: `client:only` ships an
+empty homepage, which is a bad trade on a page whose whole value is its content.
+A shared link is applied after first paint.
+
+How it's wired (worth knowing before you refactor, so you don't reintroduce
+fixed bugs):
+
+- **Two-speed recompute**: inputs live in one state object. `simulateCore()` runs
+  synchronously on every change; the expensive pass — `analyzeScenario()` plus the
+  nine-rung `rateLadder()` — is debounced 160 ms. The first analysis runs eagerly
+  at init so there is no "Computing…" flash.
+- **No layout shift**: while the deferred pass recomputes, the last values stay on
+  screen dimmed instead of unmounting. Collapsing those rows mid-recompute was a
+  real bug.
+- **Winner state is derived, never stored.** Every render recomputes who is
+  ahead and reapplies tint, tag, flags, legend and line colour together, so they
+  cannot disagree.
 - **URL = share artifact**: inputs encode into the query string (`urlParams.ts`),
   debounced, preserving non-owned params (utm_*). Legacy short links still decode.
+- **Domain math lives in `src/lib/engine/`,** never in components — including the
+  money decomposition (`decompose.ts`) and the rate ladder (`ladder.ts`), both of
+  which have their own tests.
 
 Component map:
 
 | File | Role |
 | --- | --- |
-| `Calculator.tsx` | root island: state, presets, debounced URL sync, error boundary |
-| `VerdictBanner.tsx` | the headline answer (narrative net-worth sentence) + tipping-point line |
-| `NetWorthChart.tsx` | hand-rolled SVG line chart with hover crosshair/tooltip |
-| `fields.tsx` | `SliderField`, `CompactNumber`, `Toggle`, `Group` — the input primitives |
-| `MonthlyCosts.tsx` | after-tax monthly cost breakdown |
-| `Sensitivity.tsx` | ±1pt swing table with verdict-flip flags |
-| `YearTable.tsx` | expandable year-by-year net-worth table |
-| `ShareSheet.tsx` | copy-link / share-verdict buttons |
-| `presets.ts` | the First-home / Upgrading / Downsizing preset scenarios |
+| `HomePage.tsx` | root island: state, two-speed recompute, URL sync, section composition |
+| `ConverterCard.tsx` | the signature hero: rent in, ten-year position out |
+| `AnswerBand.tsx` | the inverted ink band, gap figure up to 132px |
+| `Trio.tsx` | rent / buy / tipping-point cards |
+| `MoneyBars.tsx` | monthly decomposition, receipt legend, segment tooltip |
+| `RaceChart.tsx` | SVG net-worth chart, re-rendered at container size via ResizeObserver |
+| `FlipLevers.tsx` | sensitivity rewritten as plain sentences |
+| `RatesTable.tsx` | the nine-rung rate ladder |
+| `CustomizeGrid.tsx` | 20 assumptions, four groups, per-group reset |
+| `KeepResult.tsx` | the copy-paste-to-AI block and scenario link |
+| `AuditTable.tsx` | year-by-year net worth |
+| `inputs.tsx` | caret-preserving money field + inline number field |
+| `FivePercentRule.tsx`, `PriceToRent.tsx` | the two standalone `/calculators/*` tools |
+
+### Tables below 700px
+
+Horizontal scroll is the wrong default — it slices the last column mid-word and
+reads as broken. Pick by column count: 3 or fewer, leave it; 4-5 with one row
+that matters, stack each row into a block via `data-label` (the rate table, whose
+wrapper takes `.rwrap-stack`); 6+ being scanned down a column, mark the
+supporting columns `.sup` and hide them (the audit table). Authoring
+`data-label` at render time is the cheap moment — retrofitting it is not.
 
 Do not put domain math in components — it belongs in `src/lib/engine/`, which has
 its own tests (`npm test`). The engine is documented on

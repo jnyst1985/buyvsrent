@@ -21,7 +21,7 @@ const jsonLd = {
     <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
       Rent vs. buy: 20 questions, answered with numbers
     </h1>
-    <p class="mt-3 text-lg text-ink-secondary">
+    <p class="mt-3 text-lg text-body">
       Straight answers from <a href="/methodology" class="underline underline-offset-2">a documented model</a>,
       not vibes. Numbers reference our national-typical 2026 scenario unless stated otherwise.
     </p>
@@ -30,14 +30,14 @@ const jsonLd = {
         questions.map((f, i) => (
           <section id={`q${i + 1}`}>
             <h2 class="text-lg font-semibold text-ink">{f.q}</h2>
-            <p class="mt-2 leading-relaxed text-ink-secondary" set:html={f.a} />
+            <p class="mt-2 leading-relaxed text-body" set:html={f.a} />
           </section>
         ))
       }
     </div>
-    <p class="mt-10 border-t border-hairline pt-6 text-ink-secondary">
-      Have a question we didn't answer? <a href="/contact" class="text-buy underline underline-offset-2">Ask us</a> —
-      or just <a href="/" class="text-buy underline underline-offset-2">run your own numbers</a>.
+    <p class="mt-10 border-t border-hairline pt-6 text-body">
+      Have a question we didn't answer? <a href="/contact" class="text-primary-deep underline underline-offset-2">Ask us</a> —
+      or just <a href="/" class="text-primary-deep underline underline-offset-2">run your own numbers</a>.
     </p>
   </div>
 </BaseLayout>

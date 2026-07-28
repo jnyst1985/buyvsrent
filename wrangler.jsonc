@@ -11,7 +11,11 @@
     "not_found_handling": "404-page"
   },
   "workers_dev": false,
-  "preview_urls": false,
+  // Enabled so a redesign can be reviewed at a real URL before it replaces the
+  // live site: `wrangler versions upload` publishes a version WITHOUT routing
+  // traffic to it, and prints a preview link. `wrangler deploy` is still what
+  // makes a version live.
+  "preview_urls": true,
   "routes": [
     { "pattern": "rentvsbuymath.com", "custom_domain": true },
     // www is served by the same Worker; _redirects sends it to the apex

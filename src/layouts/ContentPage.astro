@@ -16,14 +16,20 @@ const { title, description, path, heading, subheading, updated, ogImage, jsonLd 
 ---
 
 <BaseLayout {title} {description} {path} {ogImage} {jsonLd}>
-  <article class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{heading}</h1>
-      {subheading && <p class="mt-3 text-lg text-ink-secondary">{subheading}</p>}
-      {updated && <p class="mt-3 text-sm text-ink-muted">Last updated {updated}</p>}
-    </header>
-    <div class="prose-content">
-      <slot />
+  <section class="phero">
+    <div class="wrap">
+      <h1>{heading}</h1>
+      {subheading && <p class="lede">{subheading}</p>}
+      {updated && <p class="pb" style="font-size:14px;margin:0">Last updated {updated}</p>}
     </div>
-  </article>
+  </section>
+
+  <section class="band band-white">
+    {/* .narrow, not .wrap: prose wants a measure, not the full 1160px container. */}
+    <div class="narrow">
+      <article class="prose-content">
+        <slot />
+      </article>
+    </div>
+  </section>
 </BaseLayout>

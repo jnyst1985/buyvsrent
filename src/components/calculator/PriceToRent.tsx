@@ -12,10 +12,10 @@ export default function PriceToRent() {
 
   const band =
     ratio < 15
-      ? { label: 'Favors buying', tone: 'border-buy', note: 'Rents are high relative to prices — ownership tends to pay off here.' }
+      ? { label: 'Favors buying', tone: 'border-primary-deep', note: 'Rents are high relative to prices — ownership tends to pay off here.' }
       : ratio <= 20
         ? { label: 'Could go either way', tone: 'border-hairline', note: 'The classic gray zone — stay length, rates, and your investment return decide it.' }
-        : { label: 'Favors renting', tone: 'border-rent', note: 'Prices are high relative to rents — investing the difference tends to win.' };
+        : { label: 'Favors renting', tone: 'border-primary-deep', note: 'Prices are high relative to rents — investing the difference tends to win.' };
 
   return (
     <div class="rounded-xl border border-hairline bg-white p-5">
@@ -43,13 +43,13 @@ export default function PriceToRent() {
       <div class={`mt-4 rounded-lg border-2 p-4 ${band.tone}`} aria-live="polite">
         <p class="text-lg font-bold text-ink">
           Price-to-rent ratio: <span class="tabular">{ratio.toFixed(1)}</span>{' '}
-          <span class="font-normal text-ink-secondary">— {band.label.toLowerCase()}</span>
+          <span class="font-normal text-body">— {band.label.toLowerCase()}</span>
         </p>
-        <p class="mt-1 text-sm text-ink-secondary">
+        <p class="mt-1 text-sm text-body">
           {formatCurrency(homePrice)} ÷ ({formatCurrency(monthlyRent)} × 12). Monthly rent is{' '}
           <strong class="text-ink">{monthlyPct.toFixed(2)}%</strong> of the price. {band.note}
         </p>
-        <p class="mt-2 text-xs text-ink-muted">
+        <p class="mt-2 text-xs text-lose">
           Bands: under 15 favors buying · 15–20 mixed · over 20 favors renting.{' '}
           <a href="/" class="underline underline-offset-2">
             The full calculator

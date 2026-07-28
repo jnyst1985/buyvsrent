@@ -55,19 +55,19 @@ export default function FivePercentRule() {
         }
       />
       <div
-        class={`mt-4 rounded-lg border-2 p-4 ${rentWins ? 'border-rent' : 'border-buy'}`}
+        class={`mt-4 rounded-lg border-2 p-4 ${rentWins ? 'border-primary-deep' : 'border-primary-deep'}`}
         aria-live="polite"
       >
         <p class="text-lg font-bold text-ink">
           {rentWins ? 'Renting looks better' : 'Buying looks better'}{' '}
-          <span class="font-normal text-ink-secondary">under the {rulePct}% rule</span>
+          <span class="font-normal text-body">under the {rulePct}% rule</span>
         </p>
-        <p class="mt-1 text-sm text-ink-secondary">
+        <p class="mt-1 text-sm text-body">
           Owning ≈ <strong class="text-ink">{formatCurrency(threshold)}/mo</strong> in unrecoverable
           costs vs rent of <strong class="text-ink">{formatCurrency(monthlyRent)}/mo</strong> — a{' '}
           {formatCurrency(gap)}/mo {rentWins ? 'saving for renting' : 'premium for renting'}.
         </p>
-        <p class="mt-2 text-xs text-ink-muted">
+        <p class="mt-2 text-xs text-lose">
           This is a 10-second screen, not a verdict —{' '}
           <a href="/" class="underline underline-offset-2">
             run the full month-by-month model

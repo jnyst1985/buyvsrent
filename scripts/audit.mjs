@@ -52,6 +52,18 @@ const PAGES = [
 ];
 const WIDTHS = [1440, 1024, 768, 390];
 
+// --- L. SERP metadata ---------------------------------------------------------
+// Google shows roughly 62 characters of a title, and substitutes its own snippet
+// when a description falls outside 120-165. Nothing on the page reveals a breach,
+// which is exactly why it drifts back: the only place it shows is the search
+// result. These three pages are never entered from a search, so padding their
+// descriptions to reach 120 would be filler - they are exempt from the minimum
+// only, never from the maximum.
+const TITLE_MAX = 62;
+const DESC_MIN = 120;
+const DESC_MAX = 165;
+const NO_DESC_MIN = new Set(['/404', '/contact', '/terms']);
+
 const F = {
   figureOverflow: [],
   cappedHeading: [],
@@ -64,6 +76,7 @@ const F = {
   typeFloor: [],
   proseStandard: [],
   touchTarget: [],
+  serpMeta: [],
 };
 
 const browser = await chromium.launch(EXEC ? { executablePath: EXEC } : {});
@@ -263,6 +276,12 @@ for (const width of WIDTHS) {
         const h2 = document.querySelector('.art h2, .prose-content h2, .msplit h2:not(.gletter), .fgroup h2');
         if (h2) out.h2fs = Math.round(px(getComputedStyle(h2).fontSize));
 
+        // --- L. what the search result will actually say -----------------------
+        out.meta = {
+          title: document.title || '',
+          desc: document.querySelector('meta[name="description"]')?.content || '',
+        };
+
         // --- K. touch targets on coarse pointers ------------------------------
         if (matchMedia('(pointer: coarse)').matches) {
           document.querySelectorAll('input:not([type=range]), button, a[class]').forEach((el) => {
@@ -293,6 +312,17 @@ for (const width of WIDTHS) {
     r.targets.forEach((x) => F.touchTarget.push(at(x)));
     if (r.docW > r.winW + 1) F.pageOverflow.push(at({ over: r.docW - r.winW }));
     if (width === 1440 && r.prose) F.proseStandard.push(at({ ...r.prose, h2: r.h2fs }));
+
+    // Metadata does not vary by viewport - check it once, at the first width.
+    if (width === WIDTHS[0]) {
+      const { title, desc } = r.meta;
+      const flag = (problem, len, text) => F.serpMeta.push(at({ problem, len, text }));
+      if (!title) flag('no title');
+      else if (title.length > TITLE_MAX) flag('title over 62', title.length, title);
+      if (!desc) flag('no description');
+      else if (desc.length > DESC_MAX) flag('description over 165', desc.length);
+      else if (desc.length < DESC_MIN && !NO_DESC_MIN.has(path)) flag('description under 120', desc.length);
+    }
   }
   await ctx.close();
 }
@@ -309,6 +339,7 @@ const CHECKS = [
   ['H. module butted against following prose', F.moduleGap],
   ['J. text below the 11px floor', F.typeFloor],
   ['K. touch target under 24px (coarse)', F.touchTarget],
+  ['L. title over 62, or description outside 120-165', F.serpMeta],
 ];
 console.log(`AUDIT: ${PAGES.length} pages x ${WIDTHS.length} widths\n`);
 let bad = 0;

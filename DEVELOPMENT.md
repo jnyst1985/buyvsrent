@@ -265,6 +265,7 @@ someone answers by looking. It exits non-zero on any finding.
 | I | the prose standard: one body size, one line-height, one h2 size, one column |
 | J | text below the 11px floor |
 | K | touch targets under 24px on coarse pointers |
+| L | a title over 62 characters, or a description outside 120-165 |
 
 It needs a browser and a copy of `playwright-core`, neither of which is a
 dependency of the build:
@@ -276,6 +277,16 @@ PW_CORE=/path/to/playwright-core CHROME=/path/to/chrome BASE=http://localhost:43
 
 Each check exists because that exact bug shipped at least once. Do not delete one
 because it is currently passing — passing is the point.
+
+**Check L is the one with no visible symptom.** Every other check describes
+something you could eventually see on the page; a title Google truncates looks
+perfect in the browser and wrong only in the search result, which is why eleven
+titles and seven descriptions had drifted out of range at once. Two consequences
+for authors: a guide whose headline reads better long sets `seoTitle` in its
+frontmatter rather than shortening its H1 (the `<title>` and the H1 are different
+jobs), and `/404`, `/contact` and `/terms` are exempt from the 120 minimum only —
+nobody reaches them from a search, so padding them would be filler. Nothing is
+ever exempt from the maximum.
 
 ### Facts published in more than one place
 

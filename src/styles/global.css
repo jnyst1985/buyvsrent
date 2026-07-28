@@ -88,27 +88,37 @@
 
   --radius-input: 12px;
   --radius-card: 24px;
-
-  /* ---- DEPRECATED: the old blue/green identity palette ----------------------
-     Still referenced by the calculator island (86 utility usages). The locked
-     system bans fixed rent=green / buy=blue mapping - colour now encodes WHO
-     IS AHEAD, and identity is carried by position and label. These tokens go
-     when the components migrate; do not use them in new code.                 */
-  --color-buy: #2563eb;
-  --color-buy-soft: #dbeafe;
-  --color-rent: #059669;
-  --color-rent-soft: #d1fae5;
-  --color-ink-secondary: #4b5563;
-  --color-ink-muted: #6b7280;
-  --color-surface: #ffffff;
-  --color-surface-raised: #f9fafb;
 }
+
+/* The old blue/green identity palette (--color-buy / --color-rent and friends)
+   lived here. It is gone: the locked system bans a fixed rent=green /
+   buy=blue mapping, because colour now encodes WHO IS AHEAD and identity is
+   carried by position and label. Do not reintroduce it. */
 
 :root {
   /* The single section rhythm token. Every full-bleed band uses it for BOTH
      top and bottom padding - inconsistent rhythm is the most visible
      sloppiness in a long page, so it is never hand-tuned per section. */
   --sect: 64px;
+
+  /* ---- Numeric field metrics ------------------------------------------------
+     ONE control size for the whole site. These exist because the fields were
+     previously sized by their content: a "%" box came out 116px and a "months"
+     box 150px, so the right edges inside a single card were ragged and the
+     numerals never lined up. The numeral and the unit each get a fixed column,
+     so every field is identical in width whatever unit it carries, and the
+     digits form a real column down the card.
+
+     --field-unit-w is sized to the longest unit string in GROUPS ("months",
+     47.3px at 13px/600 Inter). Adding a longer unit means raising it. */
+  --field-h: 36px;
+  --field-num-w: 62px;
+  --field-unit-w: 50px;
+  --field-pad-x: 11px;
+  --field-gap: 6px;
+  --field-w: calc(
+    var(--field-num-w) + var(--field-unit-w) + var(--field-gap) + 2 * var(--field-pad-x)
+  );
 }
 
 @media (max-width: 700px) {
@@ -533,11 +543,18 @@ summary:focus-visible {
 .crow label {
   color: var(--color-body);
 }
+/* Underline rather than a box - these are edits inside a sentence, a different
+   affordance from the boxed assumption grid on purpose. But they share the same
+   numeral and unit columns and the same height, so "6.50 %" and "10 years"
+   stacked in the connector list line up instead of being 24px apart. */
 .crow .ed {
   margin-left: auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--field-unit-w);
   align-items: center;
-  gap: 3px;
+  gap: var(--field-gap);
+  width: calc(var(--field-num-w) + var(--field-unit-w) + var(--field-gap));
+  height: var(--field-h);
   border-bottom: 1.5px solid var(--color-hairline);
 }
 .crow .ed:focus-within {
@@ -554,13 +571,15 @@ summary:focus-visible {
   background: transparent;
   color: var(--color-ink);
   text-align: right;
-  width: 68px;
-  padding: 3px 0;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
 }
 .crow .ed .sfx {
   font-size: 14px;
   font-weight: 600;
   color: var(--color-body);
+  white-space: nowrap;
 }
 
 .badge {
@@ -816,10 +835,25 @@ summary:focus-visible {
   gap: 40px;
   align-items: center;
 }
+/* A container so the figure can be sized against the column it actually sits
+   in, rather than against the viewport. */
+.answer .megacol {
+  container-type: inline-size;
+}
+/* The figure is sized to FIT, not to a fixed clamp.
+   At the design default (+$67,000) the ink measured 569px inside a 573px
+   column - four pixels of headroom - so one extra digit put the number
+   straight through the copy in the right-hand column. It has no break
+   opportunity and nothing clipped it, so it just overlapped.
+
+   --em is the string's width in ems, computed in AnswerBand.tsx from measured
+   Manrope-800 advances (tabular figures make every digit the same width, so
+   this is exact without measuring in the browser). Sizing by content means the
+   default still renders at exactly 132px and only long figures shrink. */
 .mega {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(56px, 11vw, 132px);
+  font-size: max(36px, min(132px, calc((100cqi - 4px) / var(--em, 4.4))));
   line-height: 0.98;
   letter-spacing: -0.04em;
   margin: 0;
@@ -1029,11 +1063,68 @@ summary:focus-visible {
    big / high, 50% size is enough". */
 .racebox {
   height: 320px;
+  position: relative;
+  touch-action: pan-y;
+}
+.racebox:focus-visible {
+  outline: 2px solid var(--color-primary-deep);
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 .racebox svg {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* Crosshair readout. Positioned from the crosshair's x and nudged with a
+   translate so it clears the line, flipping side in the right-hand third so it
+   never hangs off the plot. */
+.rtip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  /* left and width both come from the component - it does the fitting maths
+     against the real plot width, so CSS must not second-guess either. */
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgb(14 15 12 / 0.1);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.rtip-y {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+.rtip-r {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 0;
+  color: var(--color-body);
+}
+.rtip-r .d {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.rtip-r .v {
+  font-weight: 700;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.rtip-f {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid var(--color-hairline);
+  font-weight: 600;
+  color: var(--color-ink);
 }
 
 .levers {
@@ -1114,13 +1205,20 @@ summary:focus-visible {
   flex: 1;
   min-width: 0;
 }
+/* Two fixed columns, not flex: the numeral column ends at the same x in every
+   field, and the unit column starts at the same x, so the boxes are identical
+   widths and the digits line up down the card. Sizing by content is what made
+   them ragged. */
 .cf .box {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--field-unit-w);
   align-items: center;
-  gap: 5px;
+  gap: var(--field-gap);
+  width: var(--field-w);
+  height: var(--field-h);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-input);
-  padding: 6px 11px;
+  padding: 0 var(--field-pad-x);
   background: var(--color-canvas);
   flex: none;
 }
@@ -1139,13 +1237,15 @@ summary:focus-visible {
   background: transparent;
   color: var(--color-ink);
   text-align: right;
-  width: 74px;
-  padding: 2px 0;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
 }
 .cf .box .sfx {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-body);
+  white-space: nowrap;
 }
 .cf.check {
   justify-content: flex-start;
@@ -1672,7 +1772,13 @@ summary:focus-visible {
   letter-spacing: -0.028em;
   color: var(--color-on-dark);
   margin: 0 0 10px;
-  max-width: 20ch;
+  /* Explicitly uncapped, not merely un-set: this h2 sits inside a .band, and
+     dropping the declaration let `.band h2`'s 32ch cap take over instead.
+     At 768 the card stacks to a single 656px column and this title needs
+     560px - a cap broke it across two lines with half the card empty. The
+     card's own column is the right bound; balance handles the widths where it
+     genuinely needs two lines. */
+  max-width: none;
   text-wrap: balance;
 }
 .feat p {
@@ -1843,7 +1949,13 @@ summary:focus-visible {
   line-height: 1.15;
   letter-spacing: -0.025em;
   margin: 34px 0 10px;
-  max-width: 32ch;
+  /* No measure cap. A 32ch cap computed to 625px inside a 712px column, so
+     "The short answer: renting usually wins at 2026 rates" - 705px on one line,
+     comfortably inside the column - was broken onto two lines by the cap alone.
+     The column is already a tight measure for a heading (~36ch here);
+     text-wrap: balance handles the headings that genuinely need two lines.
+     Explicit `none` so a .band ancestor's h2 cap cannot reintroduce it. */
+  max-width: none;
   text-wrap: balance;
 }
 .art h3 {
@@ -1937,30 +2049,93 @@ summary:focus-visible {
   margin: 0;
   max-width: 34ch;
 }
-.inline-calc {
+/* ---------------------------------------------------------------------------
+   Answer box at the head of a guide.
+
+   Read top to bottom it is: the scenario, the answer, the one thing that would
+   flip it, the way out to the calculator. Exactly ONE number is at display
+   size - the answer. The tipping rent is a different KIND of quantity (a
+   monthly rent, not a net-worth gap), so it is deliberately a step down and
+   sits below a rule, subordinate to the verdict rather than beside it.
+   --------------------------------------------------------------------------- */
+
+.answerbox {
   background: var(--color-canvas-soft);
   border-radius: var(--radius-card);
   padding: 24px;
   margin: 28px 0;
 }
-.inline-calc .k {
+.ab-scn {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-body);
+  margin: 0;
+}
+.ab-verdict {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 0;
+}
+.ab-who {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+.ab-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 44px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-deep);
+}
+.ab-basis {
+  font-size: 14px;
+  color: var(--color-body);
+  margin: 8px 0 0;
+  max-width: 56ch;
+  text-wrap: pretty;
+}
+.ab-flip {
+  display: grid;
+  gap: 2px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-hairline);
+}
+.ab-flip-k {
   font-size: 13.5px;
   font-weight: 600;
   color: var(--color-body);
 }
-.inline-calc .v {
+.ab-flip-v {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(28px, 3.6vw, 40px);
-  letter-spacing: -0.03em;
+  font-size: 22px;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  margin: 6px 0 4px;
+  color: var(--color-ink);
 }
-.inline-calc .row {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-items: flex-end;
+.ab-flip-v .u {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-body);
+  margin-left: 7px;
+}
+.ab-flip-x {
+  font-size: 13.5px;
+  color: var(--color-body);
+  margin-top: 2px;
+}
+.answerbox .pill {
+  margin-top: 18px;
 }
 .next {
   display: grid;
@@ -2001,7 +2176,11 @@ summary:focus-visible {
   line-height: 1.12;
   letter-spacing: -0.028em;
   color: var(--color-ink);
-  max-width: 32ch;
+  /* Same rule as .art h2: no measure cap on a section heading inside a prose
+     column. The column is already a tight measure; a ch cap on top of it only
+     breaks headings that would have fit. Explicit `none` because this sits
+     inside a .band, whose own h2 cap would otherwise take over. */
+  max-width: none;
   text-wrap: balance;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;

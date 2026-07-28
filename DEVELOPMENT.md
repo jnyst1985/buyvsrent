@@ -106,6 +106,11 @@ static` block) and consumed as Tailwind 4 utilities (`text-ink`, `bg-primary-pal
 | `--color-canvas` / `-soft` | `#ffffff` / `#e8ebe6` | the white/sage band alternation |
 | `--color-hairline` | `#d3d8d1` | borders, table rules |
 | `--color-cost-1…6` | neutral ramp | cost segments in the money bars only |
+| `--field-h` / `-num-w` / `-unit-w` / `-w` | `36` / `62` / `50` / `140px` | the one numeric-field size, see below |
+
+The old `--color-buy` / `--color-rent` blue-green pair is **gone**, not
+deprecated-but-present. Nothing references it. Do not reintroduce it — see rule 1
+below for why a fixed path-to-colour mapping is wrong here.
 
 **`@theme static` is load-bearing.** Tailwind 4 tree-shakes `@theme` variables
 that no CSS rule references, and several of these are consumed only from JS
@@ -134,6 +139,39 @@ Band colours are chosen so every card contrasts with the band under it, not by
 blind alternation: borderless cards (`.mcard`, `.hc`, `.kcard`, `.fc`) sit on
 sage, bordered ones (`.racecard`, `.cg`, `.wc`) sit on white. Flipping a band
 without checking its cards produces invisible cards.
+
+### Three sizing rules, all learned the hard way
+
+1. **Numeric fields are sized by tokens, never by their content.** A field is a
+   two-column grid: the numeral column is `1fr` (right-aligned), the unit column
+   is a fixed `--field-unit-w`. Every field therefore comes out `--field-w` wide
+   whatever unit it carries, and the digits form a real column down the card.
+   Sizing them by content gave six different widths between 116px and 150px
+   inside one card, and three different control heights across the site. If you
+   add a unit longer than `months`, raise `--field-unit-w` — do not let the box
+   grow. `.cf .box` (boxed, assumption grid) and `.crow .ed` (underlined, inline
+   in the hero) share the metrics but keep different frames on purpose.
+2. **A live figure at display size must be sized to fit, not to a clamp.** The
+   answer band's figure had `clamp(56px, 11vw, 132px)`, which at the default
+   scenario put 569px of ink in a 573px column. One more digit — a bigger home
+   price — ran the number straight through the copy beside it, with no break
+   opportunity and nothing clipping it. `AnswerBand.tsx` now computes the
+   string's width in ems (`emWidth`, from measured Manrope advances; tabular
+   figures make it exact) and CSS sizes it with
+   `min(132px, (100cqi - 4px) / --em)` against a container. The default still
+   renders at exactly 132px, so the approved design is unchanged, and nothing
+   overflows at any length. `mega-fit.test.ts` pins the advances against
+   browser-measured ground truth — **re-measure them if the display font or
+   `.mega`'s tracking changes.**
+3. **Section headings in a prose column get no `ch` measure cap.** A `32ch` cap
+   computed to 625px inside a 712px column, so a heading needing 705px on one
+   line was broken in two by the cap alone — it reads as a bug, because it is
+   one. `.art h2`, `.prose-content h2` and `.feat h2` set `max-width: none`
+   **explicitly**: they sit inside a `.band`, and merely deleting the
+   declaration lets `.band h2`'s own cap take over. `text-wrap: balance` handles
+   the headings that genuinely need two lines. Hero headings (`.hero h1`,
+   `.phero h1`) keep their tight caps — there a deliberate two-line break is the
+   design.
 
 Every full-bleed band uses the `.band` helper, which carries the single `--sect`
 rhythm token (64px desktop / 44px mobile). Do not hand-tune section padding.
@@ -173,6 +211,14 @@ fixed bugs):
 - **Domain math lives in `src/lib/engine/`,** never in components — including the
   money decomposition (`decompose.ts`) and the rate ladder (`ladder.ts`), both of
   which have their own tests.
+- **The chart crosshair has two traps, both already sprung once.** (a) A touch
+  pointer is destroyed straight after `pointerup`, which fires `pointerleave`
+  immediately — so clearing on leave made a tap show the readout and hide it in
+  the same tick. `onPointerLeave` ignores `pointerType === 'touch'`. (b) The
+  readout's side is chosen from real geometry, not a fraction of the plot: at
+  390px the card is half the plot width, so a "flip past 62%" rule still ran it
+  25px off the card and pushed the page wider than the viewport. Its `left` and
+  `width` both come from the component; CSS must not second-guess either.
 
 Component map:
 
@@ -180,10 +226,10 @@ Component map:
 | --- | --- |
 | `HomePage.tsx` | root island: state, two-speed recompute, URL sync, section composition |
 | `ConverterCard.tsx` | the signature hero: rent in, ten-year position out |
-| `AnswerBand.tsx` | the inverted ink band, gap figure up to 132px |
+| `AnswerBand.tsx` | the inverted ink band; gap figure auto-fitted to its column, 132px max |
 | `Trio.tsx` | rent / buy / tipping-point cards |
 | `MoneyBars.tsx` | monthly decomposition, receipt legend, segment tooltip |
-| `RaceChart.tsx` | SVG net-worth chart, re-rendered at container size via ResizeObserver |
+| `RaceChart.tsx` | SVG net-worth chart, re-rendered at container size via ResizeObserver; hover/tap/arrow-key crosshair readout |
 | `FlipLevers.tsx` | sensitivity rewritten as plain sentences |
 | `RatesTable.tsx` | the nine-rung rate ladder |
 | `CustomizeGrid.tsx` | 20 assumptions, four groups, per-group reset |

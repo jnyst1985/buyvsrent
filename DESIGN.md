@@ -331,14 +331,50 @@ which reads as an accident rather than a decision:
 
 | Role | max-width | Notes |
 |---|---|---|
-| h1 | 13ch | Plus `text-wrap: balance` |
-| h2 | 32ch | Every current heading fits on one line |
+| Hero h1 (`.hero`, `.phero`) | 13ch / 24ch | Plus `text-wrap: balance`. A deliberate two-line break is the design here |
+| Band h2 (homepage sections) | 32ch | Plus `text-wrap: balance` |
+| **Prose section h2** (`.art`, `.prose-content`, `.feat`) | **none** | See below |
 | Answer sub-headline | 34ch | Plus `text-wrap: balance` |
 | Section sub / prose | 62ch | Plus `text-wrap: pretty` |
 | Footnotes | 62ch | Anchored with a 3px `{colors.primary}` left rule so the narrow column reads as deliberate |
 
 `text-wrap: balance` on every display role, `pretty` on paragraphs. Nothing renders
 below 11px.
+
+**A section heading inside a prose column takes no `ch` cap.** The column is
+already a tight measure (~36ch at the article h2 size), so a cap on top of it
+only breaks headings that would have fit: a 32ch cap computed to 625px inside a
+712px column, and a heading needing 705px on one line was split in two by the cap
+alone. That reads as a mistake because it is one. These set `max-width: none`
+**explicitly**, not by omission - they sit inside a `.band`, and simply deleting
+the declaration lets the band's own h2 cap take over.
+
+The same trap caught the featured guide card: a 20ch cap broke its title across
+two lines at 768px, where the card stacks to a single 656px column and the title
+needs 560px, leaving half the card empty.
+
+### Live figures are sized to fit, not to a clamp
+
+Any figure that comes from the engine can get longer than the one the design was
+drawn around. The answer band's `clamp(56px, 11vw, 132px)` put 569px of ink in a
+573px column at the default scenario - four pixels of headroom - so one extra
+digit ran the number straight through the copy in the next column, with no break
+opportunity and nothing clipping it.
+
+The rule: compute the string's width and size against the **container**, not the
+viewport. `min(132px, (100cqi - 4px) / --em)`, where `--em` is the em-width of
+the actual string. The default still renders at exactly 132px, so the drawn
+design is unchanged; only figures that would not fit shrink. Applies to any new
+display-size figure, not just this one.
+
+### One numeric-field size
+
+Fields are sized by token, never by content: a fixed numeral column (right
+aligned) plus a fixed unit column, so every field is the same width whatever unit
+it carries and the digits line up down the card. Sizing them by content produced
+six widths between 116px and 150px inside a single card, and three different
+control heights across the site. A unit longer than `months` means raising
+`--field-unit-w`, not letting the box grow.
 
 ## Layout
 
@@ -430,11 +466,19 @@ when the table is built.
 4. **Scroll spy** on the jump nav via IntersectionObserver, `rootMargin: -64px 0px -60% 0px`.
 5. **Reduced motion** gates smooth scrolling and the tooltip transition.
 6. **Charts re-render at container size** via ResizeObserver; SVG is never CSS-stretched, which would distort the type.
+7. **The race chart has a crosshair readout** on hover, tap and arrow keys: year, both net-worth figures, and who is ahead by how much. Two traps, both already sprung once - (a) a touch pointer is destroyed right after `pointerup`, firing `pointerleave` immediately, so clearing on leave made a tap show the readout and hide it in the same tick; (b) the card's side must be chosen from real geometry, not a fraction of the plot - at 390px the card is half the plot width, so a "flip past 62%" rule still ran it off the edge and pushed the page wider than the viewport.
 
 ## Known gaps
 
 - No dark mode, by design. Do not invent one.
-- Methodology and Guides page templates are not yet covered here.
+- Methodology and Guides page templates are not yet covered here. The guide
+  answer box (`.answerbox`) is: read top to bottom it is the scenario, the
+  answer, the one condition that would flip it, then the way out to the
+  calculator. Exactly **one** number sits at display size. The version before it
+  put a threshold rent and a net-worth gap side by side at the same size under
+  identically styled labels, so the two pairs read as one four-item row and
+  neither number said what kind of thing it was. Different kinds of quantity get
+  different weights, and the subordinate one sits below a rule.
 - The share/download image card from the previous system was dropped; the copy-paste text block replaces it.
 - The cost ramp is assigned by order of appearance, so a segment can change shade when another appears or disappears. Acceptable because the ramp carries no meaning, but do not build anything that depends on a segment's specific shade.
 

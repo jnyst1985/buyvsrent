@@ -34,6 +34,7 @@ const rate = entry.data.calcRate ?? DEFAULT_INPUTS.mortgageRatePct;
 const inputs = { ...DEFAULT_INPUTS, mortgageRatePct: rate };
 const results = simulateCore(inputs);
 const tip = tippingPointRent(inputs);
+const tie = results.verdict === 'tie';
 const rentWins = results.difference < 0;
 const fmt = (v: number) => formatCurrency(v, inputs.currency);
 const round1k = (v: number) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US');
@@ -93,36 +94,53 @@ const jsonLd = {
         <span>Every figure re-runnable</span>
       </div>
 
-      <div class="inline-calc">
-        <div class="k">
-          At {rate.toFixed(2)}%, on a {fmt(inputs.homePrice)} home, over a{' '}
-          {inputs.timeHorizonYears}-year stay
+      {/* One spine: the scenario, then THE answer, then the single condition
+          that would flip it, then the way out to the calculator. The previous
+          version put a threshold rent and a net-worth gap side by side at the
+          same size under same-styled labels, so the two pairs read as one
+          four-item row and neither number said what kind of thing it was. */}
+      <aside class="answerbox" aria-label="The answer for this scenario">
+        <p class="ab-scn">
+          At {rate.toFixed(2)}% on a {fmt(inputs.homePrice)} home, held{' '}
+          {inputs.timeHorizonYears} years
+        </p>
+
+        <p class="ab-verdict">
+          <span class="ab-who">
+            {tie ? 'Too close to call' : rentWins ? 'Renting wins by' : 'Buying wins by'}
+          </span>
+          {!tie && <span class="ab-num">{round1k(Math.abs(results.difference))}</span>}
+        </p>
+
+        <p class="ab-basis">
+          {tie
+            ? 'The two paths land within a percent of each other - inside the margin of the assumptions.'
+            : 'Measured on what you are worth at the end of the stay, not on what you paid.'}
+        </p>
+
+        <div class="ab-flip">
+          {tip ? (
+            <>
+              <span class="ab-flip-k">{rentWins ? 'Buying wins above' : 'Buying stops winning below'}</span>
+              <span class="ab-flip-v">
+                {fmt(tip)}<span class="u">a month in rent</span>
+              </span>
+              <span class="ab-flip-x">
+                That is {((tip / inputs.homePrice) * 100).toFixed(2)}% of the home price, per month.
+              </span>
+            </>
+          ) : (
+            <>
+              <span class="ab-flip-k">No rent flips it</span>
+              <span class="ab-flip-x">
+                At these assumptions there is no monthly rent that changes the answer.
+              </span>
+            </>
+          )}
         </div>
-        <div class="row">
-          <div>
-            <div class="k">Buying wins above</div>
-            <div class="v" style={`color:var(--color-${tip ? 'ink' : 'lose'})`}>
-              {tip ? fmt(tip) : 'no crossing'}
-            </div>
-          </div>
-          <div>
-            <div class="k">At {fmt(inputs.monthlyRent)} rent</div>
-            <div class="v" style="color:var(--color-primary-deep)">
-              +{round1k(Math.abs(results.difference))}
-            </div>
-          </div>
-        </div>
-        <div class="k" style="margin-top:8px">
-          {rentWins ? 'Renting and investing ends ahead by ' : 'Buying ends ahead by '}
-          {round1k(Math.abs(results.difference))}
-          {tip
-            ? ` - the tipping rent is ${((tip / inputs.homePrice) * 100).toFixed(2)}% of the home price per month.`
-            : '.'}
-        </div>
-        <div style="margin-top:16px">
-          <a class="pill" href={scenarioHref}>Change these numbers</a>
-        </div>
-      </div>
+
+        <a class="pill" href={scenarioHref}>Run these numbers yourself</a>
+      </aside>
 
       <Content />
 

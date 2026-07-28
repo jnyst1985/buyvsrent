@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Calculator from '../components/calculator/Calculator';
+import { HomePage } from '../components/calculator/HomePage';
 
 const title = 'Rent vs. Buy Calculator — Free, No Paywall, Honest Math | RentVsBuyMath';
 const description =
@@ -63,138 +63,24 @@ const jsonLd = [
     })),
   },
 ];
+
+// Only the four a reader would actually jump to. The rest of the page is read
+// in sequence, so ten links would be noise.
+const jumpLinks = [
+  { href: '#rates', label: 'Rates' },
+  { href: '#customize', label: 'Assumptions' },
+  { href: '#audit', label: 'Audit' },
+  { href: '#faq', label: 'FAQ' },
+];
 ---
 
-<BaseLayout {title} {description} path="/" jsonLd={jsonLd}>
-  <div class="mx-auto max-w-5xl px-4 pt-8 pb-2 text-center sm:pt-12">
-    <h1 class="text-2xl font-bold tracking-tight text-ink sm:text-4xl">
-      Should you buy a home or rent and invest the difference?
-    </h1>
-    <p class="mt-2 text-lg text-ink-secondary">
-      Drag the sliders. The answer updates instantly — and every formula is
-      <a href="/methodology" class="underline underline-offset-2">documented</a>.
-    </p>
-  </div>
-
-  <div class="py-6">
-    <Calculator client:only="preact">
-      <div slot="fallback" class="mx-auto max-w-5xl px-4" aria-hidden="true">
-        <div class="h-40 animate-pulse rounded-xl border-2 border-hairline bg-surface-raised"></div>
-        <div class="mt-6 grid gap-8 lg:grid-cols-[5fr_7fr]">
-          <div class="space-y-4">
-            {Array.from({ length: 5 }).map(() => (
-              <div class="h-14 animate-pulse rounded bg-surface-raised"></div>
-            ))}
-          </div>
-          <div class="h-96 animate-pulse rounded bg-surface-raised"></div>
-        </div>
-      </div>
-    </Calculator>
-  </div>
-
-  <section class="mx-auto max-w-2xl px-4 py-12">
-    <h2 class="text-2xl font-bold tracking-tight text-ink">
-      An honest calculator, not a sales tool
-    </h2>
-    <div class="prose-content mt-4">
-      <p>
-        Most rent-vs-buy tools are built by companies with a stake in your answer — lenders,
-        brokerages, listing sites — and most of them quietly skip the hard parts. The famous
-        exception sits behind a newspaper paywall. This one is free, unaffiliated, and counts
-        everything:
-      </p>
-      <ul>
-        <li>
-          <strong>Symmetric opportunity cost.</strong> The renter invests the down payment and
-          every month's savings — and when owning becomes the cheaper path, the <em>buyer's</em>
-          surplus gets invested too. Most calculators only credit one side.
-        </li>
-        <li>
-          <strong>The full cost of owning.</strong> Mortgage interest, property tax (with annual
-          growth), insurance, maintenance, HOA, PMI until it auto-cancels, ~3% closing costs going
-          in, and ~6% selling costs coming out.
-        </li>
-        <li>
-          <strong>Real tax rules.</strong> Itemizing only helps beyond the standard deduction —
-          which is why, since 2018, mortgage tax breaks are worth far less than most people think.
-          We model the $750k interest cap, the SALT cap, capital-gains tax, and the home-sale
-          exclusion.
-        </li>
-        <li>
-          <strong>Honesty about uncertainty.</strong> Every verdict ships with a sensitivity table
-          showing whether a one-point change in your assumptions flips the answer.
-        </li>
-      </ul>
-      <p>
-        The full model — every formula, every default, every simplification — is public on the
-        <a href="/methodology">methodology page</a>, and the engine is open source with 57
-        automated tests. If you find an error, <a href="/contact">tell us</a> and we'll fix it.
-      </p>
-    </div>
-  </section>
-
-  <section class="border-t border-hairline bg-surface-raised">
-    <div class="mx-auto max-w-2xl px-4 py-12">
-      <h2 class="text-2xl font-bold tracking-tight text-ink">
-        The 2026 picture: rates decide the answer
-      </h2>
-      <div class="prose-content mt-4">
-        <p>
-          According to our model, as of July 2026, with 30-year mortgages near 6.5%, buying a
-          typical US home beats renting only when a comparable rental costs more than about
-          <strong>0.59% of the home's value per month</strong> ($2,468/mo on a $420,000 home over a
-          10-year stay). Most US rentals sit nearer 0.5% — below that line — which is why
-          renting-and-investing currently wins in most markets.
-        </p>
-        <p>Here's how that buy/rent tipping point moves with mortgage rates:</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Mortgage rate</th>
-              <th>Tipping-point rent ($420k home)</th>
-              <th>As % of home value/mo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>4%</td><td>$1,890</td><td>0.45%</td></tr>
-            <tr><td>5%</td><td>$2,117</td><td>0.50%</td></tr>
-            <tr><td>6%</td><td>$2,350</td><td>0.56%</td></tr>
-            <tr><td>6.5%</td><td>$2,468</td><td>0.59%</td></tr>
-            <tr><td>7%</td><td>$2,587</td><td>0.62%</td></tr>
-            <tr><td>8%</td><td>$2,829</td><td>0.67%</td></tr>
-          </tbody>
-        </table>
-        <p class="text-sm">
-          Assumptions: 20% down, 3% home appreciation, 2.5% rent growth, 7% investment return,
-          10-year stay, standard deduction. Change any of them —
-          <a href="/">the calculator recomputes your tipping point live</a>.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-2xl px-4 py-12" id="faq">
-    <h2 class="text-2xl font-bold tracking-tight text-ink">Quick answers</h2>
-    <div class="mt-4 divide-y divide-hairline">
-      {
-        faq.map((f) => (
-          <details class="group py-3">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-ink">
-              {f.q}
-              <span class="text-ink-muted transition-transform group-open:rotate-45" aria-hidden="true">
-                +
-              </span>
-            </summary>
-            <p class="mt-2 text-ink-secondary" set:html={f.a} />
-          </details>
-        ))
-      }
-    </div>
-    <p class="mt-6 text-ink-secondary">
-      More detail: <a href="/faq" class="text-buy underline underline-offset-2">20 questions answered with numbers</a>, or
-      the deep-dive guides on
-      <a href="/guides/is-it-better-to-rent-or-buy" class="text-buy underline underline-offset-2">the 2026 math</a> and
-      <a href="/guides/when-does-buying-beat-renting" class="text-buy underline underline-offset-2">break-even years</a>.
-    </p>
-  </section>
+<BaseLayout {title} {description} path="/" {jsonLd} {jumpLinks}>
+  {/*
+    client:load, not client:only. The island server-renders at the default
+    scenario first, so every figure, heading and FAQ answer is in the HTML a
+    crawler receives, then hydrates for interaction. The previous build used
+    client:only, which shipped an empty homepage to anything without JS - a bad
+    trade on a page whose whole value is its content.
+  */}
+  <HomePage client:load />
 </BaseLayout>

@@ -27,7 +27,7 @@ export function RatesTable({ rows, rate, homePrice, currency }: Props) {
       {/* 4 columns with one row that matters: below 700px each row becomes its
           own block via data-label rather than scrolling sideways, which slices
           the last column mid-word and reads as broken. */}
-      <div class="rwrap">
+      <div class="rwrap rwrap-stack">
         <table class="rtable">
           <thead>
             <tr>

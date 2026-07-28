@@ -31,41 +31,32 @@ const PUBLISHED: Record<string, { rent: string; pct: string }> = {
   '8': { rent: '$2,829', pct: '0.67%' },
 };
 
-/** Which rows each file publishes. `pct: true` means it also prints the ratio column. */
-const PUBLISHERS: { file: string; rates: string[]; pct?: boolean }[] = [
-  { file: 'src/pages/index.astro', rates: ['4', '5', '6', '6.5', '7', '8'], pct: true },
-  { file: 'src/content/guides/rent-vs-buy-2026.md', rates: ['4', '5', '6', '6.5', '7', '8'] },
-  {
-    file: 'src/content/guides/is-buying-always-better-than-renting.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-  },
-  {
-    file: 'src/content/guides/when-does-buying-beat-renting.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-  },
-  {
-    file: 'src/content/guides/is-it-better-to-rent-or-buy.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-    pct: true,
-  },
-  {
-    file: 'src/content/sections/price-to-rent-ratio.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-    pct: true,
-  },
-  {
-    file: 'src/content/sections/five-percent-rule.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-    pct: true,
-  },
-  {
-    file: 'src/pages/free-nyt-style-rent-vs-buy-calculator.md',
-    rates: ['4', '5', '6', '6.5', '7', '8'],
-  },
-  { file: 'src/data/faq.json', rates: ['4', '5', '6', '6.5', '7', '8'] },
-  { file: 'src/data/glossary.json', rates: ['4', '5', '6', '6.5', '7', '8'] },
-  { file: 'src/pages/best-rent-vs-buy-calculators.md', rates: ['4', '6.5', '8'] },
-  { file: 'public/llms.txt', rates: ['6.5'], pct: true },
+const ALL = ['4', '5', '6', '6.5', '7', '8'];
+
+/**
+ * What each file states in prose or a hand-typed table.
+ *
+ * `rents` = rates whose dollar figure appears. `pcts` = rates whose
+ * %-of-home-value figure appears. They differ per file, so they are listed
+ * separately rather than inferred - several files print the rent without the
+ * ratio, and the homepage prints the ratio for two rates it never prices.
+ *
+ * The homepage's rate TABLE is not here on purpose: it renders from the engine
+ * via RatesTable, so it cannot drift. Only its FAQ schema hard-codes figures.
+ */
+const PUBLISHERS: { file: string; rents: string[]; pcts?: string[] }[] = [
+  { file: 'src/pages/index.astro', rents: ['6.5'], pcts: ['6.5', '4'] },
+  { file: 'public/llms.txt', rents: ['6.5'], pcts: ['6.5', '4'] },
+  { file: 'src/content/guides/rent-vs-buy-2026.md', rents: ALL, pcts: ['6.5'] },
+  { file: 'src/content/guides/is-buying-always-better-than-renting.md', rents: ALL },
+  { file: 'src/content/guides/when-does-buying-beat-renting.md', rents: ALL },
+  { file: 'src/content/guides/is-it-better-to-rent-or-buy.md', rents: ALL, pcts: ALL },
+  { file: 'src/content/sections/price-to-rent-ratio.md', rents: ALL, pcts: ALL },
+  { file: 'src/content/sections/five-percent-rule.md', rents: ALL, pcts: ALL },
+  { file: 'src/pages/free-nyt-style-rent-vs-buy-calculator.md', rents: ALL },
+  { file: 'src/data/faq.json', rents: ALL },
+  { file: 'src/data/glossary.json', rents: ALL },
+  { file: 'src/pages/best-rent-vs-buy-calculators.md', rents: ['4', '6.5', '8'] },
 ];
 
 const read = (file: string) => readFileSync(join(REPO_ROOT, file), 'utf8');
@@ -88,16 +79,16 @@ describe('published tipping-rent figures match the engine', () => {
 });
 
 describe('page copy carries the current figures', () => {
-  for (const { file, rates, pct } of PUBLISHERS) {
+  for (const { file, rents, pcts } of PUBLISHERS) {
     it(file, () => {
       const text = read(file);
-      for (const rate of rates) {
+      for (const rate of rents) {
         expect(text, `${file} is missing the ${rate}% tipping rent`).toContain(
           PUBLISHED[rate].rent
         );
-        if (pct) {
-          expect(text, `${file} is missing the ${rate}% ratio`).toContain(PUBLISHED[rate].pct);
-        }
+      }
+      for (const rate of pcts ?? []) {
+        expect(text, `${file} is missing the ${rate}% ratio`).toContain(PUBLISHED[rate].pct);
       }
     });
   }

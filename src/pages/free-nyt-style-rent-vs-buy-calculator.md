@@ -55,11 +55,11 @@ The tipping point moves mostly with the mortgage rate. Here is the same scenario
 | 30-year rate | Tipping-point rent | Implied price-to-rent ratio |
 |---|---|---|
 | 4% | $1,890/mo | 18.5 |
-| 5% | $2,067/mo | 16.9 |
-| 6% | $2,340/mo | 15.0 |
+| 5% | $2,117/mo | 16.5 |
+| 6% | $2,350/mo | 14.9 |
 | 6.5% | $2,468/mo | 14.2 |
-| 7% | $2,590/mo | 13.5 |
-| 8% | $2,830/mo | 12.4 |
+| 7% | $2,587/mo | 13.5 |
+| 8% | $2,829/mo | 12.4 |
 
 Freddie Mac's survey put the 30-year average near 6.7% in mid-2026, so the middle rows are today's reality. Our default comparable rent of $2,100 — 0.5% of the home's price per month — sits below the $2,468 threshold, and renting wins by about $67,000 over ten years. Rerun the identical house at the 4% rates of 2021 and buying wins by about $38,000, breaking even in year six. Nothing about the house changed; the rate flipped the answer, which is the story of the whole [2026 market](/guides/rent-vs-buy-2026).
 

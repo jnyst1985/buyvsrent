@@ -32,11 +32,11 @@ The verdict hangs on three inputs: the price-to-rent ratio (what a home costs ve
 | 30-year rate | Rent at which buying starts to win | As % of home value per month |
 |---|---:|---:|
 | 4% | $1,890 | 0.45% |
-| 5% | $2,067 | 0.49% |
-| 6% | $2,340 | 0.56% |
+| 5% | $2,117 | 0.50% |
+| 6% | $2,350 | 0.56% |
 | **6.5%** | **$2,468** | **0.59%** |
-| 7% | $2,590 | 0.62% |
-| 8% | $2,830 | 0.67% |
+| 7% | $2,587 | 0.62% |
+| 8% | $2,829 | 0.67% |
 
 Read the 6.5% row against the actual $2,100 rent: renting wins with about $370 of monthly headroom. Now read the 4% row: the same rent clears that threshold, and buying wins by ~$38,000 over 10 years with break-even in year 6. Nothing about the house changed. Rates flip everything.
 
@@ -44,10 +44,10 @@ Read the 6.5% row against the actual $2,100 rent: renting wins with about $370 o
 
 ## When does buying clearly win?
 
-Buying wins decisively in two situations: when mortgage rates are near 5% or below at normal price-to-rent ratios, and in markets where rent runs high relative to price — above roughly 0.6% of the home's value per month at today's rates. A long stay amplifies either win but can't create one by itself.
+Buying wins decisively in two situations: when mortgage rates are below about 4.9% at normal price-to-rent ratios, and in markets where rent runs high relative to price — above roughly 0.6% of the home's value per month at today's rates. A long stay amplifies either win but can't create one by itself.
 
 - **High-rent, low-price markets.** A $220,000 home renting for $1,600/month is 0.73% per month (price-to-rent ratio ~11.5). Our model has buying winning there over a 10-year stay even at today's rates, same assumptions otherwise. This profile is common in lower-cost metros where prices never detached from rents.
-- **Low rates.** At 4%, the default scenario flips to buying by ~$38,000. Even 5% tips it — barely — because the threshold rent ($2,067) slides just under the actual rent ($2,100).
+- **Low rates.** At 4%, the default scenario flips to buying by ~$38,000. The flip runs out around 4.9%: by 5% the threshold rent ($2,117) has climbed just above the actual rent ($2,100), and renting edges back ahead.
 - **Expensive metros are the mirror image.** A $1.1M home renting for $3,800/month is 0.35% per month (ratio ~24). Over a 15-year stay, for a married couple itemizing deductions, our model has renting winning by about **$560,000**. Full mortgage-interest and SALT deductions do not close a gap that size.
 
 For the full boundary map across rates, ratios, and horizons, see [when does buying beat renting](/guides/when-does-buying-beat-renting).

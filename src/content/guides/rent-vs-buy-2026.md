@@ -22,24 +22,24 @@ Horizon does not rescue buying at this rate. A 5-year stay has renting ahead by 
 
 ## The tipping rent: at what rent does buying start to win?
 
-The tipping rent is the monthly rent above which buying beats renting, holding everything else at our defaults ($420,000 home, ten-year stay). At July 2026 rates near 6.5%, it is $2,468 a month. At 4% it is $1,890; at 8% it is $2,830. Here is the full table from our model:
+The tipping rent is the monthly rent above which buying beats renting, holding everything else at our defaults ($420,000 home, ten-year stay). At July 2026 rates near 6.5%, it is $2,468 a month. At 4% it is $1,890; at 8% it is $2,829. Here is the full table from our model:
 
 | 30-year rate | P&I on the $336,000 loan | Tipping rent — buying wins above this | Verdict at $2,100 actual rent |
 |---|---|---|---|
 | 4.0% | $1,604 | $1,890 | Buying wins |
-| 5.0% | $1,804 | $2,067 | Buying wins, narrowly |
-| 6.0% | $2,014 | $2,340 | Renting wins |
+| 5.0% | $1,804 | $2,117 | Renting wins, narrowly |
+| 6.0% | $2,014 | $2,350 | Renting wins |
 | **6.5% — July 2026** | **$2,124** | **$2,468** | **Renting wins** |
-| 7.0% | $2,235 | $2,590 | Renting wins |
-| 8.0% | $2,465 | $2,830 | Renting wins |
+| 7.0% | $2,235 | $2,587 | Renting wins |
+| 8.0% | $2,465 | $2,829 | Renting wins |
 
 *Our model's default scenario, 10-year stay; P&I is straight 30-year amortization on the 80% loan.*
 
-Read it as a ratio and it travels to any market: each point of rate moves the tipping rent by roughly $175-275 a month, and across our runs, markets where rent is under about 0.5% of the home price per month favor renting at today's rates, while markets above roughly 0.7% favor buying. Two runs make the spread concrete. A $1.1M home renting at $3,800 (0.35% per month) loses to renting by about $560,000 over 15 years, even for a married couple who itemizes. A $220,000 home renting at $1,600 (about 0.73%) flips to buying. If ratio thinking is new to you, the [price-to-rent ratio](/calculators/price-to-rent-ratio) is the annual version of the same idea, and the [5% rule](/calculators/5-percent-rule) is its quick-and-dirty cousin.
+Read it as a ratio and it travels to any market: each point of rate moves the tipping rent by roughly $175-275 a month, and across our runs, markets where rent is under about 0.59% of the home price per month favor renting at today's rates, while markets above that favor buying. Two runs make the spread concrete. A $1.1M home renting at $3,800 (0.35% per month) loses to renting by about $560,000 over 15 years, even for a married couple who itemizes. A $220,000 home renting at $1,600 (about 0.73%) flips to buying. If ratio thinking is new to you, the [price-to-rent ratio](/calculators/price-to-rent-ratio) is the annual version of the same idea, and the [5% rule](/calculators/5-percent-rule) is its quick-and-dirty cousin.
 
 ## What would a drop to 5.5% change?
 
-On the default scenario, 5.5% cuts the payment from $2,124 to about $1,908 — $216 a month — and pulls the tipping rent from $2,468 down to roughly $2,200 (interpolating between our model's 5% and 6% runs). Against $2,100 market rent, that turns a clear renting verdict into a near coin flip.
+On the default scenario, 5.5% cuts the payment from $2,124 to about $1,908 — $216 a month — and pulls the tipping rent from $2,468 down to about $2,233. Against $2,100 market rent, renting still wins, but by roughly $24,000 instead of $67,000 — the gap narrows by about two thirds without closing.
 
 Go further and the flip completes: at 4%, buying wins the default scenario by about $38,000 and breaks even in year six. Note what our sensitivity runs say about trusting each verdict, though. At 6.5%, no single one-point change to any assumption — appreciation, rent growth, investment return, the rate itself — flips the renting result; it is robust. At 4%, one point of appreciation or rate does flip it. High-rate verdicts are sturdy; low-rate verdicts are the ones to stress-test.
 
@@ -57,12 +57,12 @@ That option has real value, but it is not a plan. Underwrite the purchase at the
 
 ## What should you do in each rate bracket?
 
-Match your quoted rate and your actual rent against the tipping table; that one comparison does more work than any forecast. Under 5%, buying usually wins at typical rents, but the margin is fragile. Between 5% and 6% it is genuinely close. In today's 6-7% band, rent unless local rents run near 0.7% of price per month.
+Match your quoted rate and your actual rent against the tipping table; that one comparison does more work than any forecast. Under 5%, buying usually wins at typical rents, but the margin is fragile. Between 5% and 6% it is genuinely close. In today's 6-7% band, rent unless local rents run near 0.6% of price per month.
 
 - **Under 5%.** Buying wins the default scenario (about +$38,000 at 4%), but fragilely — one point of appreciation or rate flips it. Run a pessimistic-appreciation case before you celebrate.
-- **5-6%.** The tipping rent ($2,067-$2,340) straddles typical mid-market rents, so horizon decides. Shorter than about six years, buying rarely wins in our runs at any rate — even at 4%, break-even is year six.
-- **6-7% — where July 2026 sits.** Renting and investing wins at typical big-metro ratios near 0.5% per month; buying wins in affordable markets where rent runs about 0.7% of price or more, like the $220,000/$1,600 example above. Check your local ratio before accepting the national verdict.
-- **Above 7%.** Tipping rents of $2,590-$2,830 on a $420,000 home are rare outside the highest-yield markets. Buy only for reasons a spreadsheet cannot price — stability, schools, the right to renovate — and price them consciously; the broader framing lives in [is it better to rent or buy](/guides/is-it-better-to-rent-or-buy).
+- **5-6%.** The tipping rent ($2,117-$2,350) straddles typical mid-market rents, so horizon decides. Shorter than about six years, buying rarely wins in our runs at any rate — even at 4%, break-even is year six.
+- **6-7% — where July 2026 sits.** Renting and investing wins at typical big-metro ratios near 0.5% per month; buying wins in affordable markets where rent runs about 0.6% of price or more, like the $220,000/$1,600 example above. Check your local ratio before accepting the national verdict.
+- **Above 7%.** Tipping rents of $2,587-$2,829 on a $420,000 home are rare outside the highest-yield markets. Buy only for reasons a spreadsheet cannot price — stability, schools, the right to renovate — and price them consciously; the broader framing lives in [is it better to rent or buy](/guides/is-it-better-to-rent-or-buy).
 
 ## Run your own numbers
 

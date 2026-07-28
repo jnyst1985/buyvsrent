@@ -41,11 +41,11 @@ Derived from our tipping-rent table — the default $420,000 scenario with 20% d
 | 30-year rate | Tipping rent (default $420k home) | As % of price per month | Annual rule of thumb |
 |---|---|---|---|
 | 4% | $1,890 | 0.45% | ~5.4% |
-| 5% | $2,067 | 0.49% | ~5.9% |
-| 6% | $2,340 | 0.56% | ~6.7% |
+| 5% | $2,117 | 0.50% | ~6.0% |
+| 6% | $2,350 | 0.56% | ~6.7% |
 | 6.5% | $2,468 | 0.59% | ~7.1% |
-| 7% | $2,590 | 0.62% | ~7.4% |
-| 8% | $2,830 | 0.67% | ~8.1% |
+| 7% | $2,587 | 0.62% | ~7.4% |
+| 8% | $2,829 | 0.67% | ~8.1% |
 
 Rates don't just slide the threshold; they flip verdicts. Rerun the identical default scenario at a 4% mortgage and buying wins by about $38,000, breaking even in year 6. If you prefer thinking in ratios, the classic rule is equivalent to "rent when the [price-to-rent ratio](/calculators/price-to-rent-ratio) is above 20"; at 6.5% mortgages the updated cutoff is closer to 14.
 

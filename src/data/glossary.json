@@ -129,7 +129,7 @@
   {
    "term": "Tipping-point rent",
    "slug": "tipping-point-rent",
-   "definition": "The monthly rent at which renting and buying finish in a dead heat \u2014 above it buying wins, below it renting wins. Our model computes it for any scenario. For a $420,000 home on default assumptions and a 10-year stay: $1,890 at a 4% mortgage, $2,067 at 5%, $2,340 at 6%, $2,468 at 6.5%, $2,590 at 7%, $2,830 at 8%. Rates move this target more than anything else."
+   "definition": "The monthly rent at which renting and buying finish in a dead heat \u2014 above it buying wins, below it renting wins. Our model computes it for any scenario. For a $420,000 home on default assumptions and a 10-year stay: $1,890 at a 4% mortgage, $2,117 at 5%, $2,350 at 6%, $2,468 at 6.5%, $2,587 at 7%, $2,829 at 8%. Rates move this target more than anything else."
   }
  ]
 }

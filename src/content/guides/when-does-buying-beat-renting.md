@@ -47,11 +47,11 @@ The mortgage rate and the rent-to-price ratio, in that order for most people. In
 | Mortgage rate | Rent above which buying wins ($420k home, 10-yr stay, our model) |
 | --- | --- |
 | 4% | $1,890/mo |
-| 5% | $2,067/mo |
-| 6% | $2,340/mo |
+| 5% | $2,117/mo |
+| 6% | $2,350/mo |
 | 6.5% | $2,468/mo |
-| 7% | $2,590/mo |
-| 8% | $2,830/mo |
+| 7% | $2,587/mo |
+| 8% | $2,829/mo |
 
 The default rent is $2,100. At 4% that clears the $1,890 bar, so buying wins; at 6.5% it falls $368 short of $2,468, so renting wins. The rate moved; the verdict followed.
 

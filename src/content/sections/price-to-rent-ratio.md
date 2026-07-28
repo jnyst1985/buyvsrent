@@ -41,11 +41,11 @@ The classic bands assume a financing environment. Our model's tipping-point rent
 | 30-year rate | Tipping rent ($420k home) | As % of price per month | Buying favored below ratio ≈ |
 | --- | --- | --- | --- |
 | 4% | $1,890 | 0.45% | 18.5 |
-| 5% | $2,067 | 0.49% | 17 |
-| 6% | $2,340 | 0.56% | 15 |
+| 5% | $2,117 | 0.50% | 16.5 |
+| 6% | $2,350 | 0.56% | 15 |
 | 6.5% | $2,468 | 0.59% | 14 |
-| 7% | $2,590 | 0.62% | 13.5 |
-| 8% | $2,830 | 0.67% | 12.4 |
+| 7% | $2,587 | 0.62% | 13.5 |
+| 8% | $2,829 | 0.67% | 12.4 |
 
 *Our model's assumptions: 20% down, 3% appreciation, 2.5% rent growth, 7% investment return, 10-year stay, standard deduction. Buying wins when actual rent exceeds the tipping rent.*
 

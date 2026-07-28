@@ -17,7 +17,7 @@ const faq = [
   },
   {
     q: 'What rent makes buying the better deal?',
-    a: 'We compute a tipping-point rent for your exact inputs. In the default 2026 scenario it’s about $2,468/month on a $420,000 home — roughly 0.7% of the home’s value per month at 6.5% mortgage rates. If similar homes rent for more than that, buying wins; for less, renting wins. At 4% rates the tipping point drops to about 0.54% of home value.',
+    a: 'We compute a tipping-point rent for your exact inputs. In the default 2026 scenario it’s about $2,468/month on a $420,000 home — roughly 0.59% of the home’s value per month at 6.5% mortgage rates. If similar homes rent for more than that, buying wins; for less, renting wins. At 4% rates the tipping point drops to about 0.45% of home value.',
   },
   {
     q: 'Does it account for taxes?',
@@ -142,9 +142,9 @@ const jsonLd = [
         <p>
           According to our model, as of July 2026, with 30-year mortgages near 6.5%, buying a
           typical US home beats renting only when a comparable rental costs more than about
-          <strong>0.7% of the home's value per month</strong> ($2,468/mo on a $420,000 home over a
-          10-year stay). Most US rentals sit closer to 0.5–0.6% — which is why renting-and-investing
-          currently wins in most markets.
+          <strong>0.59% of the home's value per month</strong> ($2,468/mo on a $420,000 home over a
+          10-year stay). Most US rentals sit nearer 0.5% — below that line — which is why
+          renting-and-investing currently wins in most markets.
         </p>
         <p>Here's how that buy/rent tipping point moves with mortgage rates:</p>
         <table>
@@ -156,12 +156,12 @@ const jsonLd = [
             </tr>
           </thead>
           <tbody>
-            <tr><td>4%</td><td>$1,890</td><td>0.54%</td></tr>
-            <tr><td>5%</td><td>$2,067</td><td>0.59%</td></tr>
-            <tr><td>6%</td><td>$2,340</td><td>0.67%</td></tr>
-            <tr><td>6.5%</td><td>$2,468</td><td>0.71%</td></tr>
-            <tr><td>7%</td><td>$2,590</td><td>0.74%</td></tr>
-            <tr><td>8%</td><td>$2,830</td><td>0.81%</td></tr>
+            <tr><td>4%</td><td>$1,890</td><td>0.45%</td></tr>
+            <tr><td>5%</td><td>$2,117</td><td>0.50%</td></tr>
+            <tr><td>6%</td><td>$2,350</td><td>0.56%</td></tr>
+            <tr><td>6.5%</td><td>$2,468</td><td>0.59%</td></tr>
+            <tr><td>7%</td><td>$2,587</td><td>0.62%</td></tr>
+            <tr><td>8%</td><td>$2,829</td><td>0.67%</td></tr>
           </tbody>
         </table>
         <p class="text-sm">

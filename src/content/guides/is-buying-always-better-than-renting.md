@@ -42,11 +42,11 @@ Renting tends to win when rent is low relative to local prices, when you may mov
 | 30-year rate | Rent at which buying starts to win* | Verdict at the actual $2,100 rent |
 | --- | --- | --- |
 | 4% | $1,890 | Buying wins |
-| 5% | $2,067 | Buying wins (barely) |
-| 6% | $2,340 | Renting wins |
+| 5% | $2,117 | Renting wins (barely) |
+| 6% | $2,350 | Renting wins |
 | 6.5% | $2,468 | Renting wins |
-| 7% | $2,590 | Renting wins |
-| 8% | $2,830 | Renting wins |
+| 7% | $2,587 | Renting wins |
+| 8% | $2,829 | Renting wins |
 
 \*Our model: $420,000 home, 10-year stay, all other inputs at defaults.
 
@@ -58,7 +58,7 @@ Same house, same rent: at 6.5%, renting wins by ~$67,000; at 4%, buying wins by 
 
 ## When does buying win?
 
-Buying tends to win when rent runs high relative to price (roughly 0.7% of the home's value per month or more), when you stay well past the break-even year, when you lock in a low rate, when a mortgage is the only saving you'd realistically do, and when you'd pay real money for stability.
+Buying tends to win when rent runs high relative to price (roughly 0.6% of the home's value per month or more), when you stay well past the break-even year, when you lock in a low rate, when a mortgage is the only saving you'd realistically do, and when you'd pay real money for stability.
 
 **High rent-to-price markets.** A $220,000 home renting for $1,600 — 0.73% per month, price-to-rent near 11 — flips the verdict: buying wins the 10-year comparison in our model. Affordable metros where rents run proportionally high are buying's home turf.
 

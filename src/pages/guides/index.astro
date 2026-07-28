@@ -1,44 +1,140 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CATEGORIES } from '../../content.config';
+import { DEFAULT_INPUTS as D } from '../../lib/engine/defaults';
+import { simulateCore, tippingPointRent } from '../../lib/engine/engine';
+import { formatCurrency } from '../../lib/engine/format';
+import { readingMinutes } from '../../lib/readingTime';
 
-const guides = (await getCollection('guides')).sort(
-  (a, b) => a.data.title.localeCompare(b.data.title),
-);
+/**
+ * A category pill row only earns its place once a category holds enough posts to
+ * read as one. Four guides across four pills looks like a broken filter, not a
+ * taxonomy - so the row stays hidden until something crosses this line.
+ */
+const CATEGORY_PILL_THRESHOLD = 3;
+
+/**
+ * Likewise the topic clusters: they are only worth rendering when there are
+ * enough real guides to fill them. Linking to posts that do not exist yet would
+ * ship dead internal links, which is worse than not having the block.
+ */
+const CLUSTER_THRESHOLD = 8;
+
+const all = await getCollection('guides');
+const guides = all.sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+const pillar = guides.find((g) => g.data.pillar) ?? guides[0];
+const rest = guides.filter((g) => g !== pillar);
+
+const counts = new Map<string, number>();
+for (const g of guides) counts.set(g.data.category, (counts.get(g.data.category) ?? 0) + 1);
+const showPills = [...counts.values()].some((n) => n >= CATEGORY_PILL_THRESHOLD);
+const activeCategories = CATEGORIES.filter((c) => (counts.get(c) ?? 0) > 0);
+
+const slugOf = (id: string) => id.replace(/\.md$/, '');
+const fmt = (v: number) => formatCurrency(v, 'USD');
+const round1k = (v: number) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US');
+const shortDate = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(d);
+
+// Live figures for the pillar card, straight from the engine at build time.
+const results = simulateCore(D);
+const tip = tippingPointRent(D);
+const rentWins = results.difference < 0;
+
+const title = 'Rent vs. Buy Guides — The Math, Explained | RentVsBuyMath';
+const description =
+  "Deep-dive guides on the rent-vs-buy decision: the 2026 math, break-even years, when renting wins, and what today's mortgage rates change. Every figure re-runnable in the calculator.";
 ---
 
-<BaseLayout
-  title="Rent vs. Buy Guides — The Math, Explained | RentVsBuyMath"
-  description="Deep-dive guides on the rent-vs-buy decision: the 2026 math, break-even years, when renting wins, and what today's mortgage rates change."
-  path="/guides"
->
-  <div class="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-    <h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">Guides</h1>
-    <p class="mt-3 text-lg text-ink-secondary">
-      The rent-vs-buy decision, explained with real numbers from
-      <a href="/methodology" class="underline underline-offset-2">a documented model</a> — not
-      rules of thumb.
-    </p>
-    <ul class="mt-8 space-y-6">
-      {
-        guides.map((g) => {
-          const slug = g.id.replace(/\.md$/, '');
-          return (
-            <li class="border-b border-hairline pb-6">
-              <a href={`/guides/${slug}`} class="group block">
-                <h2 class="text-xl font-semibold text-ink group-hover:text-buy">
-                  {g.data.title}
-                </h2>
-                <p class="mt-1.5 text-ink-secondary">{g.data.description}</p>
-              </a>
-            </li>
-          );
-        })
-      }
-    </ul>
-    <p class="mt-8 text-ink-secondary">
-      Prefer quick answers? Try the <a href="/faq" class="text-buy underline underline-offset-2">FAQ</a>
-      or the <a href="/glossary" class="text-buy underline underline-offset-2">glossary</a>.
-    </p>
-  </div>
+<BaseLayout {title} {description} path="/guides">
+  <section class="phero">
+    <div class="wrap">
+      <h1>Guides</h1>
+      <p class="lede">
+        The rent-versus-buy question, one piece at a time. Every guide is worked with real numbers
+        you can re-run in <a href="/">the calculator</a> - no rules of thumb, no "it depends".
+      </p>
+    </div>
+  </section>
+
+  <section class="band band-sage">
+    <div class="wrap">
+      {showPills && (
+        <div class="cats">
+          <a href="/guides" aria-current="page">All guides</a>
+          {activeCategories.map((c) => <span>{c} ({counts.get(c)})</span>)}
+        </div>
+      )}
+
+      {pillar && (
+        <div class="feat">
+          <div>
+            <span class="tag">Start here</span>
+            <h2>{pillar.data.title}</h2>
+            <p>{pillar.data.description}</p>
+            <a class="pill" href={`/guides/${slugOf(pillar.id)}`}>Read the guide</a>
+          </div>
+          <div class="fig">
+            <div class="k">At {D.mortgageRatePct}% on a {fmt(D.homePrice)} home</div>
+            <div class="v tabular">+{round1k(Math.abs(results.difference))}</div>
+            <div class="k">
+              {rentWins ? 'Renting and investing ends ahead' : 'Buying ends ahead'}.{' '}
+              {tip && (
+                <>
+                  {rentWins ? 'Buying needs rent above' : 'Renting wins below'}{' '}
+                  <b class="tabular">{fmt(tip)}</b>.
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div class="grid3">
+        {rest.map((g) => (
+          <a class="gc" href={`/guides/${slugOf(g.id)}`}>
+            <span class="cat">{g.data.category}</span>
+            <h3>{g.data.shortTitle ?? g.data.title}</h3>
+            <p>{g.data.description}</p>
+            <span class="meta">
+              <span>{readingMinutes(g.body ?? '')} min read</span>
+              <span>Updated {shortDate(g.data.updatedDate ?? g.data.pubDate)}</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {guides.length < CLUSTER_THRESHOLD && (
+    <section class="band band-white">
+      <div class="wrap">
+        <h2>Also useful</h2>
+        <p class="pb" style="margin-bottom:22px">
+          Shorter answers and single-purpose tools, for when you do not need the whole argument.
+        </p>
+        <div class="grid3">
+          <a class="gc" href="/calculators/5-percent-rule">
+            <span class="cat">Tool</span>
+            <h3>The 5% rule</h3>
+            <p>The quick screen for whether owning is cheaper this year, and where it breaks.</p>
+            <span class="meta"><span>Calculator</span></span>
+          </a>
+          <a class="gc" href="/calculators/price-to-rent-ratio">
+            <span class="cat">Tool</span>
+            <h3>Price-to-rent ratio</h3>
+            <p>Turn a price and a rent into one number you can compare across markets.</p>
+            <span class="meta"><span>Calculator</span></span>
+          </a>
+          <a class="gc" href="/faq">
+            <span class="cat">Reference</span>
+            <h3>Twenty questions, answered</h3>
+            <p>The FAQ, each answer carrying the numbers behind it. Plus a full glossary.</p>
+            <span class="meta"><span>FAQ</span><span>Glossary</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
 </BaseLayout>

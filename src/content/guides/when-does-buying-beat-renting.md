@@ -2,6 +2,7 @@
 title: "When Does Buying Beat Renting? Finding Your Break-Even Year"
 description: "Break-even is a net-worth crossover, not monthly-cost parity. Our model: no break-even within 30 years at 6.5%, but year 6 at 4%. Find your break-even year."
 pubDate: 2026-07-18
+category: "The math"
 ---
 
 Your break-even year is the first year in which selling your home would leave you with more net worth than renting the same home and investing every dollar the cheaper path freed up — after paying roughly 6% of the sale price to exit. In our model's default US scenario ($420,000 home, 20% down, 6.5% thirty-year mortgage, $2,100 comparable rent, 7% investment return), that year never arrives within 30 years. Cut the mortgage rate to 4% and it arrives in year 6.

@@ -2,6 +2,8 @@
 title: "Is It Better to Rent or Buy in 2026? The Actual Math"
 description: "At 2026's ~6.5% rates, our model shows renting beats buying by ~$67,000 over 10 years on a typical home. The 3 numbers that decide it, and when buying wins."
 pubDate: 2026-07-18
+category: "The math"
+pillar: true
 ---
 
 At today's mortgage rates — Freddie Mac's weekly survey has put the 30-year average near 6.7% through mid-2026, inside the roughly 6.5–6.9% band it has held all year — renting and investing the difference beats buying in most typical US markets, and the margin isn't small. In our model's default scenario ($420,000 home, $2,100/month comparable rent, 20% down at 6.5%, 10-year stay), renting comes out about $67,000 ahead. Buying wins when rent is unusually high relative to price, when your rate is near 5% or below, or both — and the line between those two worlds can be located precisely.

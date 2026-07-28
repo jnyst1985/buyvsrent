@@ -1,78 +1,135 @@
 ---
-import ContentPage from '../layouts/ContentPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR, authorSchema } from '../lib/author';
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'AboutPage',
-  name: 'About RentVsBuyMath',
-  url: 'https://rentvsbuymath.com/about',
-  mainEntity: {
-    '@type': 'WebSite',
-    name: 'RentVsBuyMath',
-    url: 'https://rentvsbuymath.com',
+const title = 'About | RentVsBuyMath';
+const description =
+  "Who builds RentVsBuyMath and why: a free, transparent rent-vs-buy calculator with every formula documented and the engine open source. No paywall, no signup, no stake in your answer.";
+
+// Two blocks: the page itself, and the Person it is about. The Person is the same
+// object every guide byline points at, so the author resolves to one entity
+// across the site instead of a name repeated in prose.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About RentVsBuyMath',
+    url: 'https://rentvsbuymath.com/about',
+    mainEntity: { ...authorSchema, '@context': undefined },
   },
-};
+  {
+    '@context': 'https://schema.org',
+    ...authorSchema,
+    jobTitle: AUTHOR.role,
+    knowsAbout: [
+      'rent vs buy analysis',
+      'mortgage amortization',
+      'opportunity cost',
+      'US housing tax rules',
+    ],
+    worksFor: undefined,
+  },
+];
 ---
 
-<ContentPage
-  title="About | RentVsBuyMath"
-  description="Why RentVsBuyMath.com exists: a free, transparent rent-vs-buy calculator with every formula documented — no paywall, no signup, no agenda."
-  path="/about"
-  heading="About RentVsBuyMath"
-  subheading="A free calculator with one job: give you the honest math."
-  jsonLd={jsonLd}
->
-  <h2>Why this exists</h2>
-  <p>
-    "Should I buy or keep renting?" is one of the biggest financial decisions most people ever
-    make — often a difference of hundreds of thousands over a few decades. Yet the tools available
-    are surprisingly poor. The best-known calculator sits behind a newspaper paywall. Many free
-    ones are built by parties with a stake in your answer — lenders, brokerages, listing sites —
-    and most quietly skip the factors that decide the outcome: the opportunity cost of your down
-    payment, selling costs, tax rules as they actually work, and what the cheaper party should be
-    doing with the monthly difference.
-  </p>
-  <p>
-    RentVsBuyMath.com is our answer: a genuinely free calculator that counts everything, explains
-    everything, and doesn't care which answer you get.
-  </p>
+<BaseLayout {title} {description} path="/about" {jsonLd}>
+  <section class="phero">
+    <div class="wrap">
+      <h1>About this calculator</h1>
+      <p class="lede">
+        One job: give you the honest math on renting versus buying, with nothing riding on which
+        answer you get.
+      </p>
+      <div class="cats">
+        <a href="https://github.com/jnyst1985/buyvsrent">Open source, MIT</a>
+        <span>No signup, no data collected</span>
+        <span>Not a lender or broker</span>
+      </div>
+    </div>
+  </section>
 
-  <h2>What makes it different</h2>
-  <ul>
-    <li>
-      <strong>Symmetric math.</strong> Whichever path is cheaper in a given year, that saver
-      invests the difference. Most calculators only credit the renter — which quietly biases the
-      result.
-    </li>
-    <li>
-      <strong>Everything on the table.</strong> Mortgage amortization, PMI with automatic
-      cancellation, closing and selling costs, property tax growth, maintenance, insurance, rent
-      inflation, investment fees, capital gains tax, and the U.S. home-sale exclusion.
-    </li>
-    <li>
-      <strong>Documented formulas.</strong> The full model is public on the
-      <a href="/methodology">methodology page</a> — every formula, every default, every source. If
-      you find an error, tell us and we'll fix it.
-    </li>
-    <li>
-      <strong>Honest about uncertainty.</strong> The verdict comes with a sensitivity check
-      showing which assumptions could flip it.
-    </li>
-    <li><strong>No paywall, no signup, no data collection.</strong> Calculations run in your browser.</li>
-  </ul>
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="msplit">
+        {/* The author block is the point of this page for a YMYL topic: a reader
+            and a search engine both need to know who is accountable. */}
+        <div>
+          <div class="card">
+            <div class="artmeta" style="margin:0 0 12px">
+              <span class="au">
+                <span class="av" aria-hidden="true">{AUTHOR.initials}</span>
+                {AUTHOR.name}
+              </span>
+            </div>
+            <p class="pb" style="font-size:15px">{AUTHOR.role}.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+              {AUTHOR.sameAs.map((url) => (
+                <a class="pill sm ghost" href={url} rel="me noopener" target="_blank">
+                  {url.includes('github') ? 'GitHub' : 'Profile'}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
 
-  <h2>Who's behind it</h2>
-  <p>
-    RentVsBuyMath was built by <strong>Jonathan Nyst</strong>, a fintech growth professional, as an
-    independent project. It has no affiliation with any lender, brokerage, or real-estate platform.
-    The site is supported by advertising, which never influences the math: the calculator's output
-    depends only on your inputs.
-  </p>
+        <div>
+          <h2>Who is behind it</h2>
+          <p class="pb">{AUTHOR.bio}</p>
+          <p class="pb" style="margin-top:12px">
+            There is no affiliation with any lender, brokerage or real-estate platform, and no
+            referral fees. The site is supported by advertising, which cannot influence the result:
+            the calculator's output depends only on the numbers you enter, and it runs entirely in
+            your browser.
+          </p>
 
-  <h2>Open methodology, open source</h2>
-  <p>
-    The calculation engine is open source under the MIT license and covered by an automated test
-    suite. Corrections and suggestions are welcome — reach us via the
-    <a href="/contact">contact page</a>.
-  </p>
-</ContentPage>
+          <h2 style="margin-top:38px">Why it exists</h2>
+          <p class="pb">
+            "Should I buy or keep renting?" is one of the largest financial decisions most people
+            make, and the tools for it are poor. The best-known calculator sits behind a newspaper
+            paywall. Many free ones are published by parties with a stake in the answer, and most
+            quietly skip the factors that actually decide it: the opportunity cost of the down
+            payment, selling costs, tax rules as they really work, and what the cheaper party does
+            with the monthly difference.
+          </p>
+
+          <h2 style="margin-top:38px">What makes the math different</h2>
+          <div class="scope" style="margin-top:14px">
+            <div class="card">
+              <h3>Symmetric opportunity cost</h3>
+              <ul>
+                <li>Whichever path is cheaper in a month, that side invests the difference</li>
+                <li>Most calculators only ever credit the renter, which biases the result</li>
+                <li>The renter's portfolio is taxed on its gains, so it is not a free ride either</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Everything on the table</h3>
+              <ul>
+                <li>Amortisation, PMI with automatic cancellation, closing and selling costs</li>
+                <li>Property tax growth, maintenance, insurance, HOA, rent inflation, fund fees</li>
+                <li>Standard versus itemised deductions, SALT cap, Section 121 exclusion</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2 style="margin-top:38px">How to check it</h2>
+          <p class="pb">
+            The full model is public on the <a href="/methodology">methodology page</a> - every
+            formula, every default and a plain statement of what it does not measure. The engine is
+            MIT-licensed and covered by automated tests, including scenarios worked out by hand
+            independently of the code, so a mistake in the implementation shows up as a failing test
+            rather than a wrong answer on the page.
+          </p>
+          <p class="pb" style="margin-top:12px">
+            If you find an error, <a href="/contact">say so</a> - corrections are made publicly.
+          </p>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+            <a class="pill" href="/">Run your numbers</a>
+            <a class="pill ghost" href="/methodology">Read the methodology</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

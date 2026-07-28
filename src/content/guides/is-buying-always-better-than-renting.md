@@ -2,6 +2,7 @@
 title: "Is Buying Always Better Than Renting? No — Here’s When Renting Wins"
 description: "Renting isn't throwing money away: our model shows ~$2,400 of an owner's $3,067 monthly cost is just as unrecoverable as rent. See when renting wins."
 pubDate: 2026-07-18
+category: "Myths"
 ---
 
 Buying is not always better than renting. In our model's default US scenario (a $420,000 home versus $2,100 rent, 20% down, 6.5% mortgage, 10-year stay), renting and investing the difference ends roughly **$67,000 ahead** — while dropping the rate to 4% flips the verdict to buying by about $38,000. "Rent is throwing money away" isn't analysis; it's a slogan, and the numbers below show exactly when it's wrong.

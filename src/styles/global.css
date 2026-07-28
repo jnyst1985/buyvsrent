@@ -1437,6 +1437,528 @@ summary:focus-visible {
 }
 
 /* ---------------------------------------------------------------------------
+   Content pages: methodology, guides index, guide article
+   --------------------------------------------------------------------------- */
+
+/* Simple sage masthead - no converter, so no split grid. */
+.phero {
+  background: var(--color-canvas-soft);
+  padding: var(--sect) 0;
+}
+.phero h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 16px;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.phero .lede {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--color-body);
+  max-width: 62ch;
+  margin: 0 0 20px;
+  text-wrap: pretty;
+}
+.pb {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-body);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+.card {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  padding: 24px;
+}
+.card.dark {
+  background: var(--color-ink);
+  color: var(--color-primary);
+  border: 0;
+}
+.card.dark p {
+  color: var(--color-canvas-soft);
+}
+
+/* Methodology */
+.msplit {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+.toc {
+  position: sticky;
+  top: 60px;
+  align-self: start;
+}
+.toc a {
+  display: block;
+  font-size: 14.5px;
+  color: var(--color-body);
+  text-decoration: none;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid var(--color-hairline);
+}
+.toc a:hover,
+.toc a[aria-current] {
+  color: var(--color-ink);
+  border-left-color: var(--color-primary-deep);
+}
+.step {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+.step .n {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--color-primary-deep);
+  background: var(--color-primary-pale);
+  border-radius: 999px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.step h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.step p {
+  margin: 4px 0 0;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--color-body);
+  text-wrap: pretty;
+}
+.dtable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dtable th {
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-body);
+  padding: 0 12px 10px;
+  border-bottom: 2px solid var(--color-ink);
+}
+.dtable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-hairline);
+  font-size: 15px;
+}
+.dtable td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.scope {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.scope h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.scope ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.scope li {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--color-body);
+  margin: 5px 0;
+}
+
+/* Guides index */
+.cats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 26px;
+}
+.cats a,
+.cats span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-body);
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+  padding: 7px 15px;
+  text-decoration: none;
+}
+.cats a[aria-current] {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-on-dark);
+}
+.feat {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  background: var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  margin-bottom: 20px;
+}
+.feat .tag {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.feat h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  color: var(--color-on-dark);
+  margin: 0 0 10px;
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.feat p {
+  color: var(--color-canvas-soft);
+  font-size: 16.5px;
+  line-height: 1.55;
+  margin: 0 0 18px;
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+.feat .fig {
+  background: rgb(255 255 255 / 0.06);
+  border-radius: 16px;
+  padding: 22px;
+}
+.feat .fig .k {
+  font-size: 13px;
+  color: var(--color-canvas-soft);
+}
+.feat .fig .v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(30px, 4vw, 46px);
+  letter-spacing: -0.03em;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 12px;
+}
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.gc {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+.gc:hover {
+  border-color: var(--color-ink);
+}
+.gc .cat {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-primary-deep);
+  margin-bottom: 9px;
+}
+.gc h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.gc p {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--color-body);
+  margin: 0 0 14px;
+  text-wrap: pretty;
+}
+.gc .meta {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--color-lose);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.clusters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.clusters h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.cl a {
+  display: block;
+  font-size: 15px;
+  color: var(--color-primary-deep);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+.cl a:hover {
+  color: var(--color-ink);
+}
+
+/* Guide article */
+.art {
+  padding: var(--sect) 0;
+}
+.narrow {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.crumb {
+  font-size: 13.5px;
+  color: var(--color-body);
+  margin-bottom: 14px;
+}
+.crumb a {
+  color: var(--color-primary-deep);
+  text-decoration: none;
+}
+.art h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(30px, 4.4vw, 46px);
+  line-height: 1.07;
+  letter-spacing: -0.03em;
+  margin: 0 0 14px;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.artmeta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--color-lose);
+  margin: 0 0 26px;
+  align-items: center;
+}
+.artmeta .au {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.artmeta .au:hover {
+  text-decoration: underline;
+}
+.artmeta .av {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-primary-pale);
+  color: var(--color-primary-deep);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+/* Article body. The markdown renders bare h2/p/ul, so these style it in place. */
+.art h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(23px, 2.6vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 34px 0 10px;
+  max-width: 32ch;
+  text-wrap: balance;
+}
+.art h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  margin: 26px 0 8px;
+}
+.art p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: #26281f;
+  max-width: 68ch;
+  margin: 0 0 16px;
+  text-wrap: pretty;
+}
+.art ul,
+.art ol {
+  margin: 0 0 16px 1.25rem;
+  max-width: 68ch;
+}
+.art ul {
+  list-style: disc;
+}
+.art ol {
+  list-style: decimal;
+}
+.art li {
+  font-size: 17px;
+  line-height: 1.65;
+  color: #26281f;
+  margin: 0 0 8px;
+  text-wrap: pretty;
+}
+.art a {
+  color: var(--color-primary-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.art .crumb a,
+.art .artmeta a,
+.art .gc,
+.art .pill {
+  text-decoration: none;
+}
+.art strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.art table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.art th {
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-body);
+  padding: 0 12px 10px 0;
+  border-bottom: 2px solid var(--color-ink);
+}
+.art td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--color-hairline);
+}
+.art blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 18px;
+  margin: 24px 0;
+  color: var(--color-body);
+}
+
+.pull {
+  border-left: 3px solid var(--color-primary);
+  padding: 4px 0 4px 18px;
+  margin: 24px 0;
+}
+.pull p {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin: 0;
+  max-width: 34ch;
+}
+.inline-calc {
+  background: var(--color-canvas-soft);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  margin: 28px 0;
+}
+.inline-calc .k {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-body);
+}
+.inline-calc .v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.6vw, 40px);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0 4px;
+}
+.inline-calc .row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.next {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+}
+
+@media (max-width: 900px) {
+  .msplit,
+  .feat,
+  .grid3,
+  .clusters,
+  .scope,
+  .next {
+    grid-template-columns: 1fr;
+  }
+  .toc {
+    position: static;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Prose for content pages (no typography plugin needed).
    Measure is capped at 62ch: past ~85 characters the eye loses its place
    returning to the next line, and 72ch renders at ~91 actual characters.

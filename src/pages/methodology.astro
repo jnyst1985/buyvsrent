@@ -1,139 +1,274 @@
 ---
-import ContentPage from '../layouts/ContentPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { DEFAULT_INPUTS as D } from '../lib/engine/defaults';
+import { tippingPointRent } from '../lib/engine/engine';
+import { formatCurrency } from '../lib/engine/format';
+import { authorSchema, AUTHOR } from '../lib/author';
+
+const fmt = (v: number) => formatCurrency(v, 'USD');
+
+// Computed at build from the same engine the calculator runs, so this page can
+// never quote a figure the calculator disagrees with.
+const tip = tippingPointRent(D);
+const tipPct = tip ? ((tip / D.homePrice) * 100).toFixed(2) : null;
+
+const UPDATED = 'July 28, 2026';
+
+const taxRows: [string, string, string][] = [
+  ['Standard deduction', 'Itemise only when it beats this', fmt(D.standardDeduction)],
+  ['Mortgage interest cap', 'Interest deductible on loan up to', fmt(D.mortgageInterestDeductionCap)],
+  ['SALT cap', 'Property tax deduction limited to', fmt(D.saltCap)],
+  ['Marginal tax rate', 'Applied to any deduction benefit', `${D.marginalTaxRatePct}%`],
+  ['Capital gains', 'On invested gains, both paths', `${D.capitalGainsRatePct}%`],
+  ['Section 121 exclusion', 'Home-sale gain excluded (single)', '$250,000'],
+];
+
+const defaultRows: [string, string, string][] = [
+  ['Down payment', `${D.downPaymentPct}%`, 'The conventional threshold at which mortgage insurance stops'],
+  ['Mortgage term', `${D.mortgageTermYears} years`, 'The dominant US product'],
+  ['Closing costs', `${D.closingCostPct}%`, 'Mid-point of the typical 2-5% range'],
+  ['Selling costs', `${D.sellingCostPct}%`, 'Agent commission plus transfer costs'],
+  ['Property tax', `${D.propertyTaxPct}% /yr`, 'Near the US median; varies hugely by state'],
+  ['Maintenance', `${D.maintenancePct}% /yr`, 'The common 1%-of-value rule; older homes cost more'],
+  ['Home appreciation', `${D.homeAppreciationPct}% /yr`, 'Long-run US average, not a forecast'],
+  ['Investment return', `${D.investmentReturnPct}% /yr`, 'Long-run nominal equity return before fees'],
+  ['Fund expense ratio', `${D.expenseRatioPct}% /yr`, 'A cheap index fund'],
+  ['Rent growth', `${D.rentIncreasePct}% /yr`, 'Slightly above target inflation'],
+  ['Inflation', `${D.inflationPct}% /yr`, 'Applied to insurance, HOA and upkeep'],
+];
+
+const toc = [
+  ['m1', '1. The model'],
+  ['m2', '2. What counts as owning'],
+  ['m3', '3. What counts as renting'],
+  ['m4', '4. Taxes'],
+  ['m5', '5. The defaults'],
+  ['m6', '6. The tipping rent'],
+  ['m7', '7. What this does not measure'],
+  ['m8', '8. Errors and changes'],
+];
+
+const steps = [
+  [
+    'Both paths pay their real costs',
+    "Each month the owner pays mortgage interest, principal, property tax, insurance, maintenance, HOA and mortgage insurance. The renter pays rent and renter's insurance.",
+  ],
+  [
+    'Whoever spends less invests the difference',
+    'This is the step most calculators skip. If owning costs more this month, the renter invests the gap. If renting costs more, the owner invests it. The comparison is symmetric in both directions.',
+  ],
+  [
+    'Everything grows at its own rate',
+    'The home appreciates, rent grows, property tax grows, insurance and upkeep inflate, and investments compound at the return you set minus the fund expense ratio.',
+  ],
+  [
+    'Both sides sell up at the end',
+    'The owner sells - paying selling costs and any capital-gains tax above the exclusion - and clears the remaining loan. The renter liquidates the portfolio and pays capital gains, and gets the deposit back. Those two net figures are what you see.',
+  ],
+];
+
+const title = 'Methodology: Exactly How We Compare Renting vs. Buying | RentVsBuyMath';
+const description =
+  'Every formula in the RentVsBuyMath calculator, documented: symmetric opportunity cost, monthly amortization, 2026 US tax rules, PMI cancellation, selling costs, and what the model deliberately does not measure.';
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
   headline: 'Methodology: Exactly How We Compare Renting vs. Buying',
-  description:
-    'The complete, documented model behind the RentVsBuyMath calculator: symmetric opportunity cost, monthly amortization, US tax rules, PMI, and liquidation math.',
+  description,
   datePublished: '2026-07-18',
-  dateModified: '2026-07-18',
-  author: { '@type': 'Organization', name: 'RentVsBuyMath' },
+  dateModified: '2026-07-28',
+  author: authorSchema,
+  mainEntityOfPage: 'https://rentvsbuymath.com/methodology',
 };
 ---
 
-<ContentPage
-  title="Methodology: Exactly How We Compare Renting vs. Buying | RentVsBuyMath"
-  description="Every formula in the RentVsBuyMath calculator, documented: symmetric opportunity cost, monthly amortization, 2026 US tax rules, PMI cancellation, selling costs, and sensitivity analysis."
-  path="/methodology"
-  heading="How the math works"
-  subheading="Every formula, every convention, every simplification — so you can check our work."
-  updated="July 18, 2026"
-  jsonLd={jsonLd}
->
-  <p>
-    The calculator answers one question: <strong>after your planned stay, which path leaves you
-    with more money — buying a home, or renting a similar one and investing the difference?</strong>
-    It simulates both paths month by month, then "cashes out" both sides at the end, with all exit
-    costs and taxes paid. The engine is open source and covered by 57 automated tests, including
-    ten verification scenarios derived by hand with closed-form math, independently of the code.
-  </p>
+<BaseLayout {title} {description} path="/methodology" {jsonLd}>
+  <section class="phero">
+    <div class="wrap">
+      <h1>How this calculator works, in full</h1>
+      <p class="lede">
+        Every formula, every default and every tax rule the model applies - plus a plain statement
+        of what it deliberately does not measure. If you find an error, it gets fixed and credited.
+      </p>
+      <div class="cats">
+        <a href="https://github.com/jnyst1985/buyvsrent">Open source</a>
+        <span>Automated tests on every formula</span>
+        <span>Last updated {UPDATED}</span>
+      </div>
+    </div>
+  </section>
 
-  <h2>The core principle: symmetric opportunity cost</h2>
-  <p>
-    Money not spent on housing doesn't vanish — it gets invested. Each month we compute both
-    sides' total housing cost. If owning costs more (the usual case early on), the renter invests
-    the difference. If renting costs more (common after rents have grown for a decade, after the
-    mortgage is paid off, or in cash purchases), <em>the buyer invests the surplus instead</em>.
-    Both portfolios grow at the same rate and both are taxed the same way at the end. Most
-    calculators only credit the renter's side; that asymmetry quietly biases results, and it's the
-    single most common flaw we found when auditing other tools.
-  </p>
-  <p>
-    The renter's portfolio starts with what the buyer spent upfront (down payment + closing
-    costs, minus the renter's own security deposit). If the deposit somehow exceeds the buyer's
-    upfront cash, the buyer's portfolio is seeded with the difference instead — the comparison is
-    symmetric in both directions.
-  </p>
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="msplit">
+        <nav class="toc" aria-label="On this page">
+          {toc.map(([id, label]) => <a href={`#${id}`}>{label}</a>)}
+        </nav>
 
-  <h2>The buyer's monthly cost</h2>
-  <ul>
-    <li><strong>Mortgage payment</strong> — standard amortization: monthly rate r = annual/12; payment = L·r(1+r)<sup>n</sup>/((1+r)<sup>n</sup>−1) on loan L over n months. Payments stop when the loan is paid off (if your stay outlasts the term, later years have no payment). A 0% rate divides principal evenly; a 100% down payment means no loan at all.</li>
-    <li><strong>Property tax</strong> — year 1 charges exactly your stated rate on the purchase price; the bill then grows at your property-tax growth rate each year.</li>
-    <li><strong>Homeowner's insurance and HOA</strong> — grow with general inflation each year.</li>
-    <li><strong>Maintenance</strong> — your maintenance percentage applied to the home's value at the start of each year (1%/year is the common rule of thumb).</li>
-    <li><strong>PMI</strong> — with under 20% down, PMI (your annual rate on the original loan) is charged in any month that begins with the balance above 80% of the <em>original</em> purchase price, then stops permanently. That's the federally guaranteed automatic-termination schedule; borrowers can often cancel earlier by request once appreciation lifts equity, so our treatment is slightly conservative toward buying.</li>
-    <li><strong>Minus tax savings</strong> — see taxes below; spread across the year's months.</li>
-  </ul>
+        <div>
+          <h2 id="m1">1. The model</h2>
+          <p class="pb">
+            The calculator runs a month-by-month simulation over the length of your stay, then asks
+            a single question: if you sold up and walked away at the end, which path leaves you
+            holding more cash?
+          </p>
+          <div style="margin-top:18px">
+            {steps.map(([h, p], i) => (
+              <div class="step">
+                <span class="n">{i + 1}</span>
+                <div>
+                  <h3>{h}</h3>
+                  <p>{p}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-  <h2>The renter's monthly cost</h2>
-  <p>
-    Rent plus renter's insurance. Rent steps up once per year at your rent-growth rate (lease
-    renewals); renter's insurance grows with inflation. The security deposit is locked up at move-in
-    and returned without interest at the end — its cost is the investment growth it missed.
-  </p>
+          <h2 id="m2" style="margin-top:38px">2. What counts as the cost of owning</h2>
+          <p class="pb">
+            Mortgage interest and principal on a fully amortising loan, property tax, home
+            insurance, maintenance as a percentage of home value, HOA dues, and mortgage insurance
+            while the loan is above 80% of the purchase price. Closing costs are paid up front;
+            selling costs come out of the sale.
+          </p>
+          <p class="pb" style="margin-top:12px">
+            Principal is not treated as a cost. It moves from your cash to your equity, which is why
+            the money breakdown shows it in the accent colour rather than the cost ramp.
+          </p>
 
-  <h2>Growth conventions</h2>
-  <ul>
-    <li><strong>Home value</strong> compounds monthly at (1+a)<sup>1/12</sup>, so each year-end value matches your stated annual appreciation exactly.</li>
-    <li><strong>Investments</strong> compound monthly at (return − fund fees)/12, with contributions added at month-end. The return you enter is <em>total</em> return, dividends included — entering price growth and dividends separately double-counts (a flaw we found in several tools, including the previous version of this one).</li>
-    <li><strong>Rent and recurring bills</strong> step annually, as they do in real life.</li>
-  </ul>
+          <h2 id="m3" style="margin-top:38px">3. What counts as the cost of renting</h2>
+          <p class="pb">
+            Rent, renter's insurance, and the security deposit, which is returned at the end. Rent
+            grows each year at the rate you set. The rent you enter must be for a place genuinely
+            comparable to the home you are pricing - same bedrooms, same area, same parking.
+            Comparing a studio to a four-bed house is the single easiest way to make this calculator
+            lie to you.
+          </p>
 
-  <h2>Taxes (US model, 2026 rules)</h2>
-  <p>
-    <strong>While owning:</strong> if you choose to itemize, the deductible amount is mortgage
-    interest (capped pro-rata using the IRS average-balance method when the loan exceeds the
-    $750,000 acquisition-debt cap) plus property tax (capped by the $40,400 SALT limit for 2026).
-    Only the excess over your standard deduction ($16,100 single / $32,200 married for 2026)
-    produces a benefit, valued at your marginal rate. This is why mortgage tax breaks help far
-    less than commonly believed: for most buyers since 2018, the standard deduction already beats
-    itemizing, and the calculator defaults to that.
-  </p>
-  <p>
-    <strong>At the end:</strong> the home sale pays selling costs, then capital-gains tax at your
-    rate on any gain beyond the Section 121 exclusion ($250,000 single / $500,000 married); gain
-    is the net sale proceeds minus the purchase price. Both investment portfolios pay
-    capital-gains tax on growth above contributed basis — we track every contribution, so the
-    basis is exact. The renter also gets the security deposit back.
-  </p>
+          <h2 id="m4" style="margin-top:38px">4. Taxes</h2>
+          <p class="pb">
+            The model itemises only when itemising beats the standard deduction, and it applies the
+            mortgage-interest cap, the SALT cap, capital-gains tax on invested gains for both paths,
+            and the Section 121 exclusion on the home sale. Every threshold is editable, because
+            they change and because they differ outside the US.
+          </p>
+          <div class="rwrap card" style="margin-top:14px;padding:20px">
+            <table class="dtable">
+              <thead>
+                <tr>
+                  <th scope="col">Rule</th>
+                  <th scope="col">Applied as</th>
+                  <th scope="col" class="num">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {taxRows.map(([rule, applied, value]) => (
+                  <tr>
+                    <td data-label="Rule"><b>{rule}</b></td>
+                    <td data-label="Applied as">{applied}</td>
+                    <td class="num" data-label="Default">{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-  <h2>The verdict, break-even, and tipping point</h2>
-  <ul>
-    <li><strong>Net worth series</strong> — for every year we compute both sides' liquidate-now value with the exact same exit math as the final year. The chart, the table, and the headline all use this one consistent basis.</li>
-    <li><strong>Break-even year</strong> — the first year buying pulls ahead <em>and stays ahead</em> through your horizon; temporary crossovers don't count.</li>
-    <li><strong>Tipping-point rent</strong> — a binary search for the rent at which both paths tie at your horizon. Above it, buying wins; below it, renting wins.</li>
-    <li><strong>Tie band</strong> — verdicts within 1% of the larger side are called a tie, because no model is that precise.</li>
-    <li><strong>Sensitivity table</strong> — we re-run the full simulation with each key assumption (appreciation, investment return, rent growth, mortgage rate) moved ±1 point and flag any that flips the verdict.</li>
-  </ul>
+          <h2 id="m5" style="margin-top:38px">5. The defaults, and where they come from</h2>
+          <p class="pb">
+            Defaults are a starting point, not a claim about your market. All of them are editable
+            on the calculator, and the answer recomputes as you type.
+          </p>
+          <div class="rwrap card" style="margin-top:14px;padding:20px">
+            <table class="dtable">
+              <thead>
+                <tr>
+                  <th scope="col">Assumption</th>
+                  <th scope="col" class="num">Default</th>
+                  <th scope="col">Why this value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {defaultRows.map(([name, value, why]) => (
+                  <tr>
+                    <td data-label="Assumption"><b>{name}</b></td>
+                    <td class="num" data-label="Default">{value}</td>
+                    <td data-label="Why this value">{why}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-  <h2>Default assumptions (July 2026)</h2>
-  <table>
-    <thead><tr><th>Input</th><th>Default</th><th>Why</th></tr></thead>
-    <tbody>
-      <tr><td>Mortgage rate</td><td>6.5%</td><td>~30-yr fixed average, mid-2026</td></tr>
-      <tr><td>Home appreciation</td><td>3%/yr</td><td>long-run US nominal average, cooled 2026 market</td></tr>
-      <tr><td>Rent growth</td><td>2.5%/yr</td><td>national rent indices, 2025–26 trend</td></tr>
-      <tr><td>Investment return</td><td>7%/yr total</td><td>conservative nominal total-return expectation</td></tr>
-      <tr><td>Property tax</td><td>1.1%/yr</td><td>US effective-rate median</td></tr>
-      <tr><td>Home insurance</td><td>$2,500/yr</td><td>2026 premium levels</td></tr>
-      <tr><td>Maintenance</td><td>1% of value/yr</td><td>standard industry rule of thumb</td></tr>
-      <tr><td>Closing / selling costs</td><td>3% / 6%</td><td>typical buyer costs; commissions + transfer at sale</td></tr>
-      <tr><td>PMI</td><td>0.6%/yr</td><td>typical conventional-loan range (0.3–1.1%)</td></tr>
-      <tr><td>Stay length</td><td>10 years</td><td>median US owner tenure ≈ 12 years; 30-year defaults overstate buying</td></tr>
-      <tr><td>Inflation</td><td>2.5%/yr</td><td>drives insurance/HOA growth</td></tr>
-    </tbody>
-  </table>
-  <p>Every default is editable, and shared links preserve your exact inputs.</p>
+          <h2 id="m6" style="margin-top:38px">6. The tipping rent</h2>
+          <p class="pb">
+            The tipping rent is the monthly rent at which both paths end the stay exactly level. It
+            is found by binary search - the model re-runs the whole simulation against different
+            rents until the difference converges to zero - not by a rule of thumb.
+          </p>
+          <div class="card dark" style="margin-top:14px">
+            <h3 style="color:var(--color-primary);font-family:var(--font-display);font-weight:800;margin:0">
+              At the current defaults
+            </h3>
+            <p style="margin:6px 0 0">
+              On a {fmt(D.homePrice)} home at {D.mortgageRatePct}% over {D.timeHorizonYears} years,
+              the tipping rent is {tip ? fmt(tip) : 'not reachable'} a month{tipPct
+                ? ` - ${tipPct}% of the home price per month`
+                : ''}. Below it, renting and investing the difference ends ahead.
+            </p>
+          </div>
+          <p class="pb" style="margin-top:14px">
+            Note that this is expressed as a share of the <b>home price</b>, not of the loan. The
+            two differ by the size of your down payment, and quoting the loan-based figure
+            overstates the tipping point by roughly a fifth at a 20% deposit.
+          </p>
 
-  <h2>Known simplifications</h2>
-  <p>We prefer honest simplifications to false precision. The ones that matter:</p>
-  <ul>
-    <li>Returns and appreciation are steady averages — no volatility, crashes, or sequence-of-returns risk. Real outcomes vary around these paths.</li>
-    <li>Investment taxes are settled once at the end (no annual dividend-tax drag; in tax-advantaged accounts the end-tax can also be set to 0).</li>
-    <li>No refinancing, no extra principal payments, no rent control, no moving costs on the rent side.</li>
-    <li>State/local income taxes, transfer taxes, and non-US tax systems aren't modeled — set taxes to 0 for a clean pre-tax comparison anywhere.</li>
-    <li>The "renter invests the difference" assumption requires discipline real renters don't always have — we model the math, you know your behavior.</li>
-  </ul>
+          <h2 id="m7" style="margin-top:38px">7. What this does not measure</h2>
+          <p class="pb">
+            The number this page produces is a net-worth comparison and nothing more. It is not a
+            statement about what you can afford, what you can be approved for, or what you should
+            do.
+          </p>
+          <div class="scope">
+            <div class="card">
+              <h3>Not modelled</h3>
+              <ul>
+                <li>Whether you qualify for the mortgage at all</li>
+                <li>Job loss, illness, or having to move early</li>
+                <li>Special assessments, major structural repairs</li>
+                <li>Landlord risk - eviction, non-renewal, a bad building</li>
+                <li>What the home is worth to you beyond money</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Assumed, not predicted</h3>
+              <ul>
+                <li>Home appreciation is a fixed annual rate, not a forecast</li>
+                <li>Investment returns are smooth; real markets are not</li>
+                <li>Rent grows steadily; real rent moves in steps</li>
+                <li>You stay exactly as long as you said you would</li>
+                <li>You actually invest the difference, every month</li>
+              </ul>
+            </div>
+          </div>
+          <p class="pb" style="margin-top:16px">
+            <b>Ahead is not the same as affordable, and not the same as safe.</b> A path can win this
+            comparison by a wide margin and still be the wrong choice for you.
+          </p>
 
-  <h2>Check our work</h2>
-  <p>
-    The engine ships with tests for every rule above — amortization against standard tables,
-    hand-enumerable zero-rate scenarios, PMI cancellation timing, the $750k cap math, Section 121,
-    and full 10-year composite scenarios derived independently with closed-form formulas. The code
-    is open source at
-    <a href="https://github.com/jnyst1985/buyvsrent" rel="noopener">github.com/jnyst1985/buyvsrent</a>.
-    Found an error? <a href="/contact">Report it</a> — verified corrections get credited here.
-  </p>
-</ContentPage>
+          <h2 id="m8" style="margin-top:38px">8. Errors and changes</h2>
+          <p class="pb">
+            The engine is open source and covered by automated tests, including scenarios worked by
+            hand to check it. If you find a mistake, send it over - corrections are made publicly
+            and the changelog records what changed and when. The model is maintained by{' '}
+            <a href="/about">{AUTHOR.name}</a>.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <a class="pill" href="/contact">Report an error</a>
+            <a class="pill ghost" href="https://github.com/jnyst1985/buyvsrent">Read the source</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

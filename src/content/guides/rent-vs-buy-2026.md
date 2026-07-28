@@ -2,6 +2,7 @@
 title: "Rent vs Buy in 2026: What Today’s Rates Do to the Math"
 description: "Rent vs buy as of July 2026: 30-year rates near 6.5-7% keep renting ahead in most US markets. See the exact rent, by rate, at which buying starts to win."
 pubDate: 2026-07-18
+category: "Rates & timing"
 ---
 
 As of July 2026, with 30-year mortgage rates holding in a mid-6% to 7% band, renting and investing the difference beats buying in most mid-priced US markets: our model puts the gap at roughly $67,000 over ten years on a typical $420,000 home versus a $2,100 rental. A drop to 5.5% would turn that into a near coin flip, and 4% would flip it to buying outright. Everything below is date-stamped, so you know exactly which numbers to re-check when conditions move.

@@ -1,17 +1,50 @@
 ---
 import { getCollection, render } from 'astro:content';
-import ContentPage from '../../layouts/ContentPage.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DEFAULT_INPUTS } from '../../lib/engine/defaults';
+import { simulateCore, tippingPointRent } from '../../lib/engine/engine';
+import { formatCurrency } from '../../lib/engine/format';
+import { readingMinutes } from '../../lib/readingTime';
+import { authorSchema, AUTHOR } from '../../lib/author';
 
 export async function getStaticPaths() {
   const guides = await getCollection('guides');
-  return guides.map((entry) => ({ params: { slug: entry.id.replace(/\.md$/, '') }, props: { entry } }));
+  return guides.map((entry) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry, all: guides },
+  }));
 }
 
-const { entry } = Astro.props;
+const { entry, all } = Astro.props;
 const { Content } = await render(entry);
 const slug = entry.id.replace(/\.md$/, '');
+const slugOf = (id: string) => id.replace(/\.md$/, '');
+
 const published = entry.data.pubDate.toISOString().slice(0, 10);
-const modified = (entry.data.updatedDate ?? entry.data.pubDate).toISOString().slice(0, 10);
+const modifiedDate = entry.data.updatedDate ?? entry.data.pubDate;
+const modified = modifiedDate.toISOString().slice(0, 10);
+const longDate = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(d);
+const minutes = readingMinutes(entry.body ?? '');
+
+// Figures for the inline calculator, computed at build from the engine at the
+// rate this article is arguing about. A guide about 7% quotes 7% numbers, and
+// neither can drift from the calculator.
+const rate = entry.data.calcRate ?? DEFAULT_INPUTS.mortgageRatePct;
+const inputs = { ...DEFAULT_INPUTS, mortgageRatePct: rate };
+const results = simulateCore(inputs);
+const tip = tippingPointRent(inputs);
+const rentWins = results.difference < 0;
+const fmt = (v: number) => formatCurrency(v, inputs.currency);
+const round1k = (v: number) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US');
+const scenarioHref = `/?rent=${inputs.monthlyRent}&pp=${inputs.homePrice}&mr=${rate}&th=${inputs.timeHorizonYears}`;
+
+// Two further guides, preferring the same category so the trail stays coherent.
+const others = all.filter((g) => g.id !== entry.id);
+const next = [
+  ...others.filter((g) => g.data.category === entry.data.category),
+  ...others.filter((g) => g.data.category !== entry.data.category),
+].slice(0, 2);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -20,25 +53,91 @@ const jsonLd = {
   description: entry.data.description,
   datePublished: published,
   dateModified: modified,
-  author: { '@type': 'Organization', name: 'RentVsBuyMath', url: 'https://rentvsbuymath.com/about' },
+  // A named person, not the organisation: rent-vs-buy is YMYL, and "who is
+  // responsible for this" needs a human answer that resolves to /about.
+  author: authorSchema,
+  publisher: {
+    '@type': 'Organization',
+    name: 'RentVsBuyMath',
+    url: 'https://rentvsbuymath.com',
+  },
+  articleSection: entry.data.category,
   mainEntityOfPage: `https://rentvsbuymath.com/guides/${slug}`,
 };
 ---
 
-<ContentPage
+<BaseLayout
   title={`${entry.data.title} | RentVsBuyMath`}
   description={entry.data.description}
   path={`/guides/${slug}`}
-  heading={entry.data.title}
-  updated={new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(entry.data.updatedDate ?? entry.data.pubDate)}
-  jsonLd={jsonLd}
+  {jsonLd}
   article={{ published, modified }}
 >
-  <Content />
-  <hr class="my-8 border-hairline" />
-  <p>
-    <strong>Run your own numbers:</strong> the
-    <a href="/">calculator</a> recomputes all of this live for your exact scenario — and the
-    <a href="/methodology">methodology page</a> documents every formula it uses.
-  </p>
-</ContentPage>
+  <article class="art">
+    <div class="narrow">
+      <div class="crumb">
+        <a href="/guides">Guides</a> &rsaquo; {entry.data.category}
+      </div>
+      <h1>{entry.data.title}</h1>
+      <p class="lede" style="max-width:62ch">{entry.data.description}</p>
+
+      <div class="artmeta">
+        <a class="au" href="/about" rel="author">
+          <span class="av" aria-hidden="true">{AUTHOR.initials}</span>
+          Written by {AUTHOR.short}
+        </a>
+        <span>
+          Updated <time datetime={modified}>{longDate(modifiedDate)}</time>
+        </span>
+        <span>{minutes} min read</span>
+        <span>Every figure re-runnable</span>
+      </div>
+
+      <div class="inline-calc">
+        <div class="k">
+          At {rate.toFixed(2)}%, on a {fmt(inputs.homePrice)} home, over a{' '}
+          {inputs.timeHorizonYears}-year stay
+        </div>
+        <div class="row">
+          <div>
+            <div class="k">Buying wins above</div>
+            <div class="v" style={`color:var(--color-${tip ? 'ink' : 'lose'})`}>
+              {tip ? fmt(tip) : 'no crossing'}
+            </div>
+          </div>
+          <div>
+            <div class="k">At {fmt(inputs.monthlyRent)} rent</div>
+            <div class="v" style="color:var(--color-primary-deep)">
+              +{round1k(Math.abs(results.difference))}
+            </div>
+          </div>
+        </div>
+        <div class="k" style="margin-top:8px">
+          {rentWins ? 'Renting and investing ends ahead by ' : 'Buying ends ahead by '}
+          {round1k(Math.abs(results.difference))}
+          {tip
+            ? ` - the tipping rent is ${((tip / inputs.homePrice) * 100).toFixed(2)}% of the home price per month.`
+            : '.'}
+        </div>
+        <div style="margin-top:16px">
+          <a class="pill" href={scenarioHref}>Change these numbers</a>
+        </div>
+      </div>
+
+      <Content />
+
+      <div class="next">
+        {next.map((g) => (
+          <a class="gc" href={`/guides/${slugOf(g.id)}`}>
+            <span class="cat">{g.data.category}</span>
+            <h3>{g.data.shortTitle ?? g.data.title}</h3>
+            <p>{g.data.description}</p>
+            <span class="meta">
+              <span>{readingMinutes(g.body ?? '')} min read</span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </article>
+</BaseLayout>

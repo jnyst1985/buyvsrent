@@ -2317,32 +2317,39 @@ summary:focus-visible {
   line-height: 1.5;
   color: var(--color-body);
 }
+/* Sized to the column it sits in, and deliberately identical to .art h2.
+   These were clamp(...,40px) - a 40px heading inside a 626px prose column,
+   which holds about 21 characters per line, so nearly every real heading broke
+   into two or three lines. That is not the max-width bug fixed earlier: the
+   cap is already none here. It is a type scale borrowed from a much wider
+   container. A heading's size is a function of its COLUMN, not the viewport.
+
+   .art (guides) and .prose-content (landing/tool pages) are the same
+   archetype - one argument in one prose column - so their scales match. */
 .prose-content h2 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(28px, 3.4vw, 40px);
-  line-height: 1.12;
-  letter-spacing: -0.028em;
+  font-size: clamp(23px, 2.6vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   color: var(--color-ink);
-  /* Same rule as .art h2: no measure cap on a section heading inside a prose
-     column. The column is already a tight measure; a ch cap on top of it only
-     breaks headings that would have fit. Explicit `none` because this sits
-     inside a .band, whose own h2 cap would otherwise take over. */
+  /* No measure cap; explicit `none` because this sits inside a .band, whose
+     own h2 cap would otherwise take over. */
   max-width: none;
   text-wrap: balance;
-  margin-top: 2.5rem;
-  margin-bottom: 0.75rem;
+  margin-top: 2.2rem;
+  margin-bottom: 0.6rem;
 }
 .prose-content h3 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(20px, 2.8vw, 24px);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+  font-size: 19px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
   color: var(--color-ink);
   text-wrap: balance;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.7rem;
+  margin-bottom: 0.4rem;
 }
 .prose-content p {
   margin-bottom: 1rem;

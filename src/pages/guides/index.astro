@@ -58,7 +58,12 @@ const description =
     </div>
   </section>
 
-  <section class="band band-sage">
+  {/* White, not sage. `.phero` IS sage, so a sage band here put two
+      same-coloured bands back to back: 64px of hero padding plus 64px of band
+      padding with no seam between them, which reads as a hole rather than as
+      two sections meeting. Every other phero page follows the hero with white
+      for exactly this reason. The ink feature card also lands harder on white. */}
+  <section class="band band-white">
     <div class="wrap">
       {showPills && (
         <div class="cats">
@@ -107,8 +112,10 @@ const description =
     </div>
   </section>
 
+  {/* Sage so the sequence keeps alternating (hero sage, guides white, this
+      sage) - and the white cards inside read strongest against it. */}
   {guides.length < CLUSTER_THRESHOLD && (
-    <section class="band band-white">
+    <section class="band band-sage">
       <div class="wrap">
         <h2>Also useful</h2>
         <p class="pb" style="margin-bottom:22px">

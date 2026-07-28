@@ -214,7 +214,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <section class="band band-sage" id="money">
+      {/* band-rule because this follows another SAGE band. Two same-coloured
+          bands butted together have no seam, so their 128px of combined padding
+          reads as one section with a hole in it - the same defect Jon caught on
+          /guides. The colour cannot change here: `.mcard` inside is a
+          borderless WHITE card, so a white band would make it invisible. When
+          the colour has to stay, a hairline is the seam. */}
+      <section class="band band-sage band-rule" id="money">
         <div class="wrap">
           <h2>Where the money actually goes</h2>
           <p class="h2sub">
@@ -241,7 +247,10 @@ export function HomePage() {
         </div>
       </section>
 
-      <section class="band band-white" id="rates">
+      {/* Inside a run of white bands every one after the first takes the
+          hairline, or the sections merge into one long white stretch. `race`
+          and `customize` already had it; this one was the gap. */}
+      <section class="band band-white band-rule" id="rates">
         <div class="wrap">
           <h2>Rates decide the answer</h2>
           <p class="h2sub">

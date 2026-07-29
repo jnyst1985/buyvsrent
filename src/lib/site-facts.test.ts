@@ -26,6 +26,12 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const PUBLISHERS = [
   'README.md',
   'src/pages/best-rent-vs-buy-calculators.md',
+  // Added after all three drifted to 72 while the suite ran 92: the guard only
+  // covered the two files above, which is exactly why a green suite missed it.
+  // llms.txt is the worst of them - it is what AI crawlers cite us on.
+  'public/llms.txt',
+  'src/content/guides/rent-vs-buy-2026.md',
+  'src/data/faq.json',
 ];
 
 const read = (f: string) => readFileSync(join(REPO_ROOT, f), 'utf8');

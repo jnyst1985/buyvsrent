@@ -15,7 +15,7 @@
  * Number of tests in `npm test`. Read it off the vitest summary line; it is not
  * derivable at build time, which is exactly why it lives in one place.
  */
-export const TEST_COUNT = 92;
+export const TEST_COUNT = 98;
 
 /** Independently hand-derived verification vectors, a subset of TEST_COUNT. */
 export const VECTOR_COUNT = 10;

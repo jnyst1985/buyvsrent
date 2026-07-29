@@ -83,4 +83,68 @@ const jumpLinks = [
     trade on a page whose whole value is its content.
   */}
   <HomePage client:load />
+
+  {/*
+    Deliberately static Astro, outside the island: these links must be in the
+    HTML a crawler receives no matter what hydration does, and they ship no JS.
+
+    Why they exist at all. On 2026-07-29 `gsc inspect --sitemap` reported 12 of
+    17 URLs indexed; the five "Discovered - currently not indexed" had NEVER
+    been crawled, and four of them are the site's highest commercial-intent
+    pages. They were not orphans - /guides links all four - but one link from a
+    single low-authority hub was not enough to earn a crawl on a ten-day-old
+    domain. The homepage is the most-crawled, highest-authority page here, so
+    this is the cheapest crawl-priority signal available.
+
+    White band: the FAQ band above is sage, so the colour change is the seam
+    (audit check E). `.gc` is a bordered card, which is the kind that belongs on
+    white - see DESIGN.md.
+  */}
+  <section class="band band-white" id="deeper">
+    <div class="wrap">
+      <h2>Go deeper</h2>
+      <p class="h2sub">
+        The calculator answers one scenario. These answer the questions it raises - the shortcuts
+        worth knowing, and how this model differs from the ones you have already tried.
+      </p>
+      <div class="grid3">
+        <a class="gc" href="/guides/is-it-better-to-rent-or-buy">
+          <span class="cat">Guide</span>
+          <h3>Is it better to rent or buy?</h3>
+          <p>
+            The whole argument in order: the five things that decide it, and why the mortgage
+            payment is not the cost of owning.
+          </p>
+          <span class="meta"><span>The math</span></span>
+        </a>
+        <a class="gc" href="/free-nyt-style-rent-vs-buy-calculator">
+          <span class="cat">Comparison</span>
+          <h3>A free, NYT-style calculator</h3>
+          <p>The methodology that made the Times calculator famous, free and fully documented.</p>
+          <span class="meta"><span>Free</span><span>No paywall</span></span>
+        </a>
+        <a class="gc" href="/best-rent-vs-buy-calculators">
+          <span class="cat">Comparison</span>
+          <h3>The calculators compared</h3>
+          <p>What each of the big rent-vs-buy calculators models, and where each one stops.</p>
+          <span class="meta"><span>Review</span></span>
+        </a>
+        <a class="gc" href="/calculators/5-percent-rule">
+          <span class="cat">Tool</span>
+          <h3>The 5% rule</h3>
+          <p>
+            The 30-second screen for whether owning is cheaper this year - and the rate at which it
+            becomes a 7% rule.
+          </p>
+          <span class="meta"><span>Calculator</span></span>
+        </a>
+        <a class="gc" href="/calculators/price-to-rent-ratio">
+          <span class="cat">Tool</span>
+          <h3>Price-to-rent ratio</h3>
+          <p>Turn a price and a rent into one number you can compare across any two markets.</p>
+          <span class="meta"><span>Calculator</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

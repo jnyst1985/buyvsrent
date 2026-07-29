@@ -169,7 +169,7 @@ why `.prose-content h2` had to come down from 40px: it was sized for a much wide
 container than the 626px column it actually lived in, so nearly every heading
 broke onto two or three lines.
 
-### Three sizing rules, all learned the hard way
+### Four sizing rules, all learned the hard way
 
 1. **Numeric fields are sized by tokens, never by their content.** A field is a
    two-column grid: the numeral column is `1fr` (right-aligned), the unit column
@@ -192,7 +192,16 @@ broke onto two or three lines.
    overflows at any length. `mega-fit.test.ts` pins the advances against
    browser-measured ground truth — **re-measure them if the display font or
    `.mega`'s tracking changes.**
-3. **Section headings in a prose column get no `ch` measure cap.** A `32ch` cap
+3. **A rule that decorates other elements is positioned from those elements,
+   never from the container.** The hero's connector line had symmetric
+   `top: 18px; bottom: 18px` insets on `.conn`, which looks correct in the
+   stylesheet and is not: a dot is pinned 6px below its row's top with 17px
+   below it, so symmetric insets on an asymmetric row drew 2px of line above the
+   first dot and 13px below the last. Both ends now compute from
+   `--conn-dot-top` and `--conn-dot`, the same two values the dot itself uses,
+   so the line ends exactly on the first and last dot centres. `npm run audit`
+   check M measures it.
+4. **Section headings in a prose column get no `ch` measure cap.** A `32ch` cap
    computed to 625px inside a 712px column, so a heading needing 705px on one
    line was broken in two by the cap alone — it reads as a bug, because it is
    one. `.art h2`, `.prose-content h2` and `.feat h2` set `max-width: none`
@@ -266,6 +275,7 @@ someone answers by looking. It exits non-zero on any finding.
 | J | text below the 11px floor |
 | K | touch targets under 24px on coarse pointers |
 | L | a title over 62 characters, or a description outside 120-165 |
+| M | a connector line whose ends do not sit on the dots it joins |
 
 It needs a browser and a copy of `playwright-core`, neither of which is a
 dependency of the build:

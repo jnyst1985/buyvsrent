@@ -512,16 +512,30 @@ summary:focus-visible {
   vertical-align: 1px;
 }
 
+/* The connector list: dots joined by a hairline, one row per editable figure.
+ *
+ * The line must end at the dot CENTRES, so both ends are derived from where a
+ * dot actually sits in its row - never from an inset guessed off the container.
+ * A dot does not sit symmetrically in its row (6px above it, 17px below), so
+ * the symmetric `top:18px; bottom:18px` this replaces drew 2px of line above
+ * the first dot and 13px below the last. Everything below is computed from the
+ * same three values the dot itself uses, so the two cannot drift apart. */
 .conn {
+  --conn-pad: 14px;
+  --conn-dot: 23px;
+  --conn-dot-top: 6px;
+  /* A row is the shared field height plus .crow's 5px of padding each side. */
+  --conn-row-h: calc(var(--field-h) + 10px);
+  --conn-dot-c: calc(var(--conn-dot-top) + var(--conn-dot) / 2);
   position: relative;
-  padding: 14px 0 14px 36px;
+  padding: var(--conn-pad) 0 var(--conn-pad) 36px;
 }
 .conn::before {
   content: '';
   position: absolute;
   left: 11px;
-  top: 18px;
-  bottom: 18px;
+  top: calc(var(--conn-pad) + var(--conn-dot-c));
+  bottom: calc(var(--conn-pad) + var(--conn-row-h) - var(--conn-dot-c));
   width: 1px;
   background: var(--color-hairline);
 }
@@ -536,9 +550,10 @@ summary:focus-visible {
 .crow .nd {
   position: absolute;
   left: -36px;
-  top: 6px;
-  width: 23px;
-  height: 23px;
+  /* Same three values the line's ends are computed from - keep them shared. */
+  top: var(--conn-dot-top);
+  width: var(--conn-dot);
+  height: var(--conn-dot);
   border-radius: 50%;
   background: var(--color-canvas-soft);
   display: flex;

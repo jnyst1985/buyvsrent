@@ -22,10 +22,23 @@ import { TEST_COUNT, VECTOR_COUNT } from './site';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..');
 
-/** Files that state the count as literal text rather than importing it. */
+/**
+ * Files that state the count as literal text rather than importing it.
+ *
+ * THIS LIST IS THE LOAD-BEARING PART. The number drifted a third time because
+ * the list named two files while five stated it: llms.txt, the 2026 guide and
+ * the FAQ all sat at 72 while the suite ran 92, and the suite passed, because a
+ * guard only guards what it is pointed at. Find every claimant with
+ *   grep -rnoE "[0-9]+ (automated )?tests" README.md public/ src/
+ * and add whatever turns up. Note the self-reference: each file added here adds
+ * two cases, which changes the number every one of them then has to state.
+ */
 const PUBLISHERS = [
   'README.md',
   'src/pages/best-rent-vs-buy-calculators.md',
+  'public/llms.txt',
+  'src/content/guides/rent-vs-buy-2026.md',
+  'src/data/faq.json',
 ];
 
 const read = (f: string) => readFileSync(join(REPO_ROOT, f), 'utf8');

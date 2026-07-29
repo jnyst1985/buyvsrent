@@ -23,7 +23,7 @@ Most are built by parties with a stake in your answer, and most skip the hard pa
 
 ## Engine
 
-`src/lib/engine/` is a framework-agnostic TypeScript simulation covered by **98 tests**, including 10 verification vectors independently derived with closed-form math (amortization tables, annuity formulas, hand-enumerable zero-rate scenarios). Run them:
+`src/lib/engine/` is a framework-agnostic TypeScript simulation covered by **101 tests**, including 10 verification vectors independently derived with closed-form math (amortization tables, annuity formulas, hand-enumerable zero-rate scenarios). Run them:
 
 ```bash
 npm install

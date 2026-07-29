@@ -76,4 +76,4 @@ Then stress-test the answer: move appreciation, investment return, and the rate 
 
 ## Run your own numbers
 
-The default scenario says "never" at 6.5% and "year 6" at 4% — but you don't live in the default scenario. Load our base case at a 4% rate ([/?price=420000&rent=2100&rate=4](/?price=420000&rent=2100&rate=4)) to watch a break-even appear in year 6, then swap in your own price, rent, rate, and stay length and see whether a crossover exists for you — and in which year.
+The default scenario says "never" at 6.5% and "year 6" at 4% — but you don't live in the default scenario. Load our base case at a 4% rate ([/?pp=420000&rent=2100&mr=4](/?pp=420000&rent=2100&mr=4)) to watch a break-even appear in year 6, then swap in your own price, rent, rate, and stay length and see whether a crossover exists for you — and in which year.

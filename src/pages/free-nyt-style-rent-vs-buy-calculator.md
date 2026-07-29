@@ -81,4 +81,4 @@ If you subscribe to the Times, genuinely: use both. Two tools built on symmetric
 
 ## Run your own numbers
 
-Every figure on this page assumes our defaults, and your rent-to-price ratio, mortgage rate, and time horizon can move the verdict by six figures in either direction. [Open the calculator](/?price=420000&rent=2100&rate=6.5&years=10) — that link preloads this page's default scenario — then swap in a real listing price and a real comparable rent, and watch the tipping point reprice as you type. No paywall, no signup: the answer, and every assumption behind it, is the whole product.
+Every figure on this page assumes our defaults, and your rent-to-price ratio, mortgage rate, and time horizon can move the verdict by six figures in either direction. [Open the calculator](/?pp=420000&rent=2100&mr=6.5&th=10) — that link preloads this page's default scenario — then swap in a real listing price and a real comparable rent, and watch the tipping point reprice as you type. No paywall, no signup: the answer, and every assumption behind it, is the whole product.

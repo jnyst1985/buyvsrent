@@ -63,4 +63,4 @@ It's one number, so it ignores everything else that decides the outcome: how lon
 
 ## Run your own numbers
 
-The ratio tells you whether your market smells cheap or expensive; the full model tells you what that means in dollars. The [rent-vs-buy calculator](/?price=420000&rent=2100&rate=6.5) is pre-loaded with the default scenario above — swap in your own price, rent, rate, and holding period, and it returns the verdict plus the tipping rent for your exact situation, taxes and selling costs included.
+The ratio tells you whether your market smells cheap or expensive; the full model tells you what that means in dollars. The [rent-vs-buy calculator](/?pp=420000&rent=2100&mr=6.5) is pre-loaded with the default scenario above — swap in your own price, rent, rate, and holding period, and it returns the verdict plus the tipping rent for your exact situation, taxes and selling costs included.

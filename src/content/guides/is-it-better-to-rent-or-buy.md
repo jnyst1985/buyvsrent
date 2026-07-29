@@ -73,4 +73,4 @@ That's the honest shape of the answer — a strong prior far from the tipping re
 
 ## Run your own numbers
 
-The defaults above describe a deliberately typical American purchase; you live somewhere specific. Open the [calculator prefilled with this guide's scenario](/?price=420000&rent=2100&rate=6.5&years=10), swap in your price, your rent, your rate, and your horizon, and watch which of the three numbers flips your verdict. It takes about two minutes, and every formula behind the result is documented.
+The defaults above describe a deliberately typical American purchase; you live somewhere specific. Open the [calculator prefilled with this guide's scenario](/?pp=420000&rent=2100&mr=6.5&th=10), swap in your price, your rent, your rate, and your horizon, and watch which of the three numbers flips your verdict. It takes about two minutes, and every formula behind the result is documented.

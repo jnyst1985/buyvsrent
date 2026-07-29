@@ -77,6 +77,7 @@ const F = {
   proseStandard: [],
   touchTarget: [],
   serpMeta: [],
+  connector: [],
 };
 
 const browser = await chromium.launch(EXEC ? { executablePath: EXEC } : {});
@@ -111,6 +112,7 @@ for (const width of WIDTHS) {
           small: [],
           prose: null,
           targets: [],
+          connectors: [],
           docW: document.documentElement.scrollWidth,
           winW: window.innerWidth,
         };
@@ -232,6 +234,31 @@ for (const width of WIDTHS) {
             });
         });
 
+        // --- M. a connector line must end on the dots it joins ----------------
+        // Its ends were set by insets guessed off the container while the dots
+        // sit asymmetrically in their rows, which drew 2px of line above the
+        // first dot and 13px below the last. Nothing but measurement catches an
+        // 11px difference at opposite ends of a card.
+        document.querySelectorAll('.conn').forEach((conn) => {
+          const cs = getComputedStyle(conn, '::before');
+          if (cs.top === 'auto' || cs.bottom === 'auto') return;
+          const dots = [...conn.querySelectorAll('.nd')];
+          if (dots.length < 2) return;
+          const cb = conn.getBoundingClientRect();
+          const mid = (d) => {
+            const b = d.getBoundingClientRect();
+            return b.top + b.height / 2 - cb.top;
+          };
+          const topOff = px(cs.top) - mid(dots[0]);
+          const bottomOff = cb.height - px(cs.bottom) - mid(dots[dots.length - 1]);
+          if (Math.abs(topOff) > 1 || Math.abs(bottomOff) > 1)
+            out.connectors.push({
+              cls: (conn.className || '').toString().slice(0, 24),
+              topOff: +topOff.toFixed(1),
+              bottomOff: +bottomOff.toFixed(1),
+            });
+        });
+
         // --- H. a module butted straight against following prose --------------
         document.querySelectorAll('.prose-content, .art .narrow > p').forEach((prose) => {
           const prev = prose.previousElementSibling;
@@ -310,6 +337,7 @@ for (const width of WIDTHS) {
     r.gaps.forEach((x) => F.moduleGap.push(at(x)));
     r.small.forEach((x) => F.typeFloor.push(at(x)));
     r.targets.forEach((x) => F.touchTarget.push(at(x)));
+    r.connectors.forEach((x) => F.connector.push(at(x)));
     if (r.docW > r.winW + 1) F.pageOverflow.push(at({ over: r.docW - r.winW }));
     if (width === 1440 && r.prose) F.proseStandard.push(at({ ...r.prose, h2: r.h2fs }));
 
@@ -340,6 +368,7 @@ const CHECKS = [
   ['J. text below the 11px floor', F.typeFloor],
   ['K. touch target under 24px (coarse)', F.touchTarget],
   ['L. title over 62, or description outside 120-165', F.serpMeta],
+  ['M. connector line not ending on the dots it joins', F.connector],
 ];
 console.log(`AUDIT: ${PAGES.length} pages x ${WIDTHS.length} widths\n`);
 let bad = 0;

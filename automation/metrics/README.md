@@ -52,6 +52,23 @@ rung is non-zero and reproducible:
 | Clicks (28d) | 0 | — not yet a usable goal |
 | Engaged sessions | no history (GA4 live 2026-07-29) | earliest honest baseline ~2026-08-26 |
 
+## The mortgage-rate watch
+
+Each `checks.jsonl` row also carries `pmms_30y` / `pmms_date` / `pmms_status` /
+`model_rate` — the latest Freddie Mac PMMS 30-year print (via FRED's no-auth
+CSV, series `MORTGAGE30US`) against the calculator's default rate, read live
+from `defaults.ts` so the band follows any future bump.
+
+Status ladder: **ok** (inside default ±0.5) → **watch** (latest print outside,
+not sustained — no action) → **drift** (last 4 weekly prints all outside — the
+sustained condition under which a default-rate bump is worth its cost: a
+share-URL version bump plus re-typing every guarded figure, which
+`published-figures.test.ts` will enumerate). The Monday Telegram message
+carries the flag automatically because the weekly script embeds this script's
+stdout. Rationale: the site's content spans 4–8% by design, so a rate move
+never invalidates it — the only thing drift changes is which row is "today's
+row" and whether the *default* still deserves its name.
+
 ## Reading the ledger
 
 ```sh

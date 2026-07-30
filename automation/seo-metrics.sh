@@ -65,6 +65,18 @@ q "$START_28" "$END" query "$TMP/q28.json"
 q "$START_28" "$END" page  "$TMP/p28.json"
 q "$START_7"  "$END" date  "$TMP/d7.json"
 
+# Freddie Mac PMMS 30-year fixed, via FRED's no-auth CSV (series MORTGAGE30US;
+# verified identical to Freddie's own PMMS_history.csv). Weekly prints, so the
+# daily run mostly re-reads the same value - cheap, and it means the ledger
+# notices a new print within a day. Failure leaves the file empty and the
+# fields null; it must never take the GSC measurement down with it.
+curl -s --max-time 20 "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US" \
+  | tail -8 > "$TMP/pmms.csv" || true
+
+# The drift band is the model default +/- 0.5, read from the engine so a future
+# default bump moves the band automatically instead of leaving a stale 6.5 here.
+MODEL_RATE=$(grep -oE 'mortgageRatePct: [0-9.]+' "$REPO/src/lib/engine/defaults.ts" | grep -oE '[0-9.]+' || echo "")
+
 if [ "$DO_INDEX" = "1" ]; then
   # `gsc inspect --sitemap` exits 2 whenever ANY URL is not indexed - which is
   # the normal state we are here to measure, not an error. Discarding stdout on
@@ -76,7 +88,7 @@ else
   echo '{}' > "$TMP/index.json"
 fi
 
-TMP="$TMP" OUT="$OUT" END="$END" BACKFILL="$BACKFILL" python3 <<'PY'
+TMP="$TMP" OUT="$OUT" END="$END" BACKFILL="$BACKFILL" MODEL_RATE="$MODEL_RATE" python3 <<'PY'
 import json, os, datetime
 
 tmp, out = os.environ['TMP'], os.environ['OUT']
@@ -151,9 +163,41 @@ c7, i7, ctr7, pos7 = agg(rows('d7'))
 w28_start = (datetime.date.fromisoformat(end) - datetime.timedelta(days=27)).isoformat()
 c28, i28, ctr28, pos28 = agg([r for r in rows('daily') if r['keys'][0] >= w28_start])
 
+# ---- PMMS 30-year fixed vs the model default ----
+# Status ladder: 'ok' inside the band; 'watch' when the LATEST print is outside
+# model default +/- 0.5; 'drift' when the last FOUR weekly prints are all
+# outside - the sustained condition that makes a default bump worth its cost
+# (URL version bump + every guarded figure re-typed; see DEVELOPMENT.md).
+pmms = []
+try:
+    for line in open(f'{tmp}/pmms.csv'):
+        parts = line.strip().split(',')
+        if len(parts) == 2 and parts[1] not in ('.', '', 'MORTGAGE30US'):
+            try:
+                pmms.append((parts[0], float(parts[1])))
+            except ValueError:
+                pass
+except Exception:
+    pass
+
+model_rate = float(os.environ['MODEL_RATE']) if os.environ.get('MODEL_RATE') else None
+pmms_date, pmms_rate, pmms_status = None, None, 'unavailable'
+if pmms and model_rate is not None:
+    pmms_date, pmms_rate = pmms[-1]
+    lo, hi = model_rate - 0.5, model_rate + 0.5
+    outside = [r for _, r in pmms[-4:] if not (lo <= r <= hi)]
+    if len(pmms) >= 4 and len(outside) == 4:
+        pmms_status = 'drift'
+    elif not (lo <= pmms_rate <= hi):
+        pmms_status = 'watch'
+    else:
+        pmms_status = 'ok'
+
 check = {
     'ts': datetime.datetime.now().replace(microsecond=0).isoformat(),
     'window_end': end,
+    'pmms_30y': pmms_rate, 'pmms_date': pmms_date, 'pmms_status': pmms_status,
+    'model_rate': model_rate,
     'indexed_pages': idx['indexed'],
     'total_pages': idx['total'],
     'not_indexed': idx['not_indexed'],
@@ -166,9 +210,14 @@ with open(f'{out}/checks.jsonl', 'a') as f:
     f.write(json.dumps(check) + '\n')
 
 ix = f"{idx['indexed']}/{idx['total']}" if idx['indexed'] is not None else 'skipped'
+pm = f"PMMS {pmms_rate}% ({pmms_date}, model {model_rate}%)" if pmms_rate else 'PMMS unavailable'
 print(f"measured through {end}  |  indexed {ix}  |  "
       f"28d: {c28} clicks, {i28} impr, pos {pos28}  |  "
-      f"7d: {c7} clicks, {i7} impr  |  daily rows {'backfilled' if backfill else 'updated'}: {len(existing)}")
+      f"7d: {c7} clicks, {i7} impr  |  {pm}  |  daily rows {'backfilled' if backfill else 'updated'}: {len(existing)}")
 if idx['not_indexed']:
     print('not indexed: ' + ', '.join(idx['not_indexed']))
+if pmms_status == 'watch':
+    print(f"PMMS WATCH: latest print {pmms_rate}% is outside the model band {model_rate}+/-0.5 - not yet sustained, no action.")
+elif pmms_status == 'drift':
+    print(f"PMMS DRIFT: last 4 weekly prints all outside {model_rate}+/-0.5. A default-rate bump is now worth considering - it is a versioned operation (URL version + guarded figures), see DEVELOPMENT.md.")
 PY

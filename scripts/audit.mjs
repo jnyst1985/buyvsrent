@@ -6,6 +6,8 @@
  * question someone has to answer by looking.
  */
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 // playwright-core is not a dependency of this project - the audit is a
 // developer tool, not part of the build. Point PW_CORE at any copy you have
@@ -30,26 +32,41 @@ try {
 const EXEC = process.env.CHROME || undefined;
 const BASE = process.env.BASE || 'http://localhost:4321';
 
-const PAGES = [
-  '/',
-  '/guides',
-  '/guides/is-it-better-to-rent-or-buy',
-  '/guides/rent-vs-buy-2026',
-  '/guides/when-does-buying-beat-renting',
-  '/guides/is-buying-always-better-than-renting',
-  '/methodology',
-  '/about',
-  '/faq',
-  '/glossary',
-  '/contact',
-  '/privacy',
-  '/terms',
-  '/calculators/5-percent-rule',
-  '/calculators/price-to-rent-ratio',
-  '/best-rent-vs-buy-calculators',
-  '/free-nyt-style-rent-vs-buy-calculator',
-  '/404',
-];
+/**
+ * Every route in the built sitemap, plus /404, which is deliberately not in it.
+ *
+ * This list used to be typed by hand, and adding a page silently exempted it
+ * from all thirteen checks - the guide added on 2026-07-30 was audited by
+ * nothing, so check L never looked at its title or description. That is the same
+ * failure as the test-count guard naming two files while five published the
+ * number: a guard only guards what it is pointed at, and a hand-maintained list
+ * of what to check drifts exactly like hand-maintained copy does.
+ *
+ * The sitemap is generated from the real routes at build, so deriving from it
+ * means a new page is audited the moment it exists. Falls back to erroring
+ * loudly rather than silently auditing a subset.
+ */
+const DIST = new URL('../dist/', import.meta.url).pathname;
+
+function routesFromSitemap() {
+  const xml = readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8');
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  if (!locs.length) throw new Error('sitemap-0.xml contained no <loc> entries');
+  const paths = locs.map((u) => new URL(u).pathname.replace(/\/$/, '') || '/');
+  return [...new Set([...paths, '/404'])];
+}
+
+let PAGES;
+try {
+  PAGES = routesFromSitemap();
+} catch (err) {
+  console.error(
+    `Could not derive routes from dist/sitemap-0.xml: ${err.message}\n` +
+      'Run `npm run build` before `npm run audit` - auditing a stale or partial\n' +
+      'route list is worse than not auditing, because it reports PASS.'
+  );
+  process.exit(2);
+}
 const WIDTHS = [1440, 1024, 768, 390];
 
 // --- L. SERP metadata ---------------------------------------------------------

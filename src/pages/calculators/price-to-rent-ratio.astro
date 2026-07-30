@@ -3,6 +3,7 @@ import { getEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PriceToRent from '../../components/calculator/PriceToRent';
 import { DEFAULT_INPUTS as D } from '../../lib/engine/defaults';
+import { simulateCore } from '../../lib/engine/engine';
 import { formatCurrency } from '../../lib/engine/format';
 
 const entry = await getEntry('sections', 'price-to-rent-ratio');
@@ -10,6 +11,41 @@ const Content = entry ? (await render(entry)).Content : null;
 
 const fmt = (v: number) => formatCurrency(v, 'USD');
 const defaultRatio = (D.homePrice / (D.monthlyRent * 12)).toFixed(1);
+
+/**
+ * The ratio-by-rate verdict matrix.
+ *
+ * `price to rent ratio chart` is a real query this page ranked ~41st for while
+ * carrying only a one-dimensional rate table. The thing the query wants is two
+ * variables at once: a ratio band down the side, a mortgage rate across the top,
+ * and who actually wins in each cell.
+ *
+ * Computed from the engine at build time, never typed. A hand-written matrix
+ * would be 28 more figures to drift, which is the bug published-figures.test.ts
+ * exists to catch - and the reason the rate table in the prose below is guarded.
+ * Holding price fixed and solving rent from the ratio keeps every cell a real
+ * simulation rather than an interpolation.
+ */
+const RATIOS = [10, 12, 14, 16, 18, 20, 24];
+const MATRIX_RATES = [4, 5, 6.5, 8];
+
+const matrix = RATIOS.map((ratio) => {
+  const rent = Math.round(D.homePrice / (ratio * 12));
+  return {
+    ratio,
+    rent,
+    cells: MATRIX_RATES.map((rate) => {
+      const r = simulateCore({ ...D, monthlyRent: rent, mortgageRatePct: rate });
+      const buyWins = r.difference > 0;
+      return {
+        rate,
+        tie: r.verdict === 'tie',
+        buyWins,
+        gap: '$' + Math.round(Math.abs(r.difference) / 1000).toLocaleString('en-US') + 'k',
+      };
+    }),
+  };
+});
 
 const title = 'Price-to-Rent Ratio Calculator (2026) | RentVsBuyMath';
 const description =
@@ -54,6 +90,56 @@ const jsonLd = {
 
         <article class="prose-content prose-after-module">
           {Content && <Content />}
+
+          <h2 id="chart">The price-to-rent ratio chart: who wins, by ratio and rate</h2>
+          <p>
+            One ratio does not have one verdict — it has a different one at every mortgage rate.
+            Read down for your market's ratio, across for the rate you can actually get. Every cell
+            is a full simulation of the same {fmt(D.homePrice)} home, with rent solved from the
+            ratio.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Ratio</th>
+                <th>Rent</th>
+                {MATRIX_RATES.map((r) => <th>{r}%</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                matrix.map((row) => (
+                  <tr>
+                    <td><strong>{row.ratio}</strong></td>
+                    <td>{fmt(row.rent)}</td>
+                    {
+                      row.cells.map((c) => (
+                        <td>{c.tie ? 'Tie' : `${c.buyWins ? 'Buy' : 'Rent'} +${c.gap}`}</td>
+                      ))
+                    }
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          <p>
+            <em>
+              Our model's defaults otherwise: 20% down, 3% appreciation, 2.5% rent growth, 7%
+              investment return, 10-year stay, standard deduction. Rent is derived from the ratio
+              against a fixed {fmt(D.homePrice)} price, so each row is a different market rather
+              than a different house. Figures are net-worth gaps at the end of the stay, after
+              selling costs and taxes on both sides.
+            </em>
+          </p>
+          <p>
+            Two things fall out of it. The buy-favorable line is not a constant: the classic "under
+            15" band only behaves like one near a 6% mortgage, and each point of rate moves it by
+            one to two ratio points — more at cheap money than dear. And the columns are not
+            symmetric — at high ratios renting
+            wins by amounts no rate change rescues, while the cells that flip are clustered in a
+            narrow band, which is exactly where a full simulation earns its keep over a rule of
+            thumb.
+          </p>
         </article>
 
         <p class="racenote" style="margin-top:34px">

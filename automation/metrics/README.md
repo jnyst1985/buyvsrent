@@ -52,6 +52,20 @@ rung is non-zero and reproducible:
 | Clicks (28d) | 0 | — not yet a usable goal |
 | Engaged sessions | no history (GA4 live 2026-07-29) | earliest honest baseline ~2026-08-26 |
 
+## The optimize-or-create query loop
+
+`automation/seo-queries.sh` (run weekly by `seo-weekly.sh`, safe ad-hoc) writes
+`queries-latest.json`: every query from the last 14 finalized days vs the prior
+14 — impressions delta, the page(s) Google actually paired it with, queries that
+vanished, and the live sitemap inventory. The weekly review (prompt step 3c)
+judges each rising query as SERVED / OPTIMIZE / CREATE, which is how a rising
+query becomes a work item instead of a statistic.
+
+Adopted 2026-08-01 from the r/Agentic_SEO scaled-blog AMA — the one transferable
+piece of that system. Division of labor is the house rule: the script assembles
+facts with no model; the intent judgment happens in the analysis step; acting on
+a verdict is a MOVE that goes through `moves.jsonl` like any other.
+
 ## The mortgage-rate watch
 
 Each `checks.jsonl` row also carries `pmms_30y` / `pmms_date` / `pmms_status` /

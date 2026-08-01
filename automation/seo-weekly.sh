@@ -33,6 +33,11 @@ METRICS_RC=$?
 # for the review to fold in. File is absent/empty if creds or API are down.
 zsh automation/clarity-insights.sh 3 > automation/logs/clarity-latest.json 2>/dev/null || true
 
+# The optimize-or-create query loop: rising queries mapped to the pages Google
+# shows for them, plus the sitemap inventory. Deterministic; the analysis step
+# judges intent-match from the file it writes (metrics/queries-latest.json).
+zsh automation/seo-queries.sh > automation/logs/seo-queries.out 2>automation/logs/seo-queries.err || true
+
 # --- 2. Analysis. Allowed to fail without taking the numbers down with it. ---
 SUMMARY=""
 for attempt in 1 2; do

@@ -51,8 +51,14 @@ START_ALL=$(date -v-180d +%Y-%m-%d)
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
+# Portable timeout: macOS ships no timeout(1), but perl's alarm is always
+# there. Added 2026-08-03 after a gsc call hung on a wedged connection for 41
+# minutes and blocked the entire Monday weekly - measurement must fail fast
+# and fall back, never wedge the pipeline.
+to() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+
 q() { # q <start> <end> <dimension> <outfile>
-  gsc analytics query --site "$SITE" --start "$1" --end "$2" \
+  to 90 gsc analytics query --site "$SITE" --start "$1" --end "$2" \
     --dimension "$3" --limit 5000 > "$4" 2>"$TMP/err" || echo '{}' > "$4"
 }
 
@@ -70,7 +76,7 @@ q "$START_7"  "$END" date  "$TMP/d7.json"
 # daily run mostly re-reads the same value - cheap, and it means the ledger
 # notices a new print within a day. Failure leaves the file empty and the
 # fields null; it must never take the GSC measurement down with it.
-curl -s --max-time 20 "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US" \
+to 30 curl -s --max-time 20 "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US" \
   | tail -8 > "$TMP/pmms.csv" || true
 
 # The drift band is the model default +/- 0.5, read from the engine so a future
@@ -82,7 +88,7 @@ if [ "$DO_INDEX" = "1" ]; then
   # the normal state we are here to measure, not an error. Discarding stdout on
   # a non-zero exit threw the whole indexation reading away. Judge the payload,
   # not the exit code; the python side already tolerates a malformed file.
-  gsc inspect --site "$SITE" --sitemap --concurrency 3 > "$TMP/index.json" 2>/dev/null
+  to 300 gsc inspect --site "$SITE" --sitemap --concurrency 3 > "$TMP/index.json" 2>/dev/null
   head -c 1 "$TMP/index.json" | grep -q '{' || echo '{}' > "$TMP/index.json"
 else
   echo '{}' > "$TMP/index.json"

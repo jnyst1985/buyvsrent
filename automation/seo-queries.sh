@@ -36,8 +36,12 @@ START_PRI=$(date -v-$((LAG + 27))d +%Y-%m-%d)
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
+# Portable timeout via perl alarm (macOS has no timeout(1)); see seo-metrics.sh
+# for the 2026-08-03 41-minute-hang incident this guards against.
+to() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+
 q() { # q <start> <end> <dimension> <outfile>
-  gsc analytics query --site "$SITE" --start "$1" --end "$2" \
+  to 90 gsc analytics query --site "$SITE" --start "$1" --end "$2" \
     --dimension "$3" --limit 5000 > "$4" 2>/dev/null || echo '{}' > "$4"
 }
 

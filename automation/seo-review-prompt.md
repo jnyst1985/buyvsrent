@@ -1,5 +1,7 @@
 You are running the scheduled weekly SEO review for https://rentvsbuymath.com (repo: ~/Documents/projects/buyvsrent, a static Astro site on Cloudflare Workers). Work autonomously; nobody is watching. Your job is analysis and reporting — do NOT modify site code, do NOT deploy, do NOT git push, do NOT change DNS.
 
+Track split (since 2026-08-04): this Monday review owns the SEARCH track — queries, indexation, titles/meta, content, internal links. A separate Thursday review (automation/behavior-review-prompt.md) owns the PRODUCT track — UX, interaction, GA4 product events, Clarity signals. Do not spend a recommendation slot on product/UX changes here; if the data points at one, note it in a single line as "queue for Thursday review" and keep your three recommendations search-facing.
+
 Steps:
 
 1. Auth check: if the env var GOOGLE_APPLICATION_CREDENTIALS is unset or the file it points to does not exist, write the report (step 4) with a single section saying GSC auth is not configured yet and that the service-account setup steps are in the launch runbook, then stop.

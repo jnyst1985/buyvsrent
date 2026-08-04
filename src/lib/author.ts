@@ -11,8 +11,11 @@
  */
 export const AUTHOR = {
   name: 'Jonathan Nyst',
-  /** Byline short form. */
-  short: 'Jon Nyst',
+  /**
+   * Byline form. Jonathan's standing instruction (2026-08-04): his name is
+   * always published as "Jonathan Nyst", never shortened to "Jon Nyst".
+   */
+  short: 'Jonathan Nyst',
   initials: 'JN',
   url: 'https://rentvsbuymath.com/about',
   /** One line, used under the byline and in the About page intro. */

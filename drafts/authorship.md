@@ -60,8 +60,15 @@ reviewer exists so none is claimed; only publicly-available personal info.
    cluster; Article schema author resolves to a verifiable Person".
 7. THEN the tax cluster is unblocked (strategy cluster 4).
 
-## Pending from Jonathan
+## Assets & links — received 2026-08-04
 
-- [ ] Exact LinkedIn URL
-- [ ] Headshot photo
-- [ ] Sign-off on the two texts above (or edits)
+- [x] LinkedIn: https://www.linkedin.com/in/jonathannyst/ → add to `sameAs`
+- [x] Photo: `drafts/authorship-photo.jpg` (640x640 JPEG, 82KB, web-ready;
+      original kept alongside). Conference-speaker shot, face sits upper-centre —
+      at ship time copy to `public/jonathan-nyst.jpg`, reference it in
+      `authorSchema.image`, and render the /about avatar with
+      `object-fit: cover; object-position: center 22%` so the face frames
+      correctly at small sizes with NO image cropping tooling needed.
+- [ ] Sign-off on the two texts above (assets delivered imply direction is
+      right; texts stay editable until the ship date — silence = approved as
+      drafted)

@@ -1,5 +1,6 @@
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { formatCurrency } from '../../lib/engine/format';
+import { track } from '../../lib/track';
 import { SliderField } from './fields';
 
 /**
@@ -13,6 +14,17 @@ export default function FivePercentRule() {
   const [homePrice, setHomePrice] = useState(420_000);
   const [monthlyRent, setMonthlyRent] = useState(2100);
   const [rulePct, setRulePct] = useState(5);
+
+  // One calc_engaged per page load, on the first real input. Simple tools get
+  // the engagement event only - field-level detail lives on the main calculator.
+  const engaged = useRef(false);
+  const wired = (set: (v: number) => void) => (v: number) => {
+    if (!engaged.current) {
+      engaged.current = true;
+      track('calc_engaged', { tool: 'five_percent_rule' });
+    }
+    set(v);
+  };
 
   const threshold = (homePrice * (rulePct / 100)) / 12;
   const rentWins = monthlyRent < threshold;
@@ -29,7 +41,7 @@ export default function FivePercentRule() {
         max={2_000_000}
         step={5_000}
         prefix="$"
-        onInput={setHomePrice}
+        onInput={wired(setHomePrice)}
       />
       <SliderField
         id="fp-rent"
@@ -40,7 +52,7 @@ export default function FivePercentRule() {
         step={25}
         prefix="$"
         suffix="/mo"
-        onInput={setMonthlyRent}
+        onInput={wired(setMonthlyRent)}
       />
       <SliderField
         id="fp-rule"
@@ -50,7 +62,7 @@ export default function FivePercentRule() {
         max={9}
         step={0.5}
         suffix="%"
-        onInput={setRulePct}
+        onInput={wired(setRulePct)}
         detail={
           <>
             The classic rule is 5%, built for a 3-4% mortgage era. At 2026 rates the full model

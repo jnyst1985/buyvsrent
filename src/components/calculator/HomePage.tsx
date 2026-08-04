@@ -5,6 +5,7 @@ import { decomposeMonthly } from '../../lib/engine/decompose';
 import { rateLadder, type RateRow } from '../../lib/engine/ladder';
 import { decodeParams, encodeParams, hasScenarioParams } from '../../lib/engine/urlParams';
 import { formatCurrency } from '../../lib/engine/format';
+import { track } from '../../lib/track';
 import type { EngineInputs, SensitivityRow } from '../../lib/engine/types';
 
 import { ConverterCard } from './ConverterCard';
@@ -48,6 +49,13 @@ export function HomePage() {
   const timer = useRef<ReturnType<typeof setTimeout>>();
   const first = useRef(true);
 
+  // Analytics bookkeeping: which fields changed since the last settled event,
+  // whether this page load has seen a real input yet, and the verdict the user
+  // last saw. Events fire from the debounced pass below, never per keystroke.
+  const touched = useRef<Set<string>>(new Set());
+  const engaged = useRef(false);
+  const prevVerdict = useRef(results.verdict);
+
   useEffect(() => {
     if (first.current) {
       first.current = false;
@@ -58,6 +66,18 @@ export function HomePage() {
     timer.current = setTimeout(() => {
       setAnalysis(analyse(inputs));
       setPending(false);
+      // Analytics ride the same debounce: one settled event per pause in the
+      // typing or dragging, with the fields that changed since the last one.
+      if (touched.current.size > 0) {
+        track('calc_input', { tool: 'main', fields: [...touched.current].sort().join(',') });
+        touched.current.clear();
+      }
+      // A verdict flip only counts when the user caused it - hydrating a
+      // shared link changes the verdict too, but that is not a user action.
+      if (engaged.current && results.verdict !== prevVerdict.current) {
+        track('verdict_flip', { to: results.verdict });
+      }
+      prevVerdict.current = results.verdict;
     }, 160);
     return () => clearTimeout(timer.current);
   }, [inputs]);
@@ -83,10 +103,14 @@ export function HomePage() {
     return () => clearTimeout(id);
   }, [inputs]);
 
-  const onChange = useCallback(
-    (patch: Partial<EngineInputs>) => setInputs((prev) => ({ ...prev, ...patch })),
-    []
-  );
+  const onChange = useCallback((patch: Partial<EngineInputs>) => {
+    for (const key of Object.keys(patch)) touched.current.add(key);
+    if (!engaged.current) {
+      engaged.current = true;
+      track('calc_engaged', { tool: 'main' });
+    }
+    setInputs((prev) => ({ ...prev, ...patch }));
+  }, []);
 
   const scrollToCustomize = useCallback(() => {
     document.getElementById('customize')?.scrollIntoView({

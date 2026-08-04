@@ -1,11 +1,23 @@
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { formatCurrency } from '../../lib/engine/format';
+import { track } from '../../lib/track';
 import { SliderField } from './fields';
 
 /** Price-to-rent ratio: home price divided by annual rent, with the bands. */
 export default function PriceToRent() {
   const [homePrice, setHomePrice] = useState(420_000);
   const [monthlyRent, setMonthlyRent] = useState(2100);
+
+  // One calc_engaged per page load, on the first real input. Simple tools get
+  // the engagement event only - field-level detail lives on the main calculator.
+  const engaged = useRef(false);
+  const wired = (set: (v: number) => void) => (v: number) => {
+    if (!engaged.current) {
+      engaged.current = true;
+      track('calc_engaged', { tool: 'price_to_rent' });
+    }
+    set(v);
+  };
 
   const ratio = homePrice / (monthlyRent * 12);
   const monthlyPct = (monthlyRent / homePrice) * 100;
@@ -40,7 +52,7 @@ export default function PriceToRent() {
         max={2_000_000}
         step={5_000}
         prefix="$"
-        onInput={setHomePrice}
+        onInput={wired(setHomePrice)}
       />
       <SliderField
         id="ptr-rent"
@@ -51,7 +63,7 @@ export default function PriceToRent() {
         step={25}
         prefix="$"
         suffix="/mo"
-        onInput={setMonthlyRent}
+        onInput={wired(setMonthlyRent)}
       />
 
       <div class="toolout" aria-live="polite">

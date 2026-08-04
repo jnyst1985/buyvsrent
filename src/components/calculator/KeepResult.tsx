@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { buildKeepText, scenarioLink } from '../../lib/keepText';
+import { track } from '../../lib/track';
 import type { CoreResults, EngineInputs } from '../../lib/engine/types';
 
 interface Props {
@@ -22,7 +23,10 @@ export function KeepResult({ inputs, results, tippingRent, investedMonthly }: Pr
     timer.current = setTimeout(() => setMsg(''), 1800);
   };
 
-  const copy = async (value: string, ok: string) => {
+  const copy = async (value: string, ok: string, what: 'ai_text' | 'link') => {
+    // Tracked on click (the intent), not on clipboard success - the fallback
+    // path cannot reliably report success anyway.
+    track('share_copy', { what });
     try {
       await navigator.clipboard.writeText(value);
       flash(ok);
@@ -53,14 +57,14 @@ export function KeepResult({ inputs, results, tippingRent, investedMonthly }: Pr
         <button
           class="pill"
           type="button"
-          onClick={() => copy(text, 'Copied - paste it into your AI')}
+          onClick={() => copy(text, 'Copied - paste it into your AI', 'ai_text')}
         >
           Copy for your AI
         </button>
         <button
           class="pill ghost"
           type="button"
-          onClick={() => copy(scenarioLink(inputs), 'Link copied')}
+          onClick={() => copy(scenarioLink(inputs), 'Link copied', 'link')}
         >
           Copy link to this scenario
         </button>

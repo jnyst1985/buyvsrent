@@ -1,1 +1,8 @@
+{"date": "2026-08-02", "status": "ok", "sessions": 1, "engaged_sessions": 0, "events": {"first_visit": 1, "page_view": 1, "session_start": 1}}
 {"date": "2026-08-04", "window_end": "2026-08-03", "range_days": 1, "status": "ok", "property": "properties/546198849", "sessions": 0, "engaged_sessions": 0, "events": {}, "channels": {}}
+{"date": "2026-08-04", "status": "ok", "sessions": 10, "engaged_sessions": 5, "events": {"calc_input": 54, "verdict_flip": 18, "page_view": 14, "session_start": 10, "first_visit": 8, "user_engagement": 6, "calc_engaged": 4, "scroll": 2, "share_copy": 1}}
+{"date": "2026-08-05", "status": "ok", "sessions": 6, "engaged_sessions": 4, "events": {"calc_input": 30, "session_start": 6, "verdict_flip": 5, "first_visit": 4, "page_view": 4, "calc_engaged": 3, "user_engagement": 3}}
+{"date": "2026-08-06", "status": "ok", "sessions": 3, "engaged_sessions": 2, "events": {"calc_input": 13, "page_view": 3, "session_start": 3, "first_visit": 2, "user_engagement": 2, "calc_engaged": 1, "scroll": 1, "verdict_flip": 1}}
+{"date": "2026-08-07", "status": "ok", "sessions": 4, "engaged_sessions": 3, "events": {"calc_input": 34, "page_view": 6, "user_engagement": 6, "session_start": 4, "first_visit": 3, "calc_engaged": 2, "scroll": 2, "verdict_flip": 2}}
+{"date": "2026-08-08", "status": "ok", "sessions": 1, "engaged_sessions": 0, "events": {"first_visit": 2, "page_view": 2, "session_start": 2}}
+{"date": "2026-08-09", "status": "ok", "sessions": 6, "engaged_sessions": 0, "events": {"session_start": 6, "page_view": 5, "first_visit": 4, "scroll": 1, "user_engagement": 1}}

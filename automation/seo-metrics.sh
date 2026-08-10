@@ -83,21 +83,23 @@ to 30 curl -s --max-time 20 "https://fred.stlouisfed.org/graph/fredgraph.csv?id=
 # default bump moves the band automatically instead of leaving a stale 6.5 here.
 MODEL_RATE=$(grep -oE 'mortgageRatePct: [0-9.]+' "$REPO/src/lib/engine/defaults.ts" | grep -oE '[0-9.]+' || echo "")
 
-# GA4: yesterday's sessions, engaged sessions, event counts and channels via
-# the Data API (same service account as GSC, added as property Viewer
-# 2026-08-04). The script prints a status row even when the API is disabled or
-# unreachable, so the ledger records the gap instead of silently skipping it.
-to 90 node "$REPO/automation/ga4-pull.mjs" 1 > "$TMP/ga4.json" 2>>"$TMP/err" \
+# GA4: per-day sessions, engaged sessions and event counts via the Data API
+# (same service account as GSC, added as property Viewer 2026-08-04). Pulls a
+# rolling 3-day window ending today: GA4 finalizes a day up to ~48h after it
+# closes (property timezone America/New_York), so each day's ledger row keeps
+# refreshing until final instead of freezing on an early, incomplete read -
+# the 2026-08-04 row froze as zeros before this. Day keys come from GA4's own
+# date dimension, never computed on this machine.
+to 90 node "$REPO/automation/ga4-pull.mjs" 3 > "$TMP/ga4.json" 2>>"$TMP/err" \
   || echo '{"status":"error","error":"ga4-pull timed out or crashed"}' > "$TMP/ga4.json"
 TMP="$TMP" OUT="$OUT" python3 - <<'PY'
 import json, os
 tmp, out = os.environ['TMP'], os.environ['OUT']
 try:
-    row = json.load(open(f'{tmp}/ga4.json'))
+    pull = json.load(open(f'{tmp}/ga4.json'))
 except Exception:
-    row = {'status': 'error', 'error': 'ga4.json unreadable'}
+    pull = {'status': 'error', 'error': 'ga4.json unreadable'}
 path = f'{out}/ga4-daily.jsonl'
-key = row.get('window_end') or row.get('date') or 'unknown'
 existing = {}
 if os.path.exists(path):
     for line in open(path):
@@ -105,20 +107,40 @@ if os.path.exists(path):
         if line:
             try:
                 r = json.loads(line)
+                # pre-2026-08-10 rollup rows carry the data date in window_end;
+                # per-day rows carry it in date. Same key space either way.
                 existing[r.get('window_end') or r.get('date')] = r
             except Exception:
                 pass
-# Idempotent per window_end; an 'ok' row is never overwritten by a later
-# error row for the same date (a failed re-run must not destroy a measurement).
-if key not in existing or existing[key].get('status') != 'ok' or row.get('status') == 'ok':
-    existing[key] = row
+
+if pull.get('status') == 'ok':
+    candidates = pull.get('daily') or []
+else:
+    # Record the gap under the fallback key so a dead API is visible in the
+    # ledger - but only as a candidate; it must never displace an ok row.
+    candidates = [{'date': pull.get('window_end') or pull.get('date'),
+                   'status': pull.get('status'), 'error': str(pull.get('error', ''))[:200]}]
+
+for row in candidates:
+    key = row.get('date')
+    # ok rows always overwrite (each re-pull is fresher, final ~48h after the
+    # day closes); error rows only fill holes, never destroy a measurement.
+    if key and (key not in existing or existing[key].get('status') != 'ok' or row.get('status') == 'ok'):
+        existing[key] = row
+
 with open(path, 'w') as f:
     for k in sorted(existing):
         f.write(json.dumps(existing[k]) + '\n')
-print(f"ga4 [{row.get('status')}]: " + (
-    f"{row.get('sessions')} sessions, {row.get('engaged_sessions')} engaged, events: "
-    + (', '.join(f'{k}={v}' for k, v in sorted((row.get('events') or {}).items())) or 'none')
-    if row.get('status') == 'ok' else str(row.get('error', ''))[:120]))
+
+if pull.get('status') == 'ok':
+    latest = (pull.get('daily') or [{}])[-1]
+    ev = latest.get('events') or {}
+    print(f"ga4 [ok]: today so far {latest.get('sessions', 0)} sessions, "
+          f"{latest.get('engaged_sessions', 0)} engaged | "
+          + (', '.join(f'{k}={v}' for k, v in sorted(ev.items())
+                       if k in ('calc_engaged', 'calc_input', 'verdict_flip', 'share_copy')) or 'no product events'))
+else:
+    print(f"ga4 [{pull.get('status')}]: {str(pull.get('error', ''))[:120]}")
 PY
 
 if [ "$DO_INDEX" = "1" ]; then

@@ -31,8 +31,9 @@ const out = (obj) => {
   console.log(
     JSON.stringify({
       date: new Date().toISOString().slice(0, 10),
-      // The report window ends yesterday (GA4 daily data is complete then);
-      // ledger rows are keyed on this, not on the run date.
+      // Fallback ledger key for ERROR rows only. Real day keys come from the
+      // GA4 date dimension in `daily` (property timezone, America/New_York);
+      // this UTC guess mislabeled a day once (2026-08-04 frozen-zeros row).
       window_end: new Date(Date.now() - 86_400_000).toISOString().slice(0, 10),
       range_days: DAYS,
       ...obj,
@@ -110,21 +111,35 @@ if (!propertyId) {
 }
 
 // --- report -----------------------------------------------------------------
+// Per-DAY rows via GA4's own `date` dimension, over a rolling window ending
+// today. Two lessons from the frozen-zeros row of 2026-08-04:
+//   1. The property runs on America/New_York time; any date computed locally
+//      (UTC or MYT) can be off by a day. GA4's date dimension is correct by
+//      construction, so day keys come from the API, never from this machine.
+//   2. A day pulled before GA4 finalizes it reads low or zero. The window
+//      includes today and re-pulls the last few days on every run, so each
+//      day's ledger row is refreshed until final instead of freezing early.
 const run = (body) =>
   fetch(`https://analyticsdata.googleapis.com/v1beta/${propertyId}:runReport`, {
     method: 'POST',
     headers: { ...auth, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dateRanges: [{ startDate: `${DAYS}daysAgo`, endDate: 'yesterday' }], ...body }),
+    body: JSON.stringify({ dateRanges: [{ startDate: `${DAYS}daysAgo`, endDate: 'today' }], ...body }),
     signal: AbortSignal.timeout(60_000),
   }).then((r) => r.json());
 
-const totals = await run({ metrics: [{ name: 'sessions' }, { name: 'engagedSessions' }] });
-if (totals.error) out({ status: classify(totals.error), error: totals.error.message });
+const iso = (d) => (/^\d{8}$/.test(d) ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}` : d);
 
-const byEvent = await run({
+const byDay = await run({
+  metrics: [{ name: 'sessions' }, { name: 'engagedSessions' }],
+  dimensions: [{ name: 'date' }],
+  limit: 100,
+});
+if (byDay.error) out({ status: classify(byDay.error), error: byDay.error.message });
+
+const byDayEvent = await run({
   metrics: [{ name: 'eventCount' }],
-  dimensions: [{ name: 'eventName' }],
-  limit: 50,
+  dimensions: [{ name: 'date' }, { name: 'eventName' }],
+  limit: 500,
 });
 const byChannel = await run({
   metrics: [{ name: 'sessions' }],
@@ -132,19 +147,35 @@ const byChannel = await run({
   limit: 20,
 });
 
-const row = totals.rows?.[0]?.metricValues ?? [];
-const events = Object.fromEntries(
-  (byEvent.rows ?? []).map((r) => [r.dimensionValues[0].value, Number(r.metricValues[0].value)])
-);
+const days = {};
+for (const r of byDay.rows ?? []) {
+  days[iso(r.dimensionValues[0].value)] = {
+    sessions: Number(r.metricValues[0].value),
+    engaged_sessions: Number(r.metricValues[1].value),
+    events: {},
+  };
+}
+for (const r of byDayEvent.rows ?? []) {
+  const d = iso(r.dimensionValues[0].value);
+  if (days[d]) days[d].events[r.dimensionValues[1].value] = Number(r.metricValues[0].value);
+}
+const daily = Object.keys(days)
+  .sort()
+  .map((d) => ({ date: d, status: 'ok', ...days[d] }));
+
 const channels = Object.fromEntries(
   (byChannel.rows ?? []).map((r) => [r.dimensionValues[0].value, Number(r.metricValues[0].value)])
 );
+const events = {};
+for (const d of daily) for (const [k, v] of Object.entries(d.events)) events[k] = (events[k] ?? 0) + v;
 
 out({
   status: 'ok',
   property: propertyId,
-  sessions: Number(row[0]?.value ?? 0),
-  engaged_sessions: Number(row[1]?.value ?? 0),
+  timezone: 'America/New_York',
+  sessions: daily.reduce((s, d) => s + d.sessions, 0),
+  engaged_sessions: daily.reduce((s, d) => s + d.engaged_sessions, 0),
   events,
   channels,
+  daily,
 });

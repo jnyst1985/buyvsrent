@@ -146,6 +146,17 @@ const byChannel = await run({
   dimensions: [{ name: 'sessionDefaultChannelGroup' }],
   limit: 20,
 });
+// Source-level breakdown so AI-engine referrals are visible instead of being
+// lumped under "Referral". Humans clicking through from an AI answer DO run
+// JS and land in GA4 - this is the half of AI-traffic telemetry we get free
+// (bot crawls are invisible to GA4 and edge-tapping them would meter the
+// Worker; standing invariant says never).
+const bySource = await run({
+  metrics: [{ name: 'sessions' }],
+  dimensions: [{ name: 'sessionSource' }],
+  limit: 50,
+});
+const AI_SOURCES = /chatgpt|openai|perplexity|claude|anthropic|gemini|bard|copilot|bing.*chat|you\.com|phind|kagi/i;
 
 const days = {};
 for (const r of byDay.rows ?? []) {
@@ -166,6 +177,10 @@ const daily = Object.keys(days)
 const channels = Object.fromEntries(
   (byChannel.rows ?? []).map((r) => [r.dimensionValues[0].value, Number(r.metricValues[0].value)])
 );
+const sources = Object.fromEntries(
+  (bySource.rows ?? []).map((r) => [r.dimensionValues[0].value, Number(r.metricValues[0].value)])
+);
+const ai_referrals = Object.fromEntries(Object.entries(sources).filter(([s]) => AI_SOURCES.test(s)));
 const events = {};
 for (const d of daily) for (const [k, v] of Object.entries(d.events)) events[k] = (events[k] ?? 0) + v;
 
@@ -177,5 +192,7 @@ out({
   engaged_sessions: daily.reduce((s, d) => s + d.engaged_sessions, 0),
   events,
   channels,
+  sources,
+  ai_referrals,
   daily,
 });

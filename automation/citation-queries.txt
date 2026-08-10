@@ -1,0 +1,13 @@
+# One query per line. These are the intents we want AI answer engines to cite
+# rentvsbuymath.com for - keep them stable so week-over-week deltas mean
+# something; editing this list resets comparability for the edited lines.
+rent vs buy calculator
+is it better to rent or buy a home in 2026
+best rent vs buy calculator
+free alternative to the NYT rent vs buy calculator
+is renting throwing money away
+5 percent rule rent vs buy
+price to rent ratio calculator
+how to decide whether to rent or buy a house
+does buying a house build wealth
+when does buying beat renting

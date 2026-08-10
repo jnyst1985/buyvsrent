@@ -38,6 +38,13 @@ zsh automation/clarity-insights.sh 3 > automation/logs/clarity-latest.json 2>/de
 # judges intent-match from the file it writes (metrics/queries-latest.json).
 zsh automation/seo-queries.sh > automation/logs/seo-queries.out 2>automation/logs/seo-queries.err || true
 
+# AI-citation probe: does Perplexity cite us for the target queries? Ten API
+# calls, appends to metrics/citations.jsonl (idempotent per date). Deltas are
+# read by the analysis step; a missing key or API failure skips quietly and
+# must never take the GSC measurement down with it.
+perl -e 'alarm 600; exec @ARGV' node automation/citation-probe.mjs \
+  > automation/logs/citation-probe.out 2>automation/logs/citation-probe.err || true
+
 # --- 2. Analysis. Allowed to fail without taking the numbers down with it. ---
 SUMMARY=""
 for attempt in 1 2; do

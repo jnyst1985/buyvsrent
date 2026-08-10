@@ -57,7 +57,16 @@ const jsonLd = [
           <div class="card">
             <div class="artmeta" style="margin:0 0 12px">
               <span class="au">
-                <span class="av" aria-hidden="true">{AUTHOR.initials}</span>
+                {/* The face sits upper-centre in the source photo, so the crop
+                    anchors at 22% from the top - no image tooling needed. */}
+                <img
+                  src="/jonathan-nyst.jpg"
+                  alt={`Photo of ${AUTHOR.name}`}
+                  width="72"
+                  height="72"
+                  loading="lazy"
+                  style="width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 22%;flex:none"
+                />
                 {AUTHOR.name}
               </span>
             </div>
@@ -65,7 +74,7 @@ const jsonLd = [
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
               {AUTHOR.sameAs.map((url) => (
                 <a class="pill sm ghost" href={url} rel="me noopener" target="_blank">
-                  {url.includes('github') ? 'GitHub' : 'Profile'}
+                  {url.includes('github') ? 'GitHub' : url.includes('linkedin') ? 'LinkedIn' : 'Profile'}
                 </a>
               ))}
             </div>
@@ -74,12 +83,30 @@ const jsonLd = [
 
         <div>
           <h2>Who is behind it</h2>
-          <p class="pb">{AUTHOR.bio}</p>
+          <p class="pb">
+            <strong>The author is the user.</strong> Jonathan Nyst is 40 and owns no property. Most
+            of his friends and peers own one, some several — and for years the honest feeling was
+            being behind. But "behind" assumes everyone started with the same chips, and nobody
+            does: different countries, different incomes, different rents, different rates,
+            different years to work with. The useful question was never <em>why am I behind</em> —
+            it was <em>what is the right move from where I actually stand, today</em>. He couldn't
+            find a tool that answered that question simply and exhaustively at the same time, so he
+            built one.
+          </p>
           <p class="pb" style="margin-top:12px">
-            There is no affiliation with any lender, brokerage or real-estate platform, and no
-            referral fees. The site is supported by advertising, which cannot influence the result:
-            the calculator's output depends only on the numbers you enter, and it runs entirely in
-            your browser.
+            Professionally, Jonathan spent fifteen years in banking, fintech, payments and
+            data-driven marketing, at CMO and Head of Marketing level. That career is precisely why
+            this site looks the way it does: he has seen from the inside how "free calculators" are
+            built as lead-generation funnels — tuned to conclude that you should buy, because
+            someone gets paid when you do. RentVsBuyMath is the calculator with no funnel. Nobody
+            here earns anything from your answer.
+          </p>
+          <p class="pb" style="margin-top:12px">
+            <strong>What he is not:</strong> a lender, a broker, an agent, or a financial advisor —
+            and this site is not financial advice. Where the model implements US tax rules, they
+            come from primary sources, are encoded in the engine's automated tests, and are open
+            for anyone to falsify — the methodology page documents every formula so you don't have
+            to take anyone's word for it, including his.
           </p>
 
           <h2 style="margin-top:38px">Why it exists</h2>

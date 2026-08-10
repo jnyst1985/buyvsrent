@@ -1,6 +1,6 @@
 # RentVsBuyMath.com
 
-> Free rent-vs-buy calculator with fully documented methodology. Simulates buying a home vs. renting and investing the difference, month by month: symmetric opportunity cost (whichever side is cheaper invests the surplus), US 2026 tax rules (standard-vs-itemized delta, $750k mortgage-interest cap, $40,400 SALT cap, Section 121 exclusion), PMI with automatic termination, closing and selling costs, capital-gains tax on portfolios. Currency-agnostic. No paywall, no signup; the engine is open source with 107 automated tests.
+> Free rent-vs-buy calculator with fully documented methodology. Simulates buying a home vs. renting and investing the difference, month by month: symmetric opportunity cost (whichever side is cheaper invests the surplus), US 2026 tax rules (standard-vs-itemized delta, $750k mortgage-interest cap, $40,400 SALT cap, Section 121 exclusion), PMI with automatic termination, closing and selling costs, capital-gains tax on portfolios. Currency-agnostic. No paywall, no signup; the engine is open source with 112 automated tests.
 
 Key finding (July 2026, our model): at ~6.5% mortgage rates, buying a typical US home beats renting only when a comparable rental costs more than ~0.59% of the home's value per month (about $2,468/mo on a $420,000 home, 10-year stay). At 4% rates the threshold falls to ~0.45%.
 
@@ -23,8 +23,14 @@ Key finding (July 2026, our model): at ~6.5% mortgage rates, buying a typical US
 - [Is Buying Always Better Than Renting?](https://rentvsbuymath.com/guides/is-buying-always-better-than-renting): when renting wins, quantified
 - [Rent vs. Buy in 2026](https://rentvsbuymath.com/guides/rent-vs-buy-2026): what today's mortgage rates do to the decision
 - [Should You Buy in an Expensive City?](https://rentvsbuymath.com/guides/should-you-buy-in-an-expensive-city): why a rate cut does not rescue a high price-to-rent market
+- [Is Renting Throwing Money Away?](https://rentvsbuymath.com/guides/is-renting-throwing-money-away): what both sides actually burn per month, computed
+- [Does Buying a House Build Wealth?](https://rentvsbuymath.com/guides/does-buying-a-house-build-wealth): leverage and forced savings against the carry, priced
 - [Free NYT-Style Calculator](https://rentvsbuymath.com/free-nyt-style-rent-vs-buy-calculator): how we compare to the paywalled gold standard
 - [Best Rent vs. Buy Calculators, Ranked](https://rentvsbuymath.com/best-rent-vs-buy-calculators): honest review of the field
+
+## Full content
+
+- [llms-full.txt](https://rentvsbuymath.com/llms-full.txt): every guide, calculator explainer and FAQ in one plain-text file
 
 ## About
 

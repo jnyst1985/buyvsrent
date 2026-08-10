@@ -27,9 +27,18 @@ const jsonLd = {
   operatingSystem: 'Any',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://rentvsbuymath.com/' },
+    { '@type': 'ListItem', position: 2, name: '5% Rule Calculator' },
+  ],
+};
 ---
 
-<BaseLayout {title} {description} path="/calculators/5-percent-rule" jsonLd={jsonLd}>
+<BaseLayout {title} {description} path="/calculators/5-percent-rule" jsonLd={[jsonLd, breadcrumbLd]}>
   <section class="phero">
     <div class="wrap">
       <h1>The 5% rule, in ten seconds</h1>

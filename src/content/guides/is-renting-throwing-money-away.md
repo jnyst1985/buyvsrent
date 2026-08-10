@@ -1,14 +1,8 @@
-<!-- DRAFT — do not ship before the open ledger reviews (a1: 2026-08-19, b2: 2026-08-27).
-     To ship: move to src/content/guides/, set pubDate to the ship date, add the file to
-     llms.txt, run npm test + npm run audit, deploy, and log ONE move in
-     automation/metrics/moves.jsonl with a falsifiable prediction.
-     All figures below already appear in published, guarded copy (faq.json,
-     is-buying-always-better-than-renting.md, methodology) — no new numbers introduced. -->
 ---
 title: "Is Renting Throwing Money Away? No — Here Is What Both Sides Actually Burn"
 seoTitle: "Is Renting Throwing Money Away?"
 description: "The renter burns $2,115 a month, the owner $2,763 — and only $304 of the mortgage payment builds equity. What throwing money away actually looks like, computed."
-pubDate: 2026-08-27
+pubDate: 2026-08-11
 category: "Myths"
 ---
 

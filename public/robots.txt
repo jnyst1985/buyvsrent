@@ -19,3 +19,17 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://rentvsbuymath.com/sitemap-index.xml
+
+# AI ANSWER-ENGINE crawlers (the ones that produce citations; distinct from
+# the training crawlers above, which are a separate policy choice)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /

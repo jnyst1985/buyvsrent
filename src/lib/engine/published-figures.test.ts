@@ -66,6 +66,8 @@ const PUBLISHERS: { file: string; rents: string[]; pcts?: string[]; ratios?: str
   { file: 'src/data/faq.json', rents: ALL },
   { file: 'src/data/glossary.json', rents: ALL },
   { file: 'src/pages/best-rent-vs-buy-calculators.md', rents: ['4', '6.5', '8'] },
+  { file: 'src/content/guides/is-renting-throwing-money-away.md', rents: ['6.5'], pcts: ['6.5'] },
+  { file: 'src/content/guides/does-buying-a-house-build-wealth.md', rents: [], pcts: ['6.5'] },
 ];
 
 const read = (file: string) => readFileSync(join(REPO_ROOT, file), 'utf8');
@@ -136,9 +138,22 @@ const PUBLISHED_MATRIX: { ratio: number; rate: number; gap: string; rentWins: bo
   { ratio: 24, rate: 8, gap: '$251,000', rentWins: true },
   { ratio: 14, rate: 4, gap: '$112,000', rentWins: false },
   { ratio: 14, rate: 8, gap: '$60,000', rentWins: true },
+  { ratio: 10, rate: 6.5, gap: '$189,000', rentWins: false },
 ];
 
-const MATRIX_QUOTERS = ['src/content/guides/should-you-buy-in-an-expensive-city.md'];
+// Which gaps each file quotes IN WORDS. Per-file, not all-files-all-gaps: the
+// wealth guide argues from two cells, the expensive-city guide from five, and
+// a guard demanding every gap in every file would force prose nobody wrote.
+const MATRIX_QUOTERS: { file: string; gaps: string[] }[] = [
+  {
+    file: 'src/content/guides/should-you-buy-in-an-expensive-city.md',
+    gaps: ['$79,000', '$185,000', '$251,000', '$112,000', '$60,000'],
+  },
+  {
+    file: 'src/content/guides/does-buying-a-house-build-wealth.md',
+    gaps: ['$189,000', '$185,000'],
+  },
+];
 
 describe('published ratio-by-rate gaps match the engine', () => {
   for (const { ratio, rate, gap, rentWins } of PUBLISHED_MATRIX) {
@@ -151,14 +166,38 @@ describe('published ratio-by-rate gaps match the engine', () => {
     });
   }
 
-  for (const file of MATRIX_QUOTERS) {
+  for (const { file, gaps } of MATRIX_QUOTERS) {
     it(`${file} states the current gaps`, () => {
       const text = read(file);
-      for (const { gap } of PUBLISHED_MATRIX) {
+      for (const gap of gaps) {
         expect(text, `${file} is missing ${gap}`).toContain(gap);
+      }
+      // Every quoted gap must also be a guarded matrix cell - a file quoting
+      // a figure this test never recomputes would be an unguarded publisher.
+      for (const gap of gaps) {
+        expect(
+          PUBLISHED_MATRIX.some((m) => m.gap === gap),
+          `${file} quotes ${gap}, which is not a PUBLISHED_MATRIX cell`
+        ).toBe(true);
       }
     });
   }
+});
+
+describe('the wealth guide default-scenario claims', () => {
+  // "At a 4% mortgage the default scenario itself flips: buying wins by about
+  // $38,000, breaking even in year six." Both halves recomputed from the
+  // engine; the guide quotes them in words.
+  it('default at 4% -> buy by $38,000, break-even year 6', () => {
+    const r = simulate({ ...DEFAULT_INPUTS, mortgageRatePct: 4 });
+    expect(r.difference > 0, 'default at 4% should favour buying').toBe(true);
+    const rounded = '$' + (Math.round(Math.abs(r.difference) / 1000) * 1000).toLocaleString('en-US');
+    expect(rounded).toBe('$38,000');
+    expect(r.breakEvenYear).toBe(6);
+    const text = read('src/content/guides/does-buying-a-house-build-wealth.md');
+    expect(text).toContain('$38,000');
+    expect(text).toContain('year six');
+  });
 });
 
 describe('verdict-sensitive boundaries', () => {

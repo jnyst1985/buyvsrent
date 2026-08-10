@@ -61,9 +61,18 @@ const jsonLd = {
   operatingSystem: 'Any',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://rentvsbuymath.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Price-to-Rent Ratio Calculator' },
+  ],
+};
 ---
 
-<BaseLayout {title} {description} path="/calculators/price-to-rent-ratio" jsonLd={jsonLd}>
+<BaseLayout {title} {description} path="/calculators/price-to-rent-ratio" jsonLd={[jsonLd, breadcrumbLd]}>
   <section class="phero">
     <div class="wrap">
       <h1>Price-to-rent ratio calculator</h1>

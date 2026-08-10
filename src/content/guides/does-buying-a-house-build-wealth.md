@@ -1,15 +1,8 @@
-<!-- DRAFT — do not ship before the open ledger reviews (a1: 2026-08-19, b2: 2026-08-27).
-     To ship: move to src/content/guides/, set pubDate to the ship date, add the file to
-     llms.txt, run npm test + npm run audit, deploy, and log ONE move in
-     automation/metrics/moves.jsonl with a falsifiable prediction.
-     Figures: all appear in published, guarded copy EXCEPT the ratio-10 matrix cell
-     (Buy +$189k at 6.5%) — if kept, add {ratio: 10, rate: 6.5} to PUBLISHED_MATRIX in
-     published-figures.test.ts when shipping. -->
 ---
 title: "Does Buying a House Actually Build Wealth? Slower Than the Payment Suggests"
 seoTitle: "Does Buying a House Build Wealth?"
 description: "Leverage, forced savings and appreciation against a 2.7% yearly carry and 9% round-trip trading costs: what wealth a house actually builds, and when it doesn't."
-pubDate: 2026-08-27
+pubDate: 2026-08-11
 category: "Myths"
 ---
 

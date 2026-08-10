@@ -57,21 +57,30 @@ const jsonLd = {
   // A named person, not the organisation: rent-vs-buy is YMYL, and "who is
   // responsible for this" needs a human answer that resolves to /about.
   author: authorSchema,
-  publisher: {
-    '@type': 'Organization',
-    name: 'RentVsBuyMath',
-    url: 'https://rentvsbuymath.com',
-  },
+  // Resolves to the site-wide Organization entity BaseLayout emits.
+  publisher: { '@id': 'https://rentvsbuymath.com/#org' },
   articleSection: entry.data.category,
   mainEntityOfPage: `https://rentvsbuymath.com/guides/${slug}`,
 };
+
+// Mirrors the visible crumb (Guides › category › this page).
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://rentvsbuymath.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://rentvsbuymath.com/guides' },
+    { '@type': 'ListItem', position: 3, name: entry.data.seoTitle ?? entry.data.title },
+  ],
+};
+const jsonLdAll = [jsonLd, breadcrumbLd];
 ---
 
 <BaseLayout
   title={`${entry.data.seoTitle ?? entry.data.title} | RentVsBuyMath`}
   description={entry.data.description}
   path={`/guides/${slug}`}
-  {jsonLd}
+  jsonLd={jsonLdAll}
   article={{ published, modified }}
 >
   <article class="art">

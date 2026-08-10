@@ -1,149 +1,27 @@
 {
- "generated": "2026-08-03T10:08:36",
+ "generated": "2026-08-10T09:25:34",
  "window_current": [
-  "2026-07-18",
-  "2026-07-31"
+  "2026-07-25",
+  "2026-08-07"
  ],
  "window_prior": [
-  "2026-07-04",
-  "2026-07-17"
+  "2026-07-11",
+  "2026-07-24"
  ],
  "queries": [
   {
-   "query": "should i rent or buy",
-   "impressions": 6,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 90.2,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/",
-     "impressions": 6,
-     "position": 90.2
-    },
-    {
-     "page": "/faq",
-     "impressions": 1,
-     "position": 89
-    }
-   ]
-  },
-  {
-   "query": "is it better to rent or buy",
-   "impressions": 2,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 98,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/faq",
-     "impressions": 1,
-     "position": 100
-    },
-    {
-     "page": "/guides",
-     "impressions": 1,
-     "position": 96
-    }
-   ]
-  },
-  {
-   "query": "better to rent or buy",
+   "query": "nytimes calculator rent vs buy",
    "impressions": 1,
    "prior_impressions": 0,
    "clicks": 0,
-   "position": 93,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/faq",
-     "impressions": 1,
-     "position": 93
-    }
-   ]
-  },
-  {
-   "query": "buy versus",
-   "impressions": 1,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 72,
+   "position": 69,
    "rising": true,
    "new": true,
    "pages": [
     {
      "page": "/",
      "impressions": 1,
-     "position": 72
-    }
-   ]
-  },
-  {
-   "query": "cheaper to rent or buy",
-   "impressions": 1,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 70,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/",
-     "impressions": 1,
-     "position": 70
-    }
-   ]
-  },
-  {
-   "query": "nyt rent vs buy calculator",
-   "impressions": 1,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 70,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/",
-     "impressions": 1,
-     "position": 70
-    }
-   ]
-  },
-  {
-   "query": "price to rent ratio calculator",
-   "impressions": 1,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 15,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/calculators/price-to-rent-ratio",
-     "impressions": 1,
-     "position": 15
-    }
-   ]
-  },
-  {
-   "query": "price to rent ratio chart",
-   "impressions": 1,
-   "prior_impressions": 0,
-   "clicks": 0,
-   "position": 41,
-   "rising": true,
-   "new": true,
-   "pages": [
-    {
-     "page": "/calculators/price-to-rent-ratio",
-     "impressions": 1,
-     "position": 41
+     "position": 69
     }
    ]
   },
@@ -164,39 +42,76 @@
    ]
   },
   {
-   "query": "what is the better buy",
+   "query": "rent vs buy calculator",
    "impressions": 1,
    "prior_impressions": 0,
    "clicks": 0,
-   "position": 74,
+   "position": 76,
    "rising": true,
    "new": true,
    "pages": [
     {
      "page": "/",
      "impressions": 1,
-     "position": 74
+     "position": 76
     }
    ]
   },
   {
-   "query": "when to rent vs buy",
+   "query": "is it better to rent or buy",
    "impressions": 1,
-   "prior_impressions": 0,
+   "prior_impressions": 1,
    "clicks": 0,
-   "position": 98,
-   "rising": true,
-   "new": true,
+   "position": 96,
+   "rising": false,
+   "new": false,
    "pages": [
     {
-     "page": "/",
+     "page": "/guides",
      "impressions": 1,
-     "position": 98
+     "position": 96
     }
    ]
   }
  ],
- "lost_queries": [],
+ "lost_queries": [
+  {
+   "query": "should i rent or buy",
+   "prior_impressions": 6
+  },
+  {
+   "query": "better to rent or buy",
+   "prior_impressions": 1
+  },
+  {
+   "query": "buy versus",
+   "prior_impressions": 1
+  },
+  {
+   "query": "cheaper to rent or buy",
+   "prior_impressions": 1
+  },
+  {
+   "query": "nyt rent vs buy calculator",
+   "prior_impressions": 1
+  },
+  {
+   "query": "price to rent ratio calculator",
+   "prior_impressions": 1
+  },
+  {
+   "query": "price to rent ratio chart",
+   "prior_impressions": 1
+  },
+  {
+   "query": "what is the better buy",
+   "prior_impressions": 1
+  },
+  {
+   "query": "when to rent vs buy",
+   "prior_impressions": 1
+  }
+ ],
  "sitemap_pages": [
   "/",
   "/about",

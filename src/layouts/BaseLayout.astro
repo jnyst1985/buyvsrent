@@ -39,6 +39,19 @@ const canonical = `${site}${path === '/' ? '' : path}`;
 const ogImageUrl = `${site}${ogImage}`;
 const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
+// One site-wide Organization entity, on every page, with a stable @id that
+// page-level schema (Article publisher, etc.) can reference - search and
+// answer engines resolve the site to one organisation instead of a name
+// re-declared per page.
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': 'https://rentvsbuymath.com/#org',
+  name: 'RentVsBuyMath',
+  url: 'https://rentvsbuymath.com',
+  logo: 'https://rentvsbuymath.com/apple-icon.png',
+};
+
 const SITE_LINKS = [
   { href: '/', label: 'Calculator' },
   { href: '/methodology', label: 'Methodology' },
@@ -99,6 +112,7 @@ const year = 2026;
     {jsonLdBlocks.map((block) => (
       <script type="application/ld+json" set:html={JSON.stringify(block)} />
     ))}
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
     <Analytics />
   </head>
   <body>

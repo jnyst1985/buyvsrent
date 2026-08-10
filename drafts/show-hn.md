@@ -23,13 +23,13 @@ The NYT's rent-vs-buy calculator is the gold standard, but it's paywalled — an
 
 I rebuilt the honest version: both paths simulated monthly, opportunity cost modeled symmetrically (whichever side is cheaper that month invests the difference — including the buyer's surplus after payoff), 2026 US tax rules (standard-vs-itemized delta, $750k interest cap, SALT cap, Section 121), PMI with automatic termination, full transaction costs.
 
-Every formula is documented at /methodology, the suite passes 107 automated tests including 10 scenario vectors derived by hand independently of the code, and every scenario is a shareable URL.
+Every formula is documented at /methodology, the suite passes 112 automated tests including 10 scenario vectors derived by hand independently of the code, and every scenario is a shareable URL.
 
 Assumptions I'd most like challenged: 7% nominal total return, 3% home appreciation, and the PMI termination convention. What am I still getting wrong?
 
 ## Changes vs the killed original (and why)
 
-1. "37 tests" -> "107 automated tests". The site publishes TEST_COUNT=107
+1. "37 tests" -> "107 automated tests". The site publishes TEST_COUNT=112 (as of 2026-08-11)
    in five places, all guarded by site-facts.test.ts; the HN post is a
    publisher that guard cannot reach, and a reader comparing the post to
    /methodology must not find two different numbers in the exact spot we

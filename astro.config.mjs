@@ -5,6 +5,8 @@ import preact from '@astrojs/preact';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
+import rehypeGlossary from './src/lib/rehype-glossary.mjs';
+
 /**
  * Wrap every markdown table in a scroll container.
  *
@@ -43,7 +45,7 @@ export default defineConfig({
   build: { format: 'file' },
   integrations: [preact(), sitemap()],
   markdown: {
-    rehypePlugins: [rehypeWrapTables],
+    rehypePlugins: [rehypeWrapTables, rehypeGlossary],
   },
   vite: {
     plugins: [tailwindcss()],

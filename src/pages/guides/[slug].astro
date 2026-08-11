@@ -167,4 +167,108 @@ const jsonLdAll = [jsonLd, breadcrumbLd];
       </div>
     </div>
   </article>
+
+  {/* Glossary popover. rehype-glossary wrapped the first occurrence of each
+      term in the prose above as <a class="gloss">; this is the one popover
+      they all share, and the script below is the whole runtime (~1KB). No JS
+      = the terms are plain links to /glossary, which is the intended
+      fallback, not a failure. */}
+  <div class="gpop" id="gpop" role="tooltip" aria-hidden="true" data-place="above">
+    <div class="gpop-arrow" aria-hidden="true"></div>
+    <p class="gpop-t" id="gpop-t"></p>
+    <p class="gpop-d" id="gpop-d"></p>
+    <a class="gpop-more" id="gpop-more" href="/glossary">Full definition &rarr;</a>
+  </div>
+
+  <script>
+    import { track } from '../../lib/track';
+
+    const pop = document.getElementById('gpop')!;
+    const tEl = document.getElementById('gpop-t')!;
+    const dEl = document.getElementById('gpop-d')!;
+    const mEl = document.getElementById('gpop-more') as HTMLAnchorElement;
+    let current: HTMLElement | null = null;
+    let openTimer: ReturnType<typeof setTimeout>, closeTimer: ReturnType<typeof setTimeout>;
+    const fine = matchMedia('(pointer: fine)').matches;
+    const seen = new Set<string>();
+
+    const place = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      pop.style.left = '0px';
+      pop.style.top = '0px';
+      const pw = pop.offsetWidth;
+      const ph = pop.offsetHeight;
+      const x = Math.min(Math.max(10, r.left + r.width / 2 - pw / 2), innerWidth - pw - 10);
+      const above = r.top - ph - 12 > 8;
+      pop.dataset.place = above ? 'above' : 'below';
+      pop.style.left = `${x}px`;
+      pop.style.top = `${above ? r.top - ph - 12 : r.bottom + 12}px`;
+      const ar = pop.querySelector('.gpop-arrow') as HTMLElement;
+      ar.style.left = `${Math.min(Math.max(14, r.left + r.width / 2 - x - 6), pw - 26)}px`;
+    };
+
+    const open = (el: HTMLElement) => {
+      clearTimeout(closeTimer);
+      if (current === el) return;
+      current?.setAttribute('aria-expanded', 'false');
+      current = el;
+      const term = el.dataset.term ?? '';
+      tEl.textContent = term;
+      dEl.textContent = el.dataset.eli ?? '';
+      mEl.href = el.getAttribute('href') ?? '/glossary';
+      el.setAttribute('aria-expanded', 'true');
+      el.setAttribute('aria-describedby', 'gpop');
+      pop.classList.add('on');
+      pop.setAttribute('aria-hidden', 'false');
+      place(el);
+      // Once per term per pageload - which terms readers need explained is
+      // the reader-confusion sensor the Thursday review reads.
+      if (!seen.has(term)) {
+        seen.add(term);
+        track('gloss_open', { term });
+      }
+    };
+
+    const close = () => {
+      if (!current) return;
+      current.setAttribute('aria-expanded', 'false');
+      current.removeAttribute('aria-describedby');
+      current = null;
+      pop.classList.remove('on');
+      pop.setAttribute('aria-hidden', 'true');
+    };
+
+    document.querySelectorAll<HTMLElement>('.gloss').forEach((el) => {
+      el.setAttribute('aria-expanded', 'false');
+      if (fine) {
+        el.addEventListener('mouseenter', () => {
+          clearTimeout(openTimer);
+          openTimer = setTimeout(() => open(el), 150);
+        });
+        el.addEventListener('mouseleave', () => {
+          clearTimeout(openTimer);
+          closeTimer = setTimeout(close, 250);
+        });
+      }
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        current === el ? close() : open(el);
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          current === el ? close() : open(el);
+        }
+      });
+    });
+    pop.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    pop.addEventListener('mouseleave', () => (closeTimer = setTimeout(close, 250)));
+    document.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (current && !pop.contains(t) && !t.closest('.gloss')) close();
+    });
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+    addEventListener('scroll', () => current && place(current), { passive: true });
+    addEventListener('resize', () => current && place(current));
+  </script>
 </BaseLayout>

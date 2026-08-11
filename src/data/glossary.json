@@ -1,135 +1,272 @@
 {
- "description": "Plain-English definitions of the 26 terms that decide rent versus buy: PMI, amortization, opportunity cost, the 5% rule and tipping-point rent, each with a number.",
- "terms": [
-  {
-   "term": "Amortization",
-   "slug": "amortization",
-   "definition": "The schedule splitting each fixed mortgage payment between interest and principal. Early on it is mostly interest: in month one of a $336,000 loan at 6.5%, $1,820 of the $2,124 payment is interest and just $304 repays principal. The mix improves slowly \u2014 payments don't become majority-principal until about 19 years in, which is why short ownership stints build so little equity."
-  },
-  {
-   "term": "Appreciation",
-   "slug": "appreciation",
-   "definition": "The annual growth in a home's price. US nominal appreciation has run about 4% a year long-term, but Robert Shiller's series back to 1890 shows real, inflation-adjusted growth under 1% \u2014 houses mostly track inflation. Our model's default assumes 3%. It is the buy case's most sensitive input: at a 4% mortgage, a \u00b11-point change in appreciation flips our default verdict outright."
-  },
-  {
-   "term": "Break-even year",
-   "slug": "break-even-year",
-   "definition": "The first year at which owning's net worth catches renting's, assuming you sold that year and paid full selling costs. Leave earlier and renting won. It is acutely rate-sensitive: in our default $420,000 scenario, buying breaks even in year 6 at a 4% mortgage, but at 6.5% it never catches up within 30 years \u2014 renting stays about $67,000 ahead at year 10."
-  },
-  {
-   "term": "Capital gains tax",
-   "slug": "capital-gains-tax",
-   "definition": "Federal tax on profit when you sell investments \u2014 long-term rates are 0%, 15%, or 20% by income, with 15% covering most households. In rent-vs-buy math it cuts both ways: the renter's portfolio gains are taxable at sale, while up to $250,000/$500,000 of the owner's home gain escapes via Section 121. Our model taxes the invested portfolio on whichever side built one, so verdicts are after-tax."
-  },
-  {
-   "term": "Closing costs",
-   "slug": "closing-costs",
-   "definition": "One-time purchase fees \u2014 loan origination, appraisal, title insurance, escrow, transfer taxes, prepaid interest and insurance. Typical US range: 2%\u20135% of the purchase price, or $8,400\u2013$21,000 on a $420,000 home. They are sunk the day you close, which is why short stays punish buying: a five-year stay in our default scenario leaves the renter about $49,000 ahead."
-  },
-  {
-   "term": "Down payment",
-   "slug": "down-payment",
-   "definition": "The upfront cash \u2014 $84,000 for 20% down on a $420,000 home. Below 20% you'll usually pay PMI. Its hidden cost is opportunity: invested at 7%, that $84,000 becomes about $165,000 in a decade. A bigger down payment buys a smaller monthly bill at the price of more forgone compounding \u2014 our model counts both effects, all the way to all-cash purchases."
-  },
-  {
-   "term": "Escrow",
-   "slug": "escrow",
-   "definition": "Two meanings: the neutral third-party account that holds deposits during a home purchase, and the lender-run account that collects one-twelfth of your annual property tax and homeowners insurance with each payment, then pays those bills for you. It doesn't change what you owe \u2014 it smooths lumpy annual costs into monthly ones, which is why a quoted 'PITI' payment runs well above bare P&I."
-  },
-  {
-   "term": "Expense ratio",
-   "slug": "expense-ratio",
-   "definition": "A fund's annual fee, expressed as a percentage of assets \u2014 0.03%\u20130.20% for broad index funds, nearer 1% for actively managed ones. It quietly trims the renter's compounding: a 7% market return held in a 0.1%-fee index fund nets 6.9%. Enter your investment-return assumption net of fees and the rent-vs-buy comparison stays honest on the renting side."
-  },
-  {
-   "term": "The 5% rule",
-   "slug": "5-percent-rule",
-   "definition": "Portfolio manager Ben Felix's shortcut for unrecoverable ownership costs: about 5% of home value per year \u2014 roughly 1% property tax, 1% maintenance, 3% cost of capital. Multiply price by 5%, divide by 12; if comparable rent is lower, renting likely wins. That's $1,750 a month on a $420,000 home. At 6.5% mortgage rates our model's true threshold is nearer 7% \u2014 the rule's capital-cost figure predates them."
-  },
-  {
-   "term": "HOA (homeowners association)",
-   "slug": "hoa",
-   "definition": "The body that governs a condo or planned community, funded by mandatory dues \u2014 typically $100\u2013$400 a month in the US, higher in full-service buildings, and prone to rising faster than general inflation. Dues are a pure unrecoverable cost: like rent, but stacked on top of your mortgage. Always add them to the owning column of any comparison."
-  },
-  {
-   "term": "Home equity",
-   "slug": "home-equity",
-   "definition": "Your home's market value minus what you still owe \u2014 the slice you actually own. It grows through the down payment, principal paydown, and appreciation. In our default scenario the owner starts with $84,000 (20% down on $420,000) but adds only about $3,800 of principal in year one, since early payments are mostly interest. Equity is real wealth \u2014 just illiquid until you sell or borrow against it."
-  },
-  {
-   "term": "Itemized deduction",
-   "slug": "itemized-deduction",
-   "definition": "Deductions listed line by line \u2014 mortgage interest on up to $750,000 of principal, state and local taxes up to the $40,400 SALT cap (2026), charitable gifts \u2014 claimed instead of the standard deduction. Only the excess above the standard deduction actually saves tax. Our model runs both paths every year and credits the buyer just the difference, which for mid-priced homes is often nothing."
-  },
-  {
-   "term": "LTV (loan-to-value)",
-   "slug": "ltv",
-   "definition": "Mortgage balance divided by home value. Put 20% down on a $420,000 home and you open at 80% LTV ($336,000 \u00f7 $420,000). Above 80% you typically pay PMI until amortization brings the balance to 78% of the original value, where it must cancel automatically. Lenders also price by LTV: lower ratios generally earn lower rates."
-  },
-  {
-   "term": "Mortgage rate lock",
-   "slug": "mortgage-rate-lock",
-   "definition": "A lender's commitment to hold your quoted interest rate for a set window while you close \u2014 usually free for 30\u201345 days, with fees around 0.25%\u20130.5% of the loan amount for extended locks. Small rate moves swing the rent-vs-buy math hard: our default $420,000 scenario flips from renting winning by about $67,000 at 6.5% to buying winning by about $38,000 at 4%."
-  },
-  {
-   "term": "Net worth",
-   "slug": "net-worth",
-   "definition": "Assets minus liabilities \u2014 the only fair scoreboard for rent versus buy. Our model compares ending net worth: the owner's equity after selling costs and taxes against the renter's portfolio after capital gains tax. Monthly payments mislead: in our default scenario the owner pays $3,067 a month to the renter's $2,115, yet after 10 years the renter finishes about $67,000 ahead."
-  },
-  {
-   "term": "Opportunity cost",
-   "slug": "opportunity-cost",
-   "definition": "The return your money would have earned in its next-best use \u2014 the invisible cost most rent-vs-buy math bungles. An $84,000 down payment invested at 7% grows to about $165,000 in 10 years. Our model applies it symmetrically: whichever side pays less in a given month invests the difference, so owners earn the credit too once their costs drop below rent."
-  },
-  {
-   "term": "P&I (principal and interest)",
-   "slug": "p-and-i",
-   "definition": "The core mortgage payment: principal repays the loan balance, interest pays the lender for the money. On a $336,000 loan ($420,000 home, 20% down) at 6.5% for 30 years, P&I is $2,124 a month, fixed for the life of the loan. It is not the full cost of owning: taxes, insurance, and maintenance push that home's true year-one cost to about $3,067 in our model."
-  },
-  {
-   "term": "PMI (private mortgage insurance)",
-   "slug": "pmi",
-   "definition": "A premium lenders charge when your down payment is under 20% \u2014 typically $30\u2013$70 a month per $100,000 borrowed, per Freddie Mac. It protects the lender, not you. PMI must cancel automatically once the balance amortizes to 78% of the original home value, and you can request removal at 80%. Our model adds PMI on low-down-payment scenarios and cancels it automatically on schedule."
-  },
-  {
-   "term": "Price-to-rent ratio",
-   "slug": "price-to-rent-ratio",
-   "definition": "A home's price divided by a year of comparable rent: $420,000 \u00f7 ($2,100 \u00d7 12) = 16.7. The old rule of thumb says below 15 favors buying and above 20 favors renting. Money is dearer now: at a 6.5% mortgage our model's break-even sits near a ratio of 14, so many 'gray zone' markets under the old rule actually favor renting today."
-  },
-  {
-   "term": "Refinancing",
-   "slug": "refinancing",
-   "definition": "Swapping your current mortgage for a new one, usually to lower the rate. Costs run roughly 2%\u20136% of the loan, so the test is payback: a 1-point rate cut on a $336,000 balance saves about $215 a month, repaying $7,000 of costs in under three years. This optionality softens buying at high rates \u2014 you keep the house and replace the loan if rates fall."
-  },
-  {
-   "term": "Rent growth",
-   "slug": "rent-growth",
-   "definition": "The annual rate your rent climbs. US rent inflation has averaged roughly 3% a year over recent decades (CPI rent of primary residence); our model's default assumes 2.5%. Compounding does the damage: $2,100 a month growing 2.5% a year is about $2,688 by year 10. A fixed-rate owner's P&I never moves \u2014 buying's main structural defense over very long stays."
-  },
-  {
-   "term": "SALT cap",
-   "slug": "salt-cap",
-   "definition": "The federal cap on deducting state and local taxes \u2014 property tax included \u2014 when you itemize: $40,400 for 2026, up from the $10,000 limit that applied 2018\u20132024. The higher cap makes itemizing pencil out for more homeowners, but in our default $420,000 scenario the standard deduction still wins, making the buyer's property-tax deduction worth exactly $0."
-  },
-  {
-   "term": "Section 121 exclusion",
-   "slug": "section-121-exclusion",
-   "definition": "The US tax rule that excludes up to $250,000 of home-sale profit from capital gains tax \u2014 $500,000 for married couples filing jointly \u2014 if the home was your primary residence for two of the past five years. It is one of owning's biggest genuine tax advantages: a renter's index-fund gains get no equivalent shelter. Our model applies it automatically when the owner sells."
-  },
-  {
-   "term": "Selling costs",
-   "slug": "selling-costs",
-   "definition": "The cost of exiting: agent commissions (historically 5%\u20136% of sale price, drifting lower since the 2024 NAR settlement), plus transfer taxes, title work, and concessions \u2014 commonly 6%\u20138% all-in. At 7%, selling a $420,000 home costs about $29,400. Our model subtracts full selling costs from the owner's ending net worth, because equity you can't keep isn't wealth."
-  },
-  {
-   "term": "Standard deduction",
-   "slug": "standard-deduction",
-   "definition": "The flat deduction every taxpayer can claim without receipts \u2014 about $16,100 for single filers and $32,200 for married couples filing jointly in 2026. It is the bar homeownership write-offs must clear: mortgage interest and property tax save you tax only to the extent itemizing beats this number. In our default $420,000 scenario it doesn't, so the buyer's federal tax benefit is zero."
-  },
-  {
-   "term": "Tipping-point rent",
-   "slug": "tipping-point-rent",
-   "definition": "The monthly rent at which renting and buying finish in a dead heat \u2014 above it buying wins, below it renting wins. Our model computes it for any scenario. For a $420,000 home on default assumptions and a 10-year stay: $1,890 at a 4% mortgage, $2,117 at 5%, $2,350 at 6%, $2,468 at 6.5%, $2,587 at 7%, $2,829 at 8%. Rates move this target more than anything else."
-  }
- ]
+  "description": "Plain-English definitions of the 26 terms that decide rent versus buy: PMI, amortization, opportunity cost, the 5% rule and tipping-point rent, each with a number.",
+  "terms": [
+    {
+      "term": "Amortization",
+      "slug": "amortization",
+      "definition": "The schedule splitting each fixed mortgage payment between interest and principal. Early on it is mostly interest: in month one of a $336,000 loan at 6.5%, $1,820 of the $2,124 payment is interest and just $304 repays principal. The mix improves slowly — payments don't become majority-principal until about 19 years in, which is why short ownership stints build so little equity.",
+      "eli15": "The built-in schedule that splits every mortgage payment between interest and actually repaying the loan. Early on it is nearly all interest - the loan itself barely shrinks for years.",
+      "aliases": [
+        "amortization schedule",
+        "amortization",
+        "amortized"
+      ]
+    },
+    {
+      "term": "Appreciation",
+      "slug": "appreciation",
+      "definition": "The annual growth in a home's price. US nominal appreciation has run about 4% a year long-term, but Robert Shiller's series back to 1890 shows real, inflation-adjusted growth under 1% — houses mostly track inflation. Our model's default assumes 3%. It is the buy case's most sensitive input: at a 4% mortgage, a ±1-point change in appreciation flips our default verdict outright.",
+      "eli15": "How much a home's price grows per year. It feels like profit, but it only becomes money when you sell - and selling has real costs.",
+      "aliases": [
+        "home appreciation",
+        "appreciation",
+        "appreciates"
+      ]
+    },
+    {
+      "term": "Break-even year",
+      "slug": "break-even-year",
+      "definition": "The first year at which owning's net worth catches renting's, assuming you sold that year and paid full selling costs. Leave earlier and renting won. It is acutely rate-sensitive: in our default $420,000 scenario, buying breaks even in year 6 at a 4% mortgage, but at 6.5% it never catches up within 30 years — renting stays about $67,000 ahead at year 10.",
+      "eli15": "The first year the buyer would come out ahead of the renter if they sold right then, selling costs included. Sell earlier than this and buying was the losing move.",
+      "aliases": [
+        "break-even year",
+        "break even year",
+        "breaking even"
+      ]
+    },
+    {
+      "term": "Capital gains tax",
+      "slug": "capital-gains-tax",
+      "definition": "Federal tax on profit when you sell investments — long-term rates are 0%, 15%, or 20% by income, with 15% covering most households. In rent-vs-buy math it cuts both ways: the renter's portfolio gains are taxable at sale, while up to $250,000/$500,000 of the owner's home gain escapes via Section 121. Our model taxes the invested portfolio on whichever side built one, so verdicts are after-tax.",
+      "eli15": "The tax on profit when you sell an investment. Our model charges it against the renter's portfolio at the end, so the comparison does not secretly favor renting.",
+      "aliases": [
+        "capital-gains tax",
+        "capital gains tax",
+        "capital gains"
+      ]
+    },
+    {
+      "term": "Closing costs",
+      "slug": "closing-costs",
+      "definition": "One-time purchase fees — loan origination, appraisal, title insurance, escrow, transfer taxes, prepaid interest and insurance. Typical US range: 2%–5% of the purchase price, or $8,400–$21,000 on a $420,000 home. They are sunk the day you close, which is why short stays punish buying: a five-year stay in our default scenario leaves the renter about $49,000 ahead.",
+      "eli15": "The one-time fees for completing a home purchase - loan setup, title, appraisal and so on. Money spent on the transaction itself, gone on day one.",
+      "aliases": [
+        "closing costs",
+        "closing cost"
+      ]
+    },
+    {
+      "term": "Down payment",
+      "slug": "down-payment",
+      "definition": "The upfront cash — $84,000 for 20% down on a $420,000 home. Below 20% you'll usually pay PMI. Its hidden cost is opportunity: invested at 7%, that $84,000 becomes about $165,000 in a decade. A bigger down payment buys a smaller monthly bill at the price of more forgone compounding — our model counts both effects, all the way to all-cash purchases.",
+      "eli15": "The upfront cash you put in, traditionally a fifth of the price. Its hidden cost: that money stops growing anywhere else the day you hand it over.",
+      "aliases": [
+        "down payment",
+        "down-payment"
+      ]
+    },
+    {
+      "term": "Escrow",
+      "slug": "escrow",
+      "definition": "Two meanings: the neutral third-party account that holds deposits during a home purchase, and the lender-run account that collects one-twelfth of your annual property tax and homeowners insurance with each payment, then pays those bills for you. It doesn't change what you owe — it smooths lumpy annual costs into monthly ones, which is why a quoted 'PITI' payment runs well above bare P&I.",
+      "eli15": "A neutral holding account. It keeps deposits safe during the purchase, and afterwards many lenders use one to collect and pay your property tax and insurance monthly.",
+      "aliases": [
+        "escrow"
+      ]
+    },
+    {
+      "term": "Expense ratio",
+      "slug": "expense-ratio",
+      "definition": "A fund's annual fee, expressed as a percentage of assets — 0.03%–0.20% for broad index funds, nearer 1% for actively managed ones. It quietly trims the renter's compounding: a 7% market return held in a 0.1%-fee index fund nets 6.9%. Enter your investment-return assumption net of fees and the rent-vs-buy comparison stays honest on the renting side.",
+      "eli15": "The yearly fee a fund quietly takes, as a share of your money. Tiny for index funds - but any fee compounds against you over decades.",
+      "aliases": [
+        "expense ratio",
+        "expense ratios",
+        "fund fees"
+      ]
+    },
+    {
+      "term": "The 5% rule",
+      "slug": "5-percent-rule",
+      "definition": "Portfolio manager Ben Felix's shortcut for unrecoverable ownership costs: about 5% of home value per year — roughly 1% property tax, 1% maintenance, 3% cost of capital. Multiply price by 5%, divide by 12; if comparable rent is lower, renting likely wins. That's $1,750 a month on a $420,000 home. At 6.5% mortgage rates our model's true threshold is nearer 7% — the rule's capital-cost figure predates them.",
+      "eli15": "A shortcut: roughly five percent of a home's value per year is unrecoverable ownership cost. Divide by twelve and compare with rent for a ten-second answer.",
+      "aliases": [
+        "5% rule",
+        "five percent rule",
+        "5 percent rule"
+      ]
+    },
+    {
+      "term": "HOA (homeowners association)",
+      "slug": "hoa",
+      "definition": "The body that governs a condo or planned community, funded by mandatory dues — typically $100–$400 a month in the US, higher in full-service buildings, and prone to rising faster than general inflation. Dues are a pure unrecoverable cost: like rent, but stacked on top of your mortgage. Always add them to the owning column of any comparison.",
+      "eli15": "The association running a condo or planned community, funded by mandatory monthly dues - a real ownership cost that a comparable rental has already priced in.",
+      "aliases": [
+        "HOA dues",
+        "HOA fees",
+        "HOA"
+      ]
+    },
+    {
+      "term": "Home equity",
+      "slug": "home-equity",
+      "definition": "Your home's market value minus what you still owe — the slice you actually own. It grows through the down payment, principal paydown, and appreciation. In our default scenario the owner starts with $84,000 (20% down on $420,000) but adds only about $3,800 of principal in year one, since early payments are mostly interest. Equity is real wealth — just illiquid until you sell or borrow against it.",
+      "eli15": "The slice of the home you actually own: what would be left for you if you sold today and paid off the loan. It grows as you repay and as the price rises.",
+      "aliases": [
+        "home equity",
+        "equity"
+      ]
+    },
+    {
+      "term": "Itemized deduction",
+      "slug": "itemized-deduction",
+      "definition": "Deductions listed line by line — mortgage interest on up to $750,000 of principal, state and local taxes up to the $40,400 SALT cap (2026), charitable gifts — claimed instead of the standard deduction. Only the excess above the standard deduction actually saves tax. Our model runs both paths every year and credits the buyer just the difference, which for mid-priced homes is often nothing.",
+      "eli15": "Listing deductions one by one - mortgage interest, state and local taxes - instead of taking the flat standard amount. Only worth it if the list beats the flat amount; for most buyers now, it barely does.",
+      "aliases": [
+        "itemized deductions",
+        "itemized deduction",
+        "itemizing",
+        "itemized"
+      ]
+    },
+    {
+      "term": "LTV (loan-to-value)",
+      "slug": "ltv",
+      "definition": "Mortgage balance divided by home value. Put 20% down on a $420,000 home and you open at 80% LTV ($336,000 ÷ $420,000). Above 80% you typically pay PMI until amortization brings the balance to 78% of the original value, where it must cancel automatically. Lenders also price by LTV: lower ratios generally earn lower rates.",
+      "eli15": "How much of the home's value is borrowed. It falls as you repay and as the price rises - and once it is low enough, the PMI fee drops off.",
+      "aliases": [
+        "loan-to-value",
+        "LTV"
+      ]
+    },
+    {
+      "term": "Mortgage rate lock",
+      "slug": "mortgage-rate-lock",
+      "definition": "A lender's commitment to hold your quoted interest rate for a set window while you close — usually free for 30–45 days, with fees around 0.25%–0.5% of the loan amount for extended locks. Small rate moves swing the rent-vs-buy math hard: our default $420,000 scenario flips from renting winning by about $67,000 at 6.5% to buying winning by about $38,000 at 4%.",
+      "eli15": "A lender's promise to hold your quoted rate for a set window while you finish closing, so a market move between offer and keys cannot reprice your loan.",
+      "aliases": [
+        "mortgage rate lock",
+        "rate lock"
+      ]
+    },
+    {
+      "term": "Net worth",
+      "slug": "net-worth",
+      "definition": "Assets minus liabilities — the only fair scoreboard for rent versus buy. Our model compares ending net worth: the owner's equity after selling costs and taxes against the renter's portfolio after capital gains tax. Monthly payments mislead: in our default scenario the owner pays $3,067 a month to the renter's $2,115, yet after 10 years the renter finishes about $67,000 ahead.",
+      "eli15": "Everything you own minus everything you owe. The only fair scoreboard for rent versus buy: not who paid less this month, but who ends up worth more.",
+      "aliases": [
+        "net worth"
+      ]
+    },
+    {
+      "term": "Opportunity cost",
+      "slug": "opportunity-cost",
+      "definition": "The return your money would have earned in its next-best use — the invisible cost most rent-vs-buy math bungles. An $84,000 down payment invested at 7% grows to about $165,000 in 10 years. Our model applies it symmetrically: whichever side pays less in a given month invests the difference, so owners earn the credit too once their costs drop below rent.",
+      "eli15": "What your money could have earned in its next-best home. Cash parked in a house is not free - the same dollars in an index fund would have kept growing.",
+      "aliases": [
+        "opportunity cost"
+      ]
+    },
+    {
+      "term": "P&I (principal and interest)",
+      "slug": "p-and-i",
+      "definition": "The core mortgage payment: principal repays the loan balance, interest pays the lender for the money. On a $336,000 loan ($420,000 home, 20% down) at 6.5% for 30 years, P&I is $2,124 a month, fixed for the life of the loan. It is not the full cost of owning: taxes, insurance, and maintenance push that home's true year-one cost to about $3,067 in our model.",
+      "eli15": "The two halves of every mortgage payment: principal actually pays the loan down; interest is the fee for borrowing. Early on, interest takes nearly all of it.",
+      "aliases": [
+        "principal and interest",
+        "P&I",
+        "principal"
+      ]
+    },
+    {
+      "term": "PMI (private mortgage insurance)",
+      "slug": "pmi",
+      "definition": "A premium lenders charge when your down payment is under 20% — typically $30–$70 a month per $100,000 borrowed, per Freddie Mac. It protects the lender, not you. PMI must cancel automatically once the balance amortizes to 78% of the original home value, and you can request removal at 80%. Our model adds PMI on low-down-payment scenarios and cancels it automatically on schedule.",
+      "eli15": "An extra monthly fee lenders charge when your down payment is under a fifth of the price. It protects the lender, not you - and it ends once you have built enough equity.",
+      "aliases": [
+        "private mortgage insurance",
+        "PMI"
+      ]
+    },
+    {
+      "term": "Price-to-rent ratio",
+      "slug": "price-to-rent-ratio",
+      "definition": "A home's price divided by a year of comparable rent: $420,000 ÷ ($2,100 × 12) = 16.7. The old rule of thumb says below 15 favors buying and above 20 favors renting. Money is dearer now: at a 6.5% mortgage our model's break-even sits near a ratio of 14, so many 'gray zone' markets under the old rule actually favor renting today.",
+      "eli15": "A home's price divided by a year of comparable rent. Low means rents are expensive relative to prices, which favors buying; high means the opposite.",
+      "aliases": [
+        "price-to-rent ratio",
+        "price to rent ratio"
+      ]
+    },
+    {
+      "term": "Refinancing",
+      "slug": "refinancing",
+      "definition": "Swapping your current mortgage for a new one, usually to lower the rate. Costs run roughly 2%–6% of the loan, so the test is payback: a 1-point rate cut on a $336,000 balance saves about $215 a month, repaying $7,000 of costs in under three years. This optionality softens buying at high rates — you keep the house and replace the loan if rates fall.",
+      "eli15": "Replacing your mortgage with a new one at a better rate. It has real upfront costs, so the saving has to outlast them before it is a win.",
+      "aliases": [
+        "refinancing",
+        "refinance"
+      ]
+    },
+    {
+      "term": "Rent growth",
+      "slug": "rent-growth",
+      "definition": "The annual rate your rent climbs. US rent inflation has averaged roughly 3% a year over recent decades (CPI rent of primary residence); our model's default assumes 2.5%. Compounding does the damage: $2,100 a month growing 2.5% a year is about $2,688 by year 10. A fixed-rate owner's P&I never moves — buying's main structural defense over very long stays.",
+      "eli15": "How fast rent climbs per year. The renter's payment rises with it while a fixed mortgage payment does not - one of buying's genuine long-run advantages.",
+      "aliases": [
+        "rent growth",
+        "rent inflation"
+      ]
+    },
+    {
+      "term": "SALT cap",
+      "slug": "salt-cap",
+      "definition": "The federal cap on deducting state and local taxes — property tax included — when you itemize: $40,400 for 2026, up from the $10,000 limit that applied 2018–2024. The higher cap makes itemizing pencil out for more homeowners, but in our default $420,000 scenario the standard deduction still wins, making the buyer's property-tax deduction worth exactly $0.",
+      "eli15": "The ceiling on how much state and local tax - property tax included - you can deduct federally when itemizing. A big reason the buyer's tax break is smaller than people assume.",
+      "aliases": [
+        "SALT cap"
+      ]
+    },
+    {
+      "term": "Section 121 exclusion",
+      "slug": "section-121-exclusion",
+      "definition": "The US tax rule that excludes up to $250,000 of home-sale profit from capital gains tax — $500,000 for married couples filing jointly — if the home was your primary residence for two of the past five years. It is one of owning's biggest genuine tax advantages: a renter's index-fund gains get no equivalent shelter. Our model applies it automatically when the owner sells.",
+      "eli15": "The rule that shields a large chunk of home-sale profit from capital gains tax if you lived there long enough. A genuine, large tax advantage of owning.",
+      "aliases": [
+        "Section 121 exclusion",
+        "Section 121"
+      ]
+    },
+    {
+      "term": "Selling costs",
+      "slug": "selling-costs",
+      "definition": "The cost of exiting: agent commissions (historically 5%–6% of sale price, drifting lower since the 2024 NAR settlement), plus transfer taxes, title work, and concessions — commonly 6%–8% all-in. At 7%, selling a $420,000 home costs about $29,400. Our model subtracts full selling costs from the owner's ending net worth, because equity you can't keep isn't wealth.",
+      "eli15": "What it costs to exit: agent commissions and fees, a meaningful slice of the sale price. Winning on paper is not winning if the exit fee erases the lead.",
+      "aliases": [
+        "selling costs",
+        "selling cost"
+      ]
+    },
+    {
+      "term": "Standard deduction",
+      "slug": "standard-deduction",
+      "definition": "The flat deduction every taxpayer can claim without receipts — about $16,100 for single filers and $32,200 for married couples filing jointly in 2026. It is the bar homeownership write-offs must clear: mortgage interest and property tax save you tax only to the extent itemizing beats this number. In our default $420,000 scenario it doesn't, so the buyer's federal tax benefit is zero.",
+      "eli15": "The flat amount every taxpayer can deduct with no receipts. Mortgage interest only helps your taxes to the extent itemizing beats this - and for most buyers now, it barely does.",
+      "aliases": [
+        "standard deduction",
+        "standard-versus-itemized"
+      ]
+    },
+    {
+      "term": "Tipping-point rent",
+      "slug": "tipping-point-rent",
+      "definition": "The monthly rent at which renting and buying finish in a dead heat — above it buying wins, below it renting wins. Our model computes it for any scenario. For a $420,000 home on default assumptions and a 10-year stay: $1,890 at a 4% mortgage, $2,117 at 5%, $2,350 at 6%, $2,468 at 6.5%, $2,587 at 7%, $2,829 at 8%. Rates move this target more than anything else.",
+      "eli15": "The rent at which renting and buying come out exactly even in our model. Above it, buying genuinely wins; below it, renting plus investing does.",
+      "aliases": [
+        "tipping-point rent",
+        "tipping point rent",
+        "tipping point"
+      ]
+    }
+  ]
 }

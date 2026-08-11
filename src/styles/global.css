@@ -2688,7 +2688,10 @@ summary:focus-visible {
    dotted - NEVER acid, which is reserved for marking the winning side, and
    never solid, which means navigation. First occurrence per term per article
    only (enforced at build by rehype-glossary). */
-.gloss {
+/* .art a (solid underline, deep-green text) outspecifies a bare class - the
+   terms shipped looking like ordinary links on 2026-08-12 until Jonathan
+   spotted it. a.gloss must WIN that rule: ink text, dotted line. */
+.art a.gloss {
   color: inherit;
   text-decoration: underline dotted;
   text-decoration-color: var(--color-primary-deep);
@@ -2698,13 +2701,13 @@ summary:focus-visible {
   border-radius: 3px;
   transition: background-color 120ms ease;
 }
-.gloss:hover,
-.gloss:focus-visible,
-.gloss[aria-expanded='true'] {
+.art a.gloss:hover,
+.art a.gloss:focus-visible,
+.art a.gloss[aria-expanded='true'] {
   background: var(--color-primary-pale);
   text-decoration-style: solid;
 }
-.gloss:focus-visible {
+.art a.gloss:focus-visible {
   outline: 2px solid var(--color-primary-deep);
   outline-offset: 2px;
 }
@@ -2766,7 +2769,7 @@ summary:focus-visible {
   top: -7px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gloss,
+  .art a.gloss,
   .gpop {
     transition: none;
   }

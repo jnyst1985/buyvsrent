@@ -95,6 +95,7 @@ const F = {
   touchTarget: [],
   serpMeta: [],
   connector: [],
+  gloss: [],
 };
 
 const browser = await chromium.launch(EXEC ? { executablePath: EXEC } : {});
@@ -120,6 +121,7 @@ for (const width of WIDTHS) {
     const r = await page.evaluate(
       ({ width }) => {
         const out = {
+          gloss: [],
           figures: [],
           heads: [],
           seams: [],
@@ -340,6 +342,18 @@ for (const width of WIDTHS) {
               });
           });
         }
+        // Glossary terms must read as definitions, not navigation: dotted line,
+        // body-ink text, help cursor. Shipped solid once (2026-08-12) because
+        // .art a outspecified .gloss - computed style is the only honest check.
+        document.querySelectorAll('a.gloss').forEach((el) => {
+          const cs = getComputedStyle(el);
+          // Color must INHERIT from the surrounding prose (that is the whole
+          // point - a term is text, not a link), so the reference is the
+          // parent's color, not some global ink.
+          const parentColor = getComputedStyle(el.parentElement).color;
+          if (cs.textDecorationStyle !== 'dotted' || cs.cursor !== 'help' || cs.color !== parentColor)
+            out.gloss.push({ style: cs.textDecorationStyle, cursor: cs.cursor, color: cs.color });
+        });
         return out;
       },
       { width }
@@ -355,6 +369,7 @@ for (const width of WIDTHS) {
     r.small.forEach((x) => F.typeFloor.push(at(x)));
     r.targets.forEach((x) => F.touchTarget.push(at(x)));
     r.connectors.forEach((x) => F.connector.push(at(x)));
+    r.gloss.forEach((x) => F.gloss.push(at(x)));
     if (r.docW > r.winW + 1) F.pageOverflow.push(at({ over: r.docW - r.winW }));
     if (width === 1440 && r.prose) F.proseStandard.push(at({ ...r.prose, h2: r.h2fs }));
 
@@ -386,6 +401,7 @@ const CHECKS = [
   ['K. touch target under 24px (coarse)', F.touchTarget],
   ['L. title over 62, or description outside 120-165', F.serpMeta],
   ['M. connector line not ending on the dots it joins', F.connector],
+  ['N. glossary term not rendering as a definition (dotted, ink, help cursor)', F.gloss],
 ];
 console.log(`AUDIT: ${PAGES.length} pages x ${WIDTHS.length} widths\n`);
 let bad = 0;

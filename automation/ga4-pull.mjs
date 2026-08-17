@@ -174,6 +174,38 @@ const daily = Object.keys(days)
   .sort()
   .map((d) => ({ date: d, status: 'ok', ...days[d] }));
 
+// Event-parameter breakdowns via the five event-scoped custom dimensions
+// Jonathan registered in GA4 Admin on 2026-08-17 (forward-only from that
+// date; "(not set)" rows are pre-registration events and are dropped).
+// One call per parameter; a parameter that errors (e.g. registration not yet
+// propagated) is recorded in event_params_errors instead of killing the pull.
+const PARAMS = ['term', 'fields', 'tool', 'what', 'to'];
+const event_params = {};
+const event_params_errors = [];
+for (const p of PARAMS) {
+  try {
+    const rep = await run({
+      metrics: [{ name: 'eventCount' }],
+      dimensions: [{ name: 'eventName' }, { name: `customEvent:${p}` }],
+      limit: 200,
+    });
+    if (rep.error) {
+      event_params_errors.push(`${p}: ${rep.error.message}`.slice(0, 160));
+      continue;
+    }
+    const byEventName = {};
+    for (const r of rep.rows ?? []) {
+      const ev = r.dimensionValues[0].value;
+      const val = r.dimensionValues[1].value;
+      if (val === '(not set)') continue;
+      (byEventName[ev] ??= {})[val] = Number(r.metricValues[0].value);
+    }
+    if (Object.keys(byEventName).length) event_params[p] = byEventName;
+  } catch (e) {
+    event_params_errors.push(`${p}: ${String(e.message ?? e)}`.slice(0, 160));
+  }
+}
+
 const channels = Object.fromEntries(
   (byChannel.rows ?? []).map((r) => [r.dimensionValues[0].value, Number(r.metricValues[0].value)])
 );
@@ -191,6 +223,8 @@ out({
   sessions: daily.reduce((s, d) => s + d.sessions, 0),
   engaged_sessions: daily.reduce((s, d) => s + d.engaged_sessions, 0),
   events,
+  event_params,
+  ...(event_params_errors.length ? { event_params_errors } : {}),
   channels,
   sources,
   ai_referrals,

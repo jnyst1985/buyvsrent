@@ -9,6 +9,7 @@ Key finding (July 2026, our model): at ~6.5% mortgage rates, buying a typical US
 - [Rent vs. Buy Calculator](https://rentvsbuymath.com/): live verdict, tipping-point rent, sensitivity analysis, shareable scenarios
 - [Methodology](https://rentvsbuymath.com/methodology): every formula, convention, default, and simplification, documented
 - [FAQ](https://rentvsbuymath.com/faq): 20 rent-vs-buy questions answered with numbers
+- [The Key Numbers](https://rentvsbuymath.com/numbers): tipping-point rents, verdicts and gaps at every rate from 4% to 8%, computed by the engine
 - [Glossary](https://rentvsbuymath.com/glossary): PMI, price-to-rent ratio, the 5% rule, Section 121, and 20+ more terms defined
 
 ## Quick tools

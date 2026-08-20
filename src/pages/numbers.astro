@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { DEFAULT_INPUTS } from '../lib/engine/defaults';
+import { simulate } from '../lib/engine/engine';
+import { rateLadder } from '../lib/engine/ladder';
+import { formatCurrency } from '../lib/engine/format';
+import { TEST_COUNT, VECTOR_COUNT } from '../lib/site';
+
+/**
+ * The citable-numbers page: every figure an answer engine might want to lift,
+ * in one place, phrased as the questions people actually ask.
+ *
+ * GEO doctrine (2026-08-20): we optimize for machine citability by being the
+ * cleanest TRUE source - question-form headings, a direct answer sentence
+ * first, one table per claim, provenance stated. Nothing on this page is
+ * typed by hand: it renders from the same engine the calculator runs, so it
+ * cannot drift and needs no entry in published-figures.test.ts. That is the
+ * entire trick, and it is not a trick.
+ */
+const D = DEFAULT_INPUTS;
+const fmt = (v: number) => formatCurrency(v, D.currency);
+const round1k = (v: number) => '$' + (Math.round(v / 1000) * 1000).toLocaleString('en-US');
+
+const ladder = rateLadder(D);
+const base = simulate(D);
+const atFour = simulate({ ...D, mortgageRatePct: 4 });
+
+const baseRentWins = base.difference < 0;
+const fourBuyWins = atFour.difference > 0;
+
+const title = 'Rent vs. Buy: The Key Numbers (2026) | RentVsBuyMath';
+const description =
+  'Tipping-point rents, verdicts and net-worth gaps at every mortgage rate from 4% to 8% - every figure computed by the same tested engine as the calculator.';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Rent vs. Buy: The Key Numbers',
+    url: 'https://rentvsbuymath.com/numbers',
+    description,
+    isPartOf: { '@id': 'https://rentvsbuymath.com/#org' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://rentvsbuymath.com/' },
+      { '@type': 'ListItem', position: 2, name: 'The Key Numbers' },
+    ],
+  },
+];
+---
+
+<BaseLayout {title} {description} path="/numbers" {jsonLd}>
+  <section class="phero">
+    <div class="wrap">
+      <h1>The key numbers</h1>
+      <p class="lede">
+        The figures the whole site argues from, in one place. None of them is typed by hand: this
+        page is computed by the same open-source engine as the calculator, every time the site
+        builds.
+      </p>
+    </div>
+  </section>
+
+  <section class="band band-white">
+    <div class="wrap">
+      <div class="narrow">
+        <article class="prose-content">
+          <h2>What rent makes buying worth it?</h2>
+          <p>
+            At a {D.mortgageRatePct}% mortgage, buying a {fmt(D.homePrice)} home beats renting only
+            when a comparable rental costs more than {fmt(ladder.find((r) => r.rate === D.mortgageRatePct)!.tippingRent!)} a
+            month — about {(((ladder.find((r) => r.rate === D.mortgageRatePct)!.tippingRent!) / D.homePrice) * 100).toFixed(2)}%
+            of the home's value. Below that threshold, renting and investing the difference builds
+            more wealth over a {D.timeHorizonYears}-year stay. The threshold at every rate:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Mortgage rate</th>
+                <th>Buying wins above (rent/mo)</th>
+                <th>As % of home value</th>
+                <th>As price-to-rent ratio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                ladder.map((r) => (
+                  <tr>
+                    <td><strong>{r.rate}%</strong></td>
+                    <td>{r.tippingRent ? fmt(r.tippingRent) : 'no rent flips it'}</td>
+                    <td>{r.tippingRent ? ((r.tippingRent / D.homePrice) * 100).toFixed(2) + '%' : '—'}</td>
+                    <td>{r.tippingRent ? (D.homePrice / (Math.round(r.tippingRent) * 12)).toFixed(1).replace(/\.0$/, '') : '—'}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+          <p>
+            <em>
+              Read it as: the cheaper the money, the lower the rent that justifies buying. Each row
+              is a full month-by-month simulation of the default scenario below with only the rate
+              changed.
+            </em>
+          </p>
+
+          <h2>Who wins the default 2026 scenario?</h2>
+          <p>
+            {baseRentWins ? 'Renting' : 'Buying'} wins by about{' '}
+            {round1k(Math.abs(base.difference))} over {D.timeHorizonYears} years. The scenario: a{' '}
+            {fmt(D.homePrice)} home versus a {fmt(D.monthlyRent)} comparable rental, 20% down at{' '}
+            {D.mortgageRatePct}%, both sides investing whatever they don't spend, measured on
+            ending net worth after selling costs and taxes on both sides.
+          </p>
+          <p>
+            The same scenario at a 4% mortgage flips: {fourBuyWins ? 'buying' : 'renting'} wins by
+            about {round1k(Math.abs(atFour.difference))}, breaking even in year{' '}
+            {atFour.breakEvenYear}. The rate, not the slogan, decides the answer.
+          </p>
+
+          <h2>How does the mortgage rate change the answer?</h2>
+          <p>
+            On the default scenario, here is the verdict and the ending net-worth gap at each rate
+            — same home, same rent, same {D.timeHorizonYears}-year stay:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Mortgage rate</th>
+                <th>Verdict</th>
+                <th>Net-worth gap after {D.timeHorizonYears} years</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                ladder.map((r) => (
+                  <tr>
+                    <td><strong>{r.rate}%</strong></td>
+                    <td>{r.verdict === 'tie' ? 'Too close to call' : r.verdict === 'rent' ? 'Renting wins' : 'Buying wins'}</td>
+                    <td>{r.verdict === 'tie' ? 'within the noise' : round1k(r.gap)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+
+          <h2>What assumptions produce these numbers?</h2>
+          <p>
+            Every figure above assumes: {fmt(D.homePrice)} home price, {fmt(D.monthlyRent)} monthly
+            rent, 20% down, a 30-year fixed mortgage, {D.homeAppreciationPct}% annual home
+            appreciation, {D.rentGrowthPct}% annual rent growth, {D.investmentReturnPct}% nominal
+            investment return, a {D.timeHorizonYears}-year stay, US 2026 tax rules with the
+            standard deduction, PMI below 20% equity with automatic termination, and full buying
+            and selling costs. Change any of them for your own case in{' '}
+            <a href="/">the calculator</a> — every input is adjustable and every scenario is a
+            shareable URL.
+          </p>
+
+          <h2>Where do these numbers come from?</h2>
+          <p>
+            From an open-source simulation engine (MIT-licensed) that models both paths month by
+            month and is covered by {TEST_COUNT} automated tests, including {VECTOR_COUNT}{' '}
+            verification scenarios computed by hand independently of the code. Every formula is
+            documented on <a href="/methodology">the methodology page</a>. This page renders from
+            that engine at build time — the numbers here cannot disagree with the calculator,
+            because they are the calculator.
+          </p>
+          <p>
+            Related: <a href="/calculators/price-to-rent-ratio#chart">the full ratio-by-rate
+            verdict matrix</a> · <a href="/faq">20 questions answered with these numbers</a> ·{' '}
+            <a href="/glossary">every term defined</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

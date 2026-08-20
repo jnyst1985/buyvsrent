@@ -1,14 +1,30 @@
 {
- "generated": "2026-08-10T09:25:34",
+ "generated": "2026-08-17T09:25:37",
  "window_current": [
-  "2026-07-25",
-  "2026-08-07"
+  "2026-08-01",
+  "2026-08-14"
  ],
  "window_prior": [
-  "2026-07-11",
-  "2026-07-24"
+  "2026-07-18",
+  "2026-07-31"
  ],
  "queries": [
+  {
+   "query": "5 rule rent vs buy",
+   "impressions": 1,
+   "prior_impressions": 0,
+   "clicks": 0,
+   "position": 72,
+   "rising": true,
+   "new": true,
+   "pages": [
+    {
+     "page": "/calculators/5-percent-rule",
+     "impressions": 1,
+     "position": 72
+    }
+   ]
+  },
   {
    "query": "nytimes calculator rent vs buy",
    "impressions": 1,
@@ -26,18 +42,18 @@
    ]
   },
   {
-   "query": "rent v",
+   "query": "rent vs",
    "impressions": 1,
    "prior_impressions": 0,
    "clicks": 0,
-   "position": 93,
+   "position": 87,
    "rising": true,
    "new": true,
    "pages": [
     {
      "page": "/",
      "impressions": 1,
-     "position": 93
+     "position": 87
     }
    ]
   },
@@ -58,18 +74,18 @@
    ]
   },
   {
-   "query": "is it better to rent or buy",
+   "query": "rent vs buy formula",
    "impressions": 1,
-   "prior_impressions": 1,
+   "prior_impressions": 0,
    "clicks": 0,
-   "position": 96,
-   "rising": false,
-   "new": false,
+   "position": 100,
+   "rising": true,
+   "new": true,
    "pages": [
     {
-     "page": "/guides",
+     "page": "/",
      "impressions": 1,
-     "position": 96
+     "position": 100
     }
    ]
   }
@@ -78,6 +94,10 @@
   {
    "query": "should i rent or buy",
    "prior_impressions": 6
+  },
+  {
+   "query": "is it better to rent or buy",
+   "prior_impressions": 2
   },
   {
    "query": "better to rent or buy",
@@ -104,6 +124,10 @@
    "prior_impressions": 1
   },
   {
+   "query": "rent v",
+   "prior_impressions": 1
+  },
+  {
    "query": "what is the better buy",
    "prior_impressions": 1
   },
@@ -123,8 +147,10 @@
   "/free-nyt-style-rent-vs-buy-calculator",
   "/glossary",
   "/guides",
+  "/guides/does-buying-a-house-build-wealth",
   "/guides/is-buying-always-better-than-renting",
   "/guides/is-it-better-to-rent-or-buy",
+  "/guides/is-renting-throwing-money-away",
   "/guides/rent-vs-buy-2026",
   "/guides/should-you-buy-in-an-expensive-city",
   "/guides/when-does-buying-beat-renting",

@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import faq from '../data/faq.json';
+import glossary from '../data/glossary.json';
 
 /**
  * llms-full.txt - the whole site's written content in one plain-text file, per
@@ -39,6 +40,11 @@ export const GET: APIRoute = async () => {
   parts.push('## Frequently asked questions', '');
   for (const { q, a } of faq.questions as { q: string; a: string }[]) {
     parts.push(`Q: ${q}`, `A: ${a}`, '');
+  }
+
+  parts.push('## Glossary', '');
+  for (const t of glossary.terms as { term: string; definition: string }[]) {
+    parts.push(`${t.term}: ${t.definition}`, '');
   }
 
   return new Response(parts.join('\n'), {

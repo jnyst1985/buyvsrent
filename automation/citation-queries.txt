@@ -11,3 +11,18 @@ price to rent ratio calculator
 how to decide whether to rent or buy a house
 does buying a house build wealth
 when does buying beat renting
+# Added 2026-08-20 (GEO push). Original 10 above keep their delta series;
+# these 15 start their baselines today.
+should I buy a house in an expensive city
+rent vs buy break even point
+what percentage of home value should rent be
+tipping point rent vs buy
+rent vs buy 2026 mortgage rates
+open source rent vs buy calculator
+rent vs buy calculator that includes opportunity cost
+how do taxes affect rent vs buy
+does the 5 percent rule still work at current mortgage rates
+rent vs buy which builds more wealth
+price to rent ratio by mortgage rate
+is it a good time to buy a house or keep renting
+best free alternative to NYT rent vs buy calculator
